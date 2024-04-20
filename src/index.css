@@ -1,0 +1,259 @@
+@font-face {
+  font-family: "Eurostile Extd";
+  src: url("../src/Assets/Fonts/EurostileFont.woff");
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  /* outline: 4px solid rgba(11, 128, 0, 0.753) !important;
+  background-color: black !important; */
+  color: #000;
+}
+
+body {
+  font-family: "Public Sans", sans-serif;
+}
+.customStartBorder {
+  border-left: 1px solid #fff;
+}
+
+.BtnStyle1 {
+  box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.1);
+  text-transform: uppercase;
+  border-radius: 28px;
+  font-weight: 800;
+  border: 0px;
+  padding: 10px 36px;
+  line-height: 1;
+}
+.BtnStyle2 {
+  border-radius: 6px;
+  border: 1px solid #b0b0b0;
+  background: #fff;
+  font-size: 14px;
+  box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+  /* padding:10px 20px; */
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+.BtnStyle2.active {
+  border: 2px solid #ff98d1;
+}
+button,
+.Copy {
+  transition: all 0.3s ease-in-out;
+  cursor: pointer;
+}
+button:hover,
+.Copy:hover {
+  transform: scale(1.05);
+}
+
+/* @media (max-width: 991px) {
+  .BtnStyle2 {
+    width: 50%;
+  }
+} */
+a {
+  color: #ff008c;
+  text-decoration: none;
+  transition: all 0.3s ease-in-out;
+  cursor: pointer;
+}
+a:hover {
+  color: #000;
+}
+
+input[type="radio"] {
+  accent-color: #ff008c !important;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.HomeHeroSection {
+  background-image: url("./Assets/Images/HomeBg.png");
+  padding-top: 160px;
+  padding-bottom: 80px;
+  background-size: cover;
+  background-position: bottom;
+  border-bottom-right-radius: 300px;
+  height: 600px;
+}
+.UtilitiesHeroSection {
+  background-image: url("./Assets/Images/Supra.jpg");
+  height: 600px;
+  padding-top: 160px;
+  padding-bottom: 80px;
+  background-size: cover;
+  background-position: bottom;
+  border-bottom-right-radius: 300px;
+}
+.AmbassadorHeroSection {
+  height: 600px;
+  background-image: url("./Assets/Images/Ambassador\ Background.png");
+  padding-top: 160px;
+  padding-bottom: 80px;
+  background-size: cover;
+  background-position: right center;
+  border-bottom-right-radius: 300px;
+}
+.StakingHeroSection {
+  height: 600px;
+  background-image: url("./Assets/Images/Staking-pagebg.jpg");
+  padding-top: 160px;
+  padding-bottom: 80px;
+  background-size: cover;
+  background-position: center center;
+  border-bottom-right-radius: 300px;
+}
+.SocialIcon {
+  cursor: pointer;
+}
+
+ul {
+  list-style-position: inside;
+  line-height: auto;
+  margin: 0;
+  padding: 0;
+}
+/*
+ul .checked {
+  list-style-image: url("./Assets/Images/Checked.png");
+}
+ul .unchecked {
+  list-style-image: url("./Assets/Images/Unchecked.png");
+} */
+
+tbody,
+td,
+tfoot,
+th,
+thead,
+tr {
+  border: 0;
+  border-style: none;
+}
+
+@media (max-width: 1440px) {
+  .HomeHeroSection,
+  .UtilitiesHeroSection,
+  .AmbassadorHeroSection {
+    height: 600px;
+  }
+}
+@media (max-width: 1200px) {
+  .BtnStyle1,
+  .BtnStyle2 {
+    font-size: 14px;
+  }
+}
+@media (max-width: 1024px) {
+  .HomeHeroSection,
+  .UtilitiesHeroSection,
+  .AmbassadorHeroSection {
+    height: 600px;
+  }
+
+  .HeroImg {
+    width: 100%;
+  }
+}
+@media (max-width: 991px) {
+  .customStartBorder {
+    border: 0px;
+  }
+}
+@media (max-width: 768px) {
+  .HomeHeroSection,
+  .UtilitiesHeroSection,
+  .AmbassadorHeroSection,
+  .StakingHeroSection {
+    height: auto;
+    padding-bottom: 60px;
+    border-radius: 0;
+  }
+}
+
+@media (max-width: 576px) {
+  .HomeHeroSection,
+  .UtilitiesHeroSection,
+  .AmbassadorHeroSection {
+    padding-top: 200px !important;
+    padding-bottom: 100px !important;
+  }
+  .HeroImg {
+    display: none;
+  }
+}
+
+.wrapper {
+  max-width: 100%;
+  overflow: hidden;
+}
+
+.marquee {
+  white-space: nowrap;
+  position: absolute;
+  bottom: 0;
+  background: #ff008c;
+  padding: 5px;
+  overflow: hidden;
+  display: inline-block;
+  animation: marquee 10s linear infinite;
+}
+.f-euro {
+  font-family: "Eurostile Extd", sans-serif;
+}
+
+.marquee p {
+  display: inline-block;
+}
+
+@keyframes marquee {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+  100% {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+.close-icon {
+  cursor: pointer;
+}
+
+.bg-pink {
+  background: linear-gradient(
+    214deg,
+    #ff6abd -2.56%,
+    #ff008c 45.94%,
+    #8f0157 82.09%
+  );
+
+  color: #fff;
+}
+
+.bg-sliver {
+  background-color: #f7f7f7;
+}
+
+.max-btn {
+  font-size: 12px;
+  padding: 3px 6px;
+  border: 1px solid #c7c7c7;
+  border-radius: 6px;
+  text-transform: uppercase;
+}
+
+.max-btn:hover {
+  transform: scale(1);
+}

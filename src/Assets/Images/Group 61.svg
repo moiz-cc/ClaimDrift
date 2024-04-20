@@ -1,0 +1,9 @@
+<svg version="1.2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 28 28" width="28" height="28">
+	<title>Group 61-svg</title>
+	<style>
+		.s0 { fill: #ff008c } 
+		.s1 { fill: #ffffff } 
+	</style>
+	<path id="Layer" class="s0" d="m14 28c-7.7 0-14-6.3-14-14 0-7.7 6.3-14 14-14 7.7 0 14 6.3 14 14 0 7.7-6.3 14-14 14z"/>
+	<path id="Layer" class="s1" d="m12.3 22.6v-16.2h3.7v16.2zm-6.3-6.3v-3.6h16.2v3.6z"/>
+</svg>

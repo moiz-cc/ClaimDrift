@@ -1,0 +1,51 @@
+{
+  "name": "driftclaim",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
+    "@reduxjs/toolkit": "^2.2.3",
+    "@walletconnect/modal": "^2.6.2",
+    "@web3modal/ethers5": "^3.2.0",
+    "axios": "^1.6.8",
+    "cra-template": "1.2.0",
+    "dotenv": "^16.4.5",
+    "react": "^18.2.0",
+    "react-d3-speedometer": "^2.2.1",
+    "react-dom": "^18.2.0",
+    "react-metamask-avatar": "^2.0.9",
+    "react-redux": "^9.1.1",
+    "react-router-dom": "^6.22.3",
+    "react-scripts": "5.0.1",
+    "redux": "^5.0.1",
+    "redux-thunk": "^3.1.0",
+    "web3": "^1.10.4"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "web-vitals": "^3.5.2"
+  }
+}

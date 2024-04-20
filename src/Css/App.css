@@ -1,0 +1,1162 @@
+/* 
+*****************************************************
+                    Header CSS 
+***************************************************** */
+.Header {
+  padding: 50px 0px;
+  margin-bottom: -160px;
+  position: relative;
+  z-index: 99;
+}
+
+.HeaderMenuContainer_Link {
+  color: #9f9f9f;
+  font-weight: 800;
+}
+.HeaderMenuContainer_Link.Active,
+.HeaderMenuContainer_Link:hover {
+  color: #fff;
+}
+.HeaderMenuContainer_Link.Dark.Active,
+.HeaderMenuContainer_Link.Dark:hover {
+  color: #000;
+}
+
+.pinkBtn {
+  border-radius: 27.962px;
+
+  background: linear-gradient(
+    214deg,
+    #ff6abd -2.56%,
+    #ff008c 45.94%,
+    #8f0157 82.09%
+  );
+
+  color: #fff;
+}
+
+.white {
+  color: #000;
+  border: 1px solid #ff008c;
+  background-color: #fff;
+}
+.transparent {
+  color: #fff;
+  border: 1px solid #ff008c;
+  background-color: transparent;
+}
+
+.ConnectedWalletAddress {
+  max-width: 166.2px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  word-break: break-word;
+  overflow: hidden;
+}
+.HeaderHamburger {
+  display: none;
+}
+
+.SideBarMenu_ListItem.Active {
+  background-color: #ff008c;
+}
+.SideBarMenu_ListItem.Active .HeaderMenuContainer_Link {
+  color: #fff;
+}
+
+.SideBar {
+  z-index: 9999;
+  display: none;
+  overflow: hidden;
+  position: fixed;
+  top: 0;
+  width: 0px;
+  height: 100vh;
+  background: #fff;
+  box-shadow: -4px 0px 20px 0px rgba(0, 0, 0, 0.1);
+  right: 0;
+  transition: width 0.3s ease-in-out;
+}
+.SideBar.Show {
+  width: 230px;
+}
+.HeaderCenter {
+  display: none;
+}
+.HeaderBottom {
+  display: none;
+}
+
+@media (max-width: 1200px) {
+  .HeaderLogo {
+    width: 150px !important;
+  }
+  .HeaderMenuContainer_Link {
+    font-size: 14px;
+  }
+}
+@media (max-width: 991px) {
+  .HeaderMenuContainer,
+  .HeaderBtnContainer {
+    display: none;
+  }
+  .HeaderCenter {
+    display: block;
+  }
+  .SideBar {
+    display: block;
+  }
+  .HeaderHamburger {
+    display: block;
+  }
+}
+@media (max-width: 768px) {
+  .HeaderMenuContainer_Link {
+    font-size: 12px;
+  }
+  .Header {
+    padding: 25px 0px;
+  }
+}
+
+.MobileLogo {
+  display: none;
+}
+@media (max-width: 576px) {
+  .MobileLogo {
+    width: 150px;
+    display: block;
+  }
+  .HeaderLogo {
+    display: none;
+  }
+}
+@media (max-width: 425px) {
+  .HeaderCenter {
+    display: none;
+  }
+  .HeaderBottom {
+    display: flex;
+  }
+}
+/* 
+*****************************************************
+                    Home Hero Section CSS 
+***************************************************** */
+.input {
+  border: 1px solid #c7c7c7;
+  border-radius: 9px;
+  display: flex;
+  justify-content: space-between;
+  padding: 0px 10px;
+}
+.Home {
+  background-color: #e9e9e9;
+}
+.Home_Hero_Section_Heading {
+  font-family: "Eurostile Extd", sans-serif;
+  font-size: 52px;
+  line-height: 100%;
+}
+.Home_Hero_Section_Description {
+  line-height: 143%;
+}
+.Home_Hero_Section_SubHeading {
+  color: #c7c7c7;
+  font-size: 18px;
+}
+
+.TransactionModalBox {
+  width: 550px;
+}
+
+@media (max-width: 991px) {
+  .Home_Hero_Section_Heading {
+    font-size: 48px;
+  }
+
+  .Home_Hero_Section_SubHeading {
+    font-size: 16px;
+  }
+}
+@media (max-width: 768px) {
+  .Home_Hero_Section_Heading {
+    font-size: 40px;
+  }
+  .TransactionModalBox {
+    width: 100%;
+    margin-left: 10%;
+    margin-right: 10%;
+    max-height: 80%;
+    overflow: auto;
+  }
+}
+
+@media (max-width: 440px) {
+  .Home_Hero_Section_Heading {
+    font-size: 32px;
+  }
+}
+@media (max-width: 350px) {
+  .Home_Hero_Section_Heading {
+    font-size: 28px;
+  }
+}
+@media (max-width: 320px) {
+  .Home_Hero_Section_Heading {
+    font-size: 24px;
+  }
+}
+/* 
+*****************************************************
+                    Home Drift Token Section CSS 
+***************************************************** */
+
+.DTSC_SubHeading {
+  font-size: 18px;
+}
+.DTSC_Heading {
+  font-weight: bold;
+  font-size: 34px;
+  line-height: 100%;
+}
+
+.DTSC_Col {
+  padding: 37px 40px;
+  box-shadow: 0px 4px 23px 0px rgba(0, 0, 0, 0.05);
+}
+.DTSC_Counter_Number {
+  font-size: 34px;
+  font-weight: 800;
+}
+
+.ProgressBar {
+  min-height: 40px;
+  background-color: #fbfbfb;
+  box-shadow: 0px 4px 32px 0px rgba(0, 0, 0, 0.25) inset;
+  border-radius: 20px;
+}
+.ProgressDone {
+  height: 40px;
+  background: linear-gradient(180deg, #6d6d6d 0%, #2e2d2d 100%);
+  border-radius: 20px;
+}
+
+.input-field {
+  border-radius: 9px;
+  outline: 0;
+  border: 0px;
+  height: 40px;
+  width: 100%;
+}
+input[type="number"] {
+  appearance: none;
+}
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+}
+
+.RadioText {
+  font-size: 14px;
+}
+
+.List_Container ol li {
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  word-break: break-word;
+}
+
+.Claimimg_Option_Info {
+  box-shadow: 0px 4px 23px 0px rgba(0, 0, 0, 0.05);
+  border: 4px solid #ff98d1;
+
+  transition: all 0.3s ease-in-out;
+}
+
+@media (max-width: 991px) {
+  .DTSC_SubHeading {
+    font-size: 16px;
+  }
+  .DTSC_Col {
+    padding: 30px;
+  }
+
+  .DTSC_Heading {
+    font-size: 28px;
+  }
+}
+
+@media (max-width: 768px) {
+  .Play_Game {
+    padding: 0;
+  }
+}
+@media (max-width: 425px) {
+  .DTSC_Col {
+    padding: 20px;
+  }
+
+  .DTSC_Heading {
+    font-size: 22px;
+  }
+  .DTSC_Counter_Number {
+    font-size: 26px;
+  }
+}
+
+@media (max-width: 1200px) and (min-width: 768px) {
+  .List_Container ol {
+    column-count: 1;
+  }
+}
+
+@media (max-width: 576px) {
+  .List_Container ol {
+    column-count: 1;
+  }
+}
+
+/* 
+*****************************************************
+                    Home Team Section Section CSS 
+***************************************************** */
+
+.Team_Section_Heading {
+  font-family: "Eurostile Extd", sans-serif;
+  font-weight: 900;
+  font-size: 52px;
+  line-height: 100%;
+  /* text-transform: capitalize; */
+}
+.TeamSection_Col {
+  padding: 37px 46px;
+  width: 100%;
+  box-shadow: 0px 4px 23px 0px rgba(0, 0, 0, 0.05);
+}
+
+.TeamSection_CounterNumber {
+  font-weight: 900;
+  font-size: 28px;
+  line-height: 100%;
+}
+.TeamSection_CounterName {
+  font-size: 14px;
+}
+.TeamMemberProfile_Name {
+  font-size: 18px;
+  font-weight: 800;
+}
+
+.TeamMemberProfile_Bio {
+  font-size: 14px;
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.7s ease-in-out;
+}
+.TeamMember_Profile_Container:hover .TeamMemberProfile_Bio {
+  padding-bottom: 5px;
+  max-height: 100%;
+  transition: max-height 0.7s ease-in-out;
+}
+
+/* @media (max-width: 1400px) {
+  .TeamMember_Profile_Container:hover .TeamMemberProfile_Bio {
+    height: 350px;
+  }
+} */
+@media (max-width: 1200px) {
+  .TeamSection_CounterName {
+    font-size: 14px;
+  }
+
+  .TeamSection_CounterNumber {
+    font-size: 32px;
+  }
+  /* .TeamMember_Profile_Container:hover .TeamMemberProfile_Bio {
+    height: 450px;
+  } */
+}
+
+@media (max-width: 991px) {
+  .Team_Section_Heading {
+    font-size: 42px;
+  }
+  .TeamSection_Col {
+    padding: 30px;
+  }
+}
+@media (max-width: 425px) {
+  .Team_Section_Heading {
+    font-size: 36px;
+  }
+  .TeamSection_CounterNumber {
+    font-size: 30px;
+  }
+}
+
+/* 
+*****************************************************
+                    Home Roadmap Section Section CSS 
+***************************************************** */
+
+.Roadmap_Section_Heading {
+  font-family: "Eurostile Extd", sans-serif;
+  font-weight: 900;
+  font-size: 52px;
+  line-height: 100%;
+  /* text-transform: capitalize; */
+}
+
+.Roadmap_Row {
+  padding: 37px 46px;
+  box-shadow: 0px 4px 23px 0px rgba(0, 0, 0, 0.05);
+}
+
+.Roadmap_Row_Heading {
+  font-size: 34px;
+  font-weight: 700;
+}
+
+.RoadmapSection {
+  background-image: url("../Assets/Images/Roadmap-bg.svg");
+
+  background-repeat: no-repeat;
+  background-size: cover;
+  padding: 80px 0px;
+}
+
+.Presale_Col {
+  padding: 28px;
+
+  box-shadow: 0px 4px 23px 0px rgba(0, 0, 0, 0.05);
+}
+
+.Presale_Col li {
+  color: #fff;
+}
+.Presale_Col_Heading {
+  font-size: 18px;
+}
+
+@media (max-width: 1400px) {
+  .Roadmap_Row,
+  .Presale_Col {
+    padding: 30px;
+  }
+}
+@media (max-width: 991px) {
+  .Presale_Col {
+    width: 100%;
+  }
+  .Roadmap_Section_Heading {
+    font-size: 42px;
+  }
+  .Roadmap_Row,
+  .Presale_Col {
+    padding: 30px;
+  }
+}
+@media (max-width: 425px) {
+  .Roadmap_Row,
+  .Presale_Col {
+    padding: 30px;
+  }
+  .Roadmap_Section_Heading {
+    font-size: 36px;
+  }
+  .Roadmap_Row_Heading {
+    font-size: 30px;
+  }
+  .RoadmapSection {
+    padding: 3rem 0rem;
+  }
+}
+
+@media (max-width: 375px) {
+  .Roadmap_Row,
+  .Presale_Col {
+    padding: 20px;
+  }
+  .Presale_Col li {
+    font-size: 14px;
+  }
+}
+
+/* 
+*****************************************************
+                    Home Tokenomics Section CSS 
+***************************************************** */
+
+.Tokenomics_Section_Heading {
+  font-family: "Eurostile Extd", sans-serif;
+  font-weight: 900;
+  font-size: 52px;
+  line-height: 100%;
+}
+
+.Tokenomics_Col_Heading {
+  font-size: 34px;
+  font-weight: 700;
+  line-height: 100%;
+  /* font-family: "Eurostile Extd", sans-serif; */
+}
+
+.Tokenomics_Col ul li {
+  font-family: "Eurostile Extd", sans-serif;
+}
+
+.Tokenomics_Col ul li span {
+  font-family: "Public Sans", sans-serif;
+}
+.TokenomicsContainer {
+  padding: 80px 0px;
+}
+
+.Tokenomics_SubHeading {
+  font-size: 18px;
+}
+.TokenomicsColHeading_Box {
+  min-height: 125px;
+
+  border-radius: 21px 21px 0px 0px;
+  /* background: #3f3f3f; */
+  box-shadow: 0px 4px 23px 0px rgba(0, 0, 0, 0.05);
+}
+
+.Bar {
+  height: 75px;
+}
+
+.Breakdowwn_Heading {
+  font-family: "Eurostile Extd", sans-serif;
+  font-size: 16px;
+}
+.Tokenomics_LRC {
+  padding: 37px 46px;
+  box-shadow: 0px 4px 23px 0px rgba(0, 0, 0, 0.05);
+}
+
+@media (max-width: 991px) {
+  .Tokenomics_Section_Heading {
+    font-size: 42px;
+  }
+  .Tokenomics_SubHeading {
+    font-size: 16px;
+  }
+}
+
+@media (max-width: 576px) {
+  .Bar {
+    height: 50px;
+  }
+}
+
+@media (max-width: 425px) {
+  .Tokenomics_Section_Heading {
+    font-size: 36px;
+  }
+  .Tokenomics_LRC {
+    padding: 30px;
+  }
+  .Tokenomics_Col_Heading {
+    font-size: 26px;
+  }
+  .TokenomicsContainer {
+    padding: 3rem 0rem;
+  }
+  .Breakdowwn_Heading {
+    font-size: 14px;
+  }
+  .Tokenomics_Col ul li {
+    font-size: 14px;
+  }
+}
+
+/* 
+*****************************************************
+                    Utilities Hero Section CSS 
+***************************************************** */
+.Utilities {
+  background-color: #e9e9e9;
+}
+
+.Utilities_Hero {
+  background-image: url("../Assets/Images/UtilitiesHeroBg.webp");
+  background-repeat: no-repeat;
+  background-size: cover;
+  padding: 80px;
+  box-shadow: 0px 4px 23px 0px rgba(0, 0, 0, 0.05);
+}
+
+.Utilities_Hero_Section_Heading {
+  font-family: "Eurostile Extd", sans-serif;
+  font-size: 52px;
+  line-height: 100%;
+}
+.Utilities_Hero_Section_SubHeading {
+  font-family: "Eurostile Extd", sans-serif;
+  font-size: 34px;
+  line-height: 100%;
+}
+.Utilities_Col {
+  padding: 30px;
+  box-shadow: 0px 4px 23px 0px rgba(0, 0, 0, 0.05);
+}
+.Utilities_Col_Heading {
+  font-size: 18px;
+}
+
+.Utilities_Hero_Section_Description {
+  width: 800px;
+}
+
+@media (max-width: 1024px) {
+  .Utilities_Col {
+    padding: 30px;
+  }
+}
+
+@media (max-width: 991px) {
+  .Utilities_Hero_Section_Heading {
+    font-size: 48px;
+  }
+  .Utilities_Hero {
+    padding: 60px;
+  }
+  .Utilities_Hero_Section_SubHeading {
+    font-size: 26px;
+  }
+  .Utilities_Hero_Section_Description {
+    width: 80%;
+  }
+}
+@media (max-width: 768px) {
+  .Utilities_Hero_Section_Heading {
+    font-size: 40px;
+  }
+  .Utilities_Hero {
+    padding: 40px;
+  }
+  .Utilities_Hero_Section_SubHeading {
+    font-size: 22px;
+  }
+}
+@media (max-width: 576px) {
+  .Utilities_Col_Image {
+    width: 120px;
+  }
+}
+@media (max-width: 425px) {
+  .Utilities_Hero {
+    padding: 30px;
+  }
+}
+/* 
+*****************************************************
+                    Revenue Section CSS 
+***************************************************** */
+.Revenue_Section_Heading {
+  font-family: "Eurostile Extd", sans-serif;
+  font-weight: 900;
+  font-size: 52px;
+  line-height: 100%;
+}
+
+.Revenue_Section_Row {
+  width: 900px;
+}
+
+.Revenue_Col_Heading {
+  font-size: 18px;
+}
+.Revenue_Col {
+  padding: 30px;
+}
+
+@media (max-width: 991px) {
+  .Revenue_Section_Heading {
+    font-size: 42px;
+  }
+  .Revenue_Section_Row {
+    width: 100%;
+  }
+  .Revenue_Col {
+    padding: 24px;
+  }
+}
+
+@media (max-width: 768px) {
+  .Breakdown_image {
+    display: none;
+  }
+}
+
+@media (width: 768px) {
+  .Revenue_Section_Row {
+    margin: 1rem 0rem !important;
+  }
+}
+
+@media (max-width: 425px) {
+  .Revenue_Section_Heading {
+    font-size: 36px;
+  }
+  .Revenue_Section_Row {
+    width: auto;
+  }
+  .Revenue_Section_Image {
+    width: 100%;
+  }
+}
+
+/* 
+*****************************************************
+                    Marketing Section CSS 
+***************************************************** */
+
+.Marketing_Section,
+.Ambassador_Section {
+  /* background: linear-gradient(
+    180deg,
+    rgba(184, 184, 184, 0.1) 0%,
+    rgba(0, 0, 0, 0.1) 100%
+  ); */
+
+  background-image: url("../Assets/Images/Frame\ 121.png");
+  background-repeat: no-repeat;
+  background-size: cover;
+
+  padding: 80px 0px;
+}
+.Marketing_Section_Heading {
+  font-family: "Eurostile Extd", sans-serif;
+  font-weight: 900;
+  font-size: 52px;
+  line-height: 100%;
+}
+.Marketing_Col {
+  padding: 37px 46px;
+  box-shadow: 0px 4px 23px 0px rgba(0, 0, 0, 0.05);
+}
+
+.Marketing_Col_Heading {
+  font-size: 18px;
+  line-height: 100%;
+}
+
+@media (max-width: 991px) {
+  .Marketing_Section_Heading {
+    font-size: 42px;
+  }
+}
+@media (max-width: 425px) {
+  .Marketing_Section_Heading {
+    font-size: 36px;
+  }
+  .Marketing_Col {
+    padding: 30px;
+  }
+  .Marketing_Section {
+    padding: 3rem 0px;
+  }
+}
+
+/* 
+*****************************************************
+                    Staking Section CSS 
+***************************************************** */
+
+.Staking_Section_Heading {
+  font-family: "Eurostile Extd", sans-serif;
+  font-weight: 900;
+  font-size: 52px;
+  line-height: 100%;
+}
+
+.Staking_Col {
+  padding: 37px 46px;
+  box-shadow: 0px 4px 23px 0px rgba(0, 0, 0, 0.05);
+  width: 800px;
+}
+
+.Staking_Col_Heading {
+  font-size: 18px;
+  font-weight: 700;
+
+  line-height: 100%;
+}
+
+.Staking_Bar {
+  min-height: 40px;
+  background-color: #fbfbfb;
+  box-shadow: 0px 4px 32px 0px rgba(0, 0, 0, 0.25) inset;
+  border-radius: 20px;
+}
+.Staking_Done {
+  width: 20%;
+  height: 40px;
+  background: linear-gradient(180deg, #6d6d6d 0%, #2e2d2d 100%);
+  border-radius: 20px;
+}
+
+.Staking_Section {
+  background: linear-gradient(
+    180deg,
+    rgba(184, 184, 184, 0.1) 0%,
+    rgba(0, 0, 0, 0.1) 100%
+  );
+  padding: 80px 0px;
+}
+
+.Staking_Col_Gray_Box {
+  background-color: #fbfbfb;
+  padding: 25px 27px;
+
+  border-radius: 17px;
+
+  box-shadow: 0px 1px 15px 0px rgba(0, 0, 0, 0.05) inset;
+}
+
+.SCGB_Heading {
+  font-size: 24px;
+  font-weight: 800;
+}
+
+@media (max-width: 991px) {
+  .Staking_Col {
+    width: 100%;
+  }
+  .Staking_Section_Heading {
+    font-size: 42px;
+  }
+}
+@media (max-width: 425px) {
+  .Staking_Section_Heading {
+    font-size: 36px;
+  }
+  .Staking_Col {
+    padding: 30px;
+  }
+
+  .Staking_Section {
+    padding: 3rem 0rem;
+  }
+}
+
+
+/* 
+*****************************************************
+                    Ambassador Page CSS 
+***************************************************** */
+
+.Ambassador,
+.Staking {
+  background: #e9e9e9;
+}
+
+.Ambassador_Snapshot_ARC_Col_Icon {
+  left: 5%;
+}
+
+.Ambassador_Col {
+  padding: 30px;
+  box-shadow: 0px 4px 23px 0px rgba(0, 0, 0, 0.05);
+  min-height: 100%;
+}
+
+.Ambassador_Hero_Section_Heading {
+  font-family: "Eurostile Extd", sans-serif;
+  font-size: 52px;
+  line-height: 100%;
+}
+
+.Ambassador_Snapshot_Section {
+  border-radius: 72px;
+  /* padding-top: 5rem !important;
+  padding-bottom: 5rem !important; */
+}
+
+.Ambassador_Snapshot_ARC_Col_Txt_SubHeading {
+  color: #00a0d2;
+  font-size: 14px;
+}
+.Ambassador_Snapshot_Section_Heading {
+  font-family: "Chakra Petch", sans-serif;
+}
+.Ambassador_Snapshot_Leaderboard_Heading,
+.Ambassador_Snapshot_AmountRaised_Plan_Item_Top {
+  background-color: #00a0d2;
+  border-top-left-radius: 15px;
+  border-top-right-radius: 15px;
+}
+
+.Ambassador_Snapshot_Leaderboard_List_Item {
+  font-size: 14px;
+}
+
+.Ambassador_Snapshot_AmountRaised_Plan_Item_Top {
+  min-height: 70px;
+}
+
+.Ambassador_Snapshot_AmountRaised_Plan_Item_Bottom {
+  background-color: #fbfbfb;
+  border-bottom-left-radius: 15px;
+  border-bottom-right-radius: 15px;
+  min-height: 70px;
+  border: 1px solid #c7c7c7;
+  box-shadow: 0px 1px 15px 0px rgba(0, 0, 0, 0.05) inset;
+}
+
+.Ambassador_Snapshot_ARC_Col_List_Container ul {
+  list-style: none;
+}
+
+.Ambassador_Snapshot_ARC_Col_List_Item {
+  font-size: 14px;
+  margin-top: 1rem;
+}
+
+.Ambassador_Snapshot_ARC_Col_List_Item::before {
+  content: url("../Assets/Images/ListBullet.svg");
+  vertical-align: middle;
+  height: 100%;
+  display: inline-block;
+  line-height: 1.1;
+  margin-right: 0.6rem;
+}
+
+.Ambassador_Snapshot_UpcommingEvents_Item_Bg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.Ambassador_Snapshot_UpcommingEvents_Item_Icon {
+  right: 5%;
+}
+
+.Ambassador_Snapshot_UpcommingEvents_Item_Txt_Container {
+  border-radius: 0px 0px 1rem 1rem;
+  background: rgba(0, 0, 0, 0.7);
+}
+
+.Ambassador_Snapshot_UpcommingEvents_Item_Txt_SubHeading,
+.Ambassador_Snapshot_LatestPost_Item_Txt_SubHeading {
+  font-size: 14px;
+}
+
+.Ambassador_Snapshot_UpcommingEvents_Item_Txt_Date,
+.Ambassador_Snapshot_LatestPost_Item_Txt_Date {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 14px;
+}
+
+.Ambassador_Snapshot_LatestPost_Item {
+  border: 1px solid #c7c7c7;
+  border-top: 1.7rem solid #00a0d2;
+}
+
+.Ambassador_Snapshot_UpcommingEvents_Item,
+.Ambassador_Snapshot_LatestPost_Item {
+  box-shadow: 0px 4px 23px 0px rgba(0, 0, 0, 0.1);
+}
+
+@media (max-width: 991px) {
+  .Ambassador_Hero_Section_Heading {
+    font-size: 42px;
+  }
+
+  .Ambassador_Hero_Section_SubHeading {
+    font-size: 14px;
+  }
+}
+@media (max-width: 991px) {
+  .Ambassador_Hero_Section_Container {
+    border-bottom-right-radius: 0rem;
+  }
+}
+@media (max-width: 425px) {
+  .Ambassador_Hero_Section_Heading {
+    font-size: 36px;
+  }
+}
+/* 
+*****************************************************
+                    Footer CSS 
+***************************************************** */
+
+.Footer {
+  padding: 100px 0px;
+}
+
+.FooterMenuContainer_Link {
+  color: #ff4bae;
+  margin-top: 10px;
+  transition: all 0.3s ease-in-out;
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 500;
+}
+
+.FooterMenuContainer_Link.Active,
+.FooterMenuContainer_Link:hover {
+  color: #fff;
+}
+
+.FooterHeading {
+  font-family: "Eurostile Extd", sans-serif;
+  font-size: 18px;
+}
+
+.FooterContractAddress {
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  word-break: break-word;
+  overflow: hidden;
+}
+@media (max-width: 1200px) {
+  .FooterMenuContainer_Link,
+  .FooterContractAddress {
+    font-size: 14px;
+  }
+}
+@media (max-width: 991px) {
+  .FooterContract_Container {
+    width: 100%;
+  }
+}
+@media (max-width: 425px) {
+  .FooterCol_Container {
+    width: 100%;
+  }
+  .Footer {
+    padding: 50px 0px;
+  }
+}
+
+.Claimimg_Option_Info {
+  display: none;
+}
+.Info:hover .Claimimg_Option_Info {
+  display: block;
+}
+
+/* *********************************************
+            YourState Section Css
+********************************************* */
+.YourState_Col,
+.Bonuses_Col,
+.Leaderboard_Col,
+.Leaderboard_BoardCol_Container {
+  border-radius: 13px;
+  background: rgba(255, 255, 255, 0.05);
+  padding: 20px 32px;
+}
+
+.YourState_Col_Icon,
+.Leaderboard_Col_Icon {
+  width: 24px;
+}
+
+.YourState_Col_Btn {
+  max-width: 220px;
+}
+
+.YourState_Number {
+  font-family: "Chakra Petch";
+  font-size: 36px;
+  line-height: 100%;
+  margin-top: 18px;
+  margin-bottom: 54px;
+}
+
+/* *********************************************
+            Bonuses Section Css
+********************************************* */
+.Bonuses_Positions_Col_Top {
+  border-radius: 15.295px 15.295px 0px 0px;
+  background: rgba(0, 160, 210, 0.2);
+  box-shadow: 0px 1.09248px 16.38723px 0px rgba(0, 0, 0, 0.05) inset;
+  min-height: 80px;
+}
+
+.Bonuses_Positions_Col_Bottom {
+  border-radius: 0px 0px 15.295px 15.295px;
+  background: rgba(251, 251, 251, 0.05);
+  box-shadow: 0px 1.09248px 16.38723px 0px rgba(0, 0, 0, 0.05) inset;
+  min-height: 80px;
+}
+
+/* *********************************************
+            Leaderboard Section Css
+********************************************* */
+
+.Leaderboard_BoardCol {
+  overflow: auto;
+}
+
+.Leaderboard_RankCol {
+  min-width: 305px;
+  max-width: 305px;
+}
+
+.Leaderboard_BoardCol_Table_HeaderRow {
+  background: #1f1f1f;
+}
+
+.Leaderboard_Col_Txt {
+  font-family: "Chakra Petch";
+  font-size: 36px;
+  line-height: 100%;
+  margin-bottom: 104px;
+}
+
+.TableRankBadge_Icon {
+  width: 14px;
+}
+
+.TableGoldCircle_Icon {
+  width: 20px;
+}
+
+.Leaderboard_RankHash {
+  min-width: 6%;
+  max-width: 6%;
+}
+
+@media (max-width: 1199px) {
+  .Leaderboard_RankCol {
+    min-width: auto;
+    max-width: 100%;
+  }
+}
+
+.Ambassador_Profile_Name {
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  word-break: break-word;
+  overflow: hidden;
+  width: 100px;
+}
+
+.Info_Box_Text {
+  font-size: 12px;
+}
+
+.Utilities_Col_Heading {
+  background-color: rgb(255, 222, 240);
+  font-size: 12px;
+}
+
+/* *********************************************
+            Privacy Policy Css
+********************************************* */
+
+.Policy_Heading {
+  font-family: "Eurostile Extd", sans-serif;
+}
+
+.Policy.table {
+  --bs-table-bg: #e9e9e9;
+}
