@@ -16,7 +16,7 @@ function Header() {
   const { selectedNetworkId } = useWeb3ModalState();
   const { web3Inst } = useSelector((state) => state.Blockchain);
 
-  const supportChain = [1, 56, 137];
+  const supportChain = [11155111, 97, 80001];
 
   useEffect(() => {
     if (
@@ -30,7 +30,7 @@ function Header() {
         web3Inst.currentProvider
           .request({
             method: "wallet_switchEthereumChain",
-            params: [{ chainId: "0x1" }],
+            params: [{ chainId: "0xaa36a7" }],
           })
           .catch((e) => console.log(e)))();
     }

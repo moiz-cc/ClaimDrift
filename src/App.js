@@ -35,13 +35,10 @@ function App() {
   const {
     contractInst,
     contractInstToken,
-    contractInstTokenBNB,
-    contractInstTokenPOLYGON,
+    // contractInstTokenBNB,
     web3Inst,
-    contractInstBNB,
-    web3InstBNB,
-    contractInstPOLYGON,
-    web3InstPOLYGON,
+    // contractInstBNB,
+    // web3InstBNB,
   } = useSelector((state) => state.Blockchain);
   const { walletProvider } = useWeb3ModalSigner();
 
@@ -49,28 +46,43 @@ function App() {
   const projectId = process.env.REACT_APP_PROJECT_ID;
 
   // 2. Set chains
-  const bnb = {
-    chainId: 56,
-    name: "BNB Chain",
-    currency: "BNB",
-    explorerUrl: "https://bscscan.com/",
-    rpcUrl: process.env.REACT_APP_RPC_BNB,
-  };
+  // const bnb = {
+  //   chainId: 56,
+  //   name: "BNB Chain",
+  //   currency: "BNB",
+  //   explorerUrl: "https://bscscan.com/",
+  //   rpcUrl: process.env.REACT_APP_RPC_BNB,
+  // };
+
+  // const ethereum = {
+  //   chainId: 1,
+  //   name: "Ethereum",
+  //   currency: "ETH",
+  //   explorerUrl: "https://etherscan.io",
+  //   rpcUrl: process.env.REACT_APP_RPC_ETH,
+  // };
+
+  // const polygon = {
+  //   chainId: 137,
+  //   name: "Polygon",
+  //   currency: "MATIC",
+  //   explorerUrl: "https://polygonscan.com",
+  //   rpcUrl: process.env.REACT_APP_RPC_POLYGON,
+  // };
+  // const bnb = {
+  //   chainId: 97,
+  //   name: "BNB Smart Chain Testnet",
+  //   currency: "tBNB",
+  //   explorerUrl: "https://testnet.bscscan.com/",
+  //   rpcUrl: process.env.REACT_APP_RPC_BNB,
+  // };
 
   const ethereum = {
-    chainId: 1,
-    name: "Ethereum",
-    currency: "ETH",
-    explorerUrl: "https://etherscan.io",
+    chainId: 11155111,
+    name: "Sepolia test network",
+    currency: "SepoliaETH",
+    explorerUrl: "https://sepolia.etherscan.io",
     rpcUrl: process.env.REACT_APP_RPC_ETH,
-  };
-
-  const polygon = {
-    chainId: 137,
-    name: "Polygon",
-    currency: "MATIC",
-    explorerUrl: "https://polygonscan.com",
-    rpcUrl: process.env.REACT_APP_RPC_POLYGON,
   };
 
   // 3. Create modal
@@ -86,7 +98,7 @@ function App() {
   createWeb3Modal({
     themeMode: "light",
     ethersConfig: defaultConfig({ metadata }),
-    chains: [ethereum, bnb, polygon],
+    chains: [ethereum],
 
     projectId,
   });
@@ -98,15 +110,16 @@ function App() {
   const _timeout = useRef(null);
 
   const getBlockchainData = () => {
-    if (contractInst && contractInstBNB && contractInstPOLYGON) {
+    if (
+      contractInst
+      // && contractInstBNB
+    ) {
       dispatch(
         LoadBlockchainData({
           contractInst,
           web3Inst,
-          contractInstBNB,
-          web3InstBNB,
-          contractInstPOLYGON,
-          web3InstPOLYGON,
+          // contractInstBNB,
+          // web3InstBNB,
         })
       );
     }
@@ -114,34 +127,24 @@ function App() {
 
   const loadUserData = async () => {
     if (isConnected && typeof address !== "undefined") {
-      selectedNetworkId === 1
+      selectedNetworkId === 11155111
         ? dispatch(
             LoadUser({
               contractInst,
               address: address.trim(),
-
               contractInstToken,
             })
           )
-        : selectedNetworkId === 56
-        ? dispatch(
-            LoadUser({
-              contractInst: contractInstBNB,
-              address: address.trim(),
+        : // : selectedNetworkId === 97
+          // ? dispatch(
+          //     LoadUser({
+          //       contractInst: contractInstBNB,
+          //       address: address.trim(),
 
-              contractInstToken: contractInstTokenBNB,
-            })
-          )
-        : selectedNetworkId === 137
-        ? dispatch(
-            LoadUser({
-              contractInst: contractInstPOLYGON,
-              address: address.trim(),
-
-              contractInstToken: contractInstTokenPOLYGON,
-            })
-          )
-        : dispatch(UpdateUser(null));
+          //       contractInstToken: contractInstTokenBNB,
+          //     })
+          //   )
+          dispatch(UpdateUser(null));
     }
   };
 
@@ -155,7 +158,10 @@ function App() {
     }
     dispatch(GetUSDPrice());
     getBlockchainData();
-  }, [contractInst, contractInstBNB]);
+  }, [
+    contractInst,
+    // , contractInstBNB
+  ]);
 
   useEffect(() => {
     if (isConnected && walletProvider?.provider && !isWeb3InstanceConnect) {
@@ -192,7 +198,7 @@ function App() {
     };
   }, [selectedNetworkId]);
 
-  useEffect(() => {}, [address, isConnected]);
+  useEffect(() => {}, [address, isConnected, selectedNetworkId]);
 
   return (
     <div className="App">
@@ -203,7 +209,7 @@ function App() {
         <Route path="/utilities" element={<Utilities />} />
         <Route path="/ambassador" element={<Ambassador />} />
         <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-        <Route path="/stake" element={<Staking />} />
+        {/* <Route path="/stake" element={<Staking />} /> */}
         <Route
           path="/price-risk-disclosure"
           element={<PriceRiskDisclosure />}

@@ -120,11 +120,11 @@ export const getErrorMessage = async (err, chainId) => {
 const getErrFromWeb3 = async (err, chainId) => {
   const defaultErrMsg = "Something went wrong. Please try again later.";
   const web3 = new Web3(
-    chainId === 1
+    chainId === 11155111
       ? process.env.REACT_APP_RPC_ETH
-      : chainId === 56
+      : chainId === 97
       ? process.env.REACT_APP_RPC_BNB
-      : chainId === 137
+      : chainId === 80001
       ? process.env.REACT_APP_RPC_POLYGON
       : ""
   );

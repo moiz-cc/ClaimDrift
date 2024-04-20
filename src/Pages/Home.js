@@ -60,64 +60,11 @@ function Home() {
     publicBlockchainData: data,
     user,
     contractInst,
-    contractInstBNB,
-    contractInstPOLYGON,
-    ethPrice,
-    bnbPrice,
-    maticPrice,
+
+    contractInstClaim,
+
     web3Inst,
-    web3InstBNB,
-    web3InstPOLYGON,
-    ambassadorList,
   } = useSelector((state) => state.Blockchain);
-
-  const usdETH = ambassadorList?.ETH.map((v, i) => {
-    return { ...v, _raised: ConvertNumber(v._raised, true) * ethPrice };
-  });
-  const usdBNB = ambassadorList?.BNB.map((v, i) => {
-    return { ...v, _raised: ConvertNumber(v._raised, true) * bnbPrice };
-  });
-  const usdPOLYGON = ambassadorList?.POLYGON.map((v, i) => {
-    return { ...v, _raised: ConvertNumber(v._raised, true) * maticPrice };
-  });
-
-  const h = [];
-  const v = {};
-  usdETH?.map((ele) => {
-    v[ele._ambassador] = ele;
-    h.push(ele._ambassador);
-  });
-
-  usdBNB?.map((ele) => {
-    if (v[ele?._ambassador]?._ambassador) {
-      v[ele._ambassador]._raised =
-        Number(v[ele._ambassador]._raised) + Number(ele._raised);
-      return;
-    }
-    v[ele._ambassador] = ele;
-    if (!h.includes(ele._ambassador)) {
-      h.push(ele._ambassador);
-    }
-  });
-
-  usdPOLYGON?.map((ele) => {
-    if (v[ele?._ambassador]?._ambassador) {
-      v[ele._ambassador]._raised =
-        Number(v[ele._ambassador]._raised) + Number(ele._raised);
-      return;
-    }
-    v[ele._ambassador] = ele;
-    if (!h.includes(ele._ambassador)) {
-      h.push(ele._ambassador);
-    }
-  });
-
-  let abc = h.sort(function (a, b) {
-    return v[b]._raised - v[a]._raised;
-  });
-
-  abc = abc.slice(0, 10);
-  const ambsData = v;
 
   const date = Date.now() / 1000;
 
@@ -128,22 +75,11 @@ function Home() {
   const [transactionModal, setTransactionModal] = useState(false);
   const [loading, setLoading] = useState(false);
   const [txHash, setTxHash] = useState("");
-  const [noOfToken, setNoOfToken] = useState(0);
-  const [extraTokens, setExtraTokens] = useState(0);
+
   const [isAmbassador, setIsAmbassador] = useState(null);
-  const [msg, setMsg] = useState("");
-  const [isTimerOff, setIsTimerOff] = useState(false);
 
   const [errors, setErrors] = useState({
-    amountInETH: "",
-    promoCode: "",
-    isStake: "",
     transaction: "",
-  });
-  const [formData, setFormData] = useState({
-    amountInETH: 0,
-    promoCode: "",
-    isStake: null,
   });
 
   function scroll() {
@@ -159,18 +95,18 @@ function Home() {
     return x;
   }
 
-  const onChange = (e) => {
-    const { name, value } = e.target;
+  // const onChange = (e) => {
+  //   const { name, value } = e.target;
 
-    if (name == "isStake" && value == 1) {
-      setFormData({ ...formData, [name]: true });
-    } else if (name == "isStake" && value == 2) {
-      setFormData({ ...formData, [name]: false });
-    } else {
-      setFormData({ ...formData, [name]: value });
-    }
-    setErrors({ ...errors, [name]: "" });
-  };
+  //   if (name == "isStake" && value == 1) {
+  //     setFormData({ ...formData, [name]: true });
+  //   } else if (name == "isStake" && value == 2) {
+  //     setFormData({ ...formData, [name]: false });
+  //   } else {
+  //     setFormData({ ...formData, [name]: value });
+  //   }
+  //   setErrors({ ...errors, [name]: "" });
+  // };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -180,41 +116,32 @@ function Home() {
       return;
     }
 
-    if (formData?.amountInETH === "" || formData?.amountInETH == 0) {
-      setErrors((state) => ({ ...state, amountInETH: "Amount is required" }));
+    // if (formData?.amountInETH === "" || formData?.amountInETH == 0) {
+    //   setErrors((state) => ({ ...state, amountInETH: "Amount is required" }));
 
-      return;
-    }
+    //   return;
+    // }
 
-    if (formData?.isStake === null) {
-      setErrors((state) => ({ ...state, isStake: "Select any one option" }));
+    // if (formData?.isStake === null) {
+    //   setErrors((state) => ({ ...state, isStake: "Select any one option" }));
 
-      return;
-    }
+    //   return;
+    // }
 
     try {
-      const isStake = formData?.isStake;
-      const promoCode =
-        formData?.promoCode.length > 0 ? formData?.promoCode : "";
-
       setTransactionModal(true);
       setLoading(true);
-      const transferTokens = await contractInst.methods.buyTokens(
-        promoCode,
-        isStake
-      );
+      const claimTokens = await contractInstClaim.methods.claimTokens();
 
-      const estimateGas = await transferTokens.estimateGas({
+      const estimateGas = await claimTokens.estimateGas({
         from: address,
-        value: ConvertNumber(formData?.amountInETH, false),
       });
 
-      const transaction = transferTokens.send({
+      const transaction = claimTokens.send({
         from: address,
-        to: process.env.REACT_APP_CROWDSALE_ETH,
+        to: process.env.REACT_APP_CLAIM_ETH,
         gas: estimateGas,
         maxPriorityFeePerGas: 50000000000,
-        value: ConvertNumber(formData?.amountInETH, false),
       });
 
       transaction
@@ -231,10 +158,8 @@ function Home() {
             LoadBlockchainData({
               contractInst,
               web3Inst,
-              contractInstBNB,
-              web3InstBNB,
-              contractInstPOLYGON,
-              web3InstPOLYGON,
+              // contractInstBNB,
+              // web3InstBNB,
             })
           );
           setLoading(false);
@@ -260,306 +185,201 @@ function Home() {
     }
   };
 
-  const handleBNBSubmit = async (e) => {
-    e.preventDefault();
+  // const handleBNBSubmit = async (e) => {
+  //   e.preventDefault();
 
-    if (!address) {
-      open();
-      return;
-    }
+  //   if (!address) {
+  //     open();
+  //     return;
+  //   }
 
-    if (formData?.amountInETH === "" || formData?.amountInETH == 0) {
-      setErrors((state) => ({ ...state, amountInETH: "Amount is required" }));
+  //   if (formData?.amountInETH === "" || formData?.amountInETH == 0) {
+  //     setErrors((state) => ({ ...state, amountInETH: "Amount is required" }));
 
-      return;
-    }
+  //     return;
+  //   }
 
-    if (formData?.isStake === null) {
-      setErrors((state) => ({ ...state, isStake: "Select any one option" }));
+  //   if (formData?.isStake === null) {
+  //     setErrors((state) => ({ ...state, isStake: "Select any one option" }));
 
-      return;
-    }
+  //     return;
+  //   }
 
-    try {
-      const isStake = formData?.isStake;
-      const promoCode =
-        formData?.promoCode.length > 0 ? formData?.promoCode : "";
+  //   try {
+  //     const isStake = formData?.isStake;
+  //     const promoCode =
+  //       formData?.promoCode.length > 0 ? formData?.promoCode : "";
 
-      setTransactionModal(true);
-      setLoading(true);
-      const transferTokens = await contractInstBNB.methods.buyTokens(
-        promoCode,
-        isStake
-      );
+  //     setTransactionModal(true);
+  //     setLoading(true);
+  //     const transferTokens = await contractInstBNB.methods.buyTokens(
+  //       promoCode,
+  //       isStake
+  //     );
 
-      const estimateGas = await transferTokens.estimateGas({
-        from: address,
-        value: ConvertNumber(formData?.amountInETH, false),
-      });
+  //     const estimateGas = await transferTokens.estimateGas({
+  //       from: address,
+  //       value: ConvertNumber(formData?.amountInETH, false),
+  //     });
 
-      const transaction = transferTokens.send({
-        from: address,
-        to: process.env.REACT_APP_CROWDSALE_BNB,
-        gas: estimateGas,
-        maxPriorityFeePerGas: 50000000000,
-        value: ConvertNumber(formData?.amountInETH, false),
-      });
+  //     const transaction = transferTokens.send({
+  //       from: address,
+  //       to: process.env.REACT_APP_CROWDSALE_BNB,
+  //       gas: estimateGas,
+  //       maxPriorityFeePerGas: 50000000000,
+  //       value: ConvertNumber(formData?.amountInETH, false),
+  //     });
 
-      transaction
-        .on("transactionHash", (txHash) => {
-          console.log(txHash);
-          setTxHash(txHash);
-        })
-        .on("receipt", async (receipt) => {
-          console.log("RECEIPT => \n", receipt);
+  //     transaction
+  //       .on("transactionHash", (txHash) => {
+  //         console.log(txHash);
+  //         setTxHash(txHash);
+  //       })
+  //       .on("receipt", async (receipt) => {
+  //         console.log("RECEIPT => \n", receipt);
 
-          setErrors((state) => ({ ...state, transaction: "" }));
-          dispatch(
-            LoadUser({
-              contractInst: contractInstBNB,
-              address,
-              web3Inst: web3InstBNB,
-            })
-          );
-          dispatch(
-            LoadBlockchainData({
-              contractInst,
-              web3Inst,
-              contractInstBNB,
-              web3InstBNB,
-              contractInstPOLYGON,
-              web3InstPOLYGON,
-            })
-          );
-          setLoading(false);
-        })
-        .on("error", async (error, receipt) => {
-          console.log("ERROR => \n", error);
+  //         setErrors((state) => ({ ...state, transaction: "" }));
+  //         dispatch(
+  //           LoadUser({
+  //             contractInst: contractInstBNB,
+  //             address,
+  //             web3Inst: web3InstBNB,
+  //           })
+  //         );
+  //         dispatch(
+  //           LoadBlockchainData({
+  //             contractInst,
+  //             web3Inst,
+  //             contractInstBNB,
+  //             web3InstBNB,
+  //           })
+  //         );
+  //         setLoading(false);
+  //       })
+  //       .on("error", async (error, receipt) => {
+  //         console.log("ERROR => \n", error);
 
-          setLoading(false);
+  //         setLoading(false);
 
-          const errorMsg = await getErrorMessage(error, chainId);
-          setErrors({ ...errors, transaction: errorMsg });
-          console.log("RECEIPT ERROR => \n", receipt);
+  //         const errorMsg = await getErrorMessage(error, chainId);
+  //         setErrors({ ...errors, transaction: errorMsg });
+  //         console.log("RECEIPT ERROR => \n", receipt);
 
-          if (receipt?.transactionHash) {
-            setTxHash(receipt.transactionHash);
-          }
-        });
-    } catch (error) {
-      const errorMsg = await getErrorMessage(error, chainId);
+  //         if (receipt?.transactionHash) {
+  //           setTxHash(receipt.transactionHash);
+  //         }
+  //       });
+  //   } catch (error) {
+  //     const errorMsg = await getErrorMessage(error, chainId);
 
-      setErrors((state) => ({ ...state, transaction: errorMsg }));
-      setLoading(false);
-    }
-  };
-
-  const handlePOLYGONSubmit = async (e) => {
-    e.preventDefault();
-
-    if (!address) {
-      open();
-      return;
-    }
-
-    if (formData?.amountInETH === "" || formData?.amountInETH == 0) {
-      setErrors((state) => ({ ...state, amountInETH: "Amount is required" }));
-
-      return;
-    }
-
-    if (formData?.isStake === null) {
-      setErrors((state) => ({ ...state, isStake: "Select any one option" }));
-
-      return;
-    }
-
-    try {
-      const isStake = formData?.isStake;
-      const promoCode =
-        formData?.promoCode.length > 0 ? formData?.promoCode : "";
-
-      setTransactionModal(true);
-      setLoading(true);
-      const transferTokens = await contractInstPOLYGON.methods.buyTokens(
-        promoCode,
-        isStake
-      );
-
-      const estimateGas = await transferTokens.estimateGas({
-        from: address,
-        value: ConvertNumber(formData?.amountInETH, false),
-      });
-
-      const transaction = transferTokens.send({
-        from: address,
-        to: process.env.REACT_APP_CROWDSALE_POLYGON,
-        gas: estimateGas,
-        maxPriorityFeePerGas: 50000000000,
-        value: ConvertNumber(formData?.amountInETH, false),
-      });
-
-      transaction
-        .on("transactionHash", (txHash) => {
-          console.log(txHash);
-          setTxHash(txHash);
-        })
-        .on("receipt", async (receipt) => {
-          console.log("RECEIPT => \n", receipt);
-
-          setErrors((state) => ({ ...state, transaction: "" }));
-          dispatch(
-            LoadUser({
-              contractInst: contractInstPOLYGON,
-              address,
-              web3Inst: web3InstPOLYGON,
-            })
-          );
-          dispatch(
-            LoadBlockchainData({
-              contractInst,
-              web3Inst,
-              contractInstBNB,
-              web3InstBNB,
-              contractInstPOLYGON,
-              web3InstPOLYGON,
-            })
-          );
-          setLoading(false);
-        })
-        .on("error", async (error, receipt) => {
-          console.log("ERROR => \n", error);
-
-          setLoading(false);
-
-          const errorMsg = await getErrorMessage(error, chainId);
-          setErrors({ ...errors, transaction: errorMsg });
-          console.log("RECEIPT ERROR => \n", receipt);
-
-          if (receipt?.transactionHash) {
-            setTxHash(receipt.transactionHash);
-          }
-        });
-    } catch (error) {
-      const errorMsg = await getErrorMessage(error, chainId);
-
-      setErrors((state) => ({ ...state, transaction: errorMsg }));
-      setLoading(false);
-    }
-  };
+  //     setErrors((state) => ({ ...state, transaction: errorMsg }));
+  //     setLoading(false);
+  //   }
+  // };
 
   const closeTransactionModal = () => {
     setTransactionModal(false);
     setIsAmbassador(null);
-    setExtraTokens(0);
-    setNoOfToken(0);
-    setFormData({
-      amountInETH: 0,
-      promoCode: "",
-      isStake: null,
-    });
+    // setExtraTokens(0);
+    // setNoOfToken(0);
+    // setFormData({
+    //   amountInETH: 0,
+    //   promoCode: "",
+    //   isStake: null,
+    // });
     setErrors({
-      amountInETH: "",
-      promoCode: "",
-      isStake: "",
+      // amountInETH: "",
+      // promoCode: "",
+      // isStake: "",
       transaction: "",
     });
     setTxHash("");
 
-    const Stake = document.getElementById("stake");
-    const Dynamic = document.getElementById("dynamic");
-
-    Dynamic.checked = false;
-    Stake.checked = false;
-    // window.location.reload();
+    window.location.reload();
   };
 
-  useEffect(() => {
-    let tokens =
-      (selectedNetworkId === 1
-        ? formData?.amountInETH * ethPrice
-        : selectedNetworkId === 56
-        ? formData?.amountInETH * bnbPrice
-        : selectedNetworkId === 137
-        ? formData?.amountInETH * maticPrice
-        : 0) / data?.ico_price;
+  // useEffect(() => {
+  //   let tokens =
+  //     (selectedNetworkId === 11155111
+  //       ? formData?.amountInETH * ethPrice
+  //       : selectedNetworkId === 97
+  //       ? formData?.amountInETH * bnbPrice
+  //       : selectedNetworkId === 80001
+  //       ? formData?.amountInETH * maticPrice
+  //       : 0) / data?.ico_price;
 
-    setNoOfToken(tokens);
+  //   setNoOfToken(tokens);
 
-    if (
-      formData?.promoCode &&
-      formData?.promoCode !== "0x" &&
-      formData?.promoCode !== "0"
-    ) {
-      let extraTokens = (tokens * 5) / 100;
+  //   if (
+  //     formData?.promoCode &&
+  //     formData?.promoCode !== "0x" &&
+  //     formData?.promoCode !== "0"
+  //   ) {
+  //     let extraTokens = (tokens * 5) / 100;
 
-      setExtraTokens(extraTokens);
-    }
+  //     setExtraTokens(extraTokens);
+  //   }
 
-    if (user) {
-      const eligible_bronze = parseInt(
-        selectedNetworkId === 1
-          ? data?.bronze_eligible
-          : selectedNetworkId === 56
-          ? data?.bronze_eligibleBNB
-          : selectedNetworkId === 137
-          ? data?.bronze_eligiblePOLYGON
-          : ""
-      );
-      const eligible_silver = parseInt(
-        selectedNetworkId === 1
-          ? data?.silver_eligible
-          : selectedNetworkId === 56
-          ? data?.silver_eligibleBNB
-          : selectedNetworkId === 137
-          ? data?.silver_eligiblePOLYGON
-          : ""
-      );
+  //   if (user) {
+  //     const eligible_bronze = parseInt(
+  //       selectedNetworkId === 11155111
+  //         ? data?.bronze_eligible
+  //         : selectedNetworkId === 97
+  //         ? data?.bronze_eligibleBNB
+  //         : ""
+  //     );
+  //     const eligible_silver = parseInt(
+  //       selectedNetworkId === 11155111
+  //         ? data?.silver_eligible
+  //         : selectedNetworkId === 97
+  //         ? data?.silver_eligibleBNB
+  //         : ""
+  //     );
 
-      let totalInvested = parseInt(user.invest_amount);
-      const newTransaction = parseInt(ConvertNumber(formData.amountInETH));
-      totalInvested += newTransaction;
+  //     let totalInvested = parseInt(user.invest_amount);
+  //     const newTransaction = parseInt(ConvertNumber(formData.amountInETH));
+  //     totalInvested += newTransaction;
 
-      if (formData.amountInETH > 0 && totalInvested < eligible_bronze) {
-        const needMore = ConvertNumber(eligible_bronze - totalInvested, true);
-        setMsg(
-          `Invest ${needMore} ${
-            selectedNetworkId === 1
-              ? "ETH"
-              : selectedNetworkId === 56
-              ? "BNB"
-              : selectedNetworkId === 137
-              ? "MATIC"
-              : ""
-          } more to become a Bronze Ambassador`
-        );
-      } else if (formData.amountInETH > 0 && totalInvested < eligible_silver) {
-        const needMore = ConvertNumber(eligible_silver - totalInvested, true);
-        setMsg(
-          `Invest ${needMore} ${
-            selectedNetworkId === 1
-              ? "ETH"
-              : selectedNetworkId === 56
-              ? "BNB"
-              : selectedNetworkId === 137
-              ? "MATIC"
-              : ""
-          } more to become a Silver Ambassador`
-        );
-      } else {
-        setMsg(null);
-      }
-    }
-  }, [formData, chainId]);
+  //     if (formData.amountInETH > 0 && totalInvested < eligible_bronze) {
+  //       const needMore = ConvertNumber(eligible_bronze - totalInvested, true);
+  //       setMsg(
+  //         `Invest ${needMore} ${
+  //           selectedNetworkId === 11155111
+  //             ? "ETH"
+  //             : selectedNetworkId === 97
+  //             ? "BNB"
+  //             : selectedNetworkId === 80001
+  //             ? "MATIC"
+  //             : ""
+  //         } more to become a Bronze Ambassador`
+  //       );
+  //     } else if (formData.amountInETH > 0 && totalInvested < eligible_silver) {
+  //       const needMore = ConvertNumber(eligible_silver - totalInvested, true);
+  //       setMsg(
+  //         `Invest ${needMore} ${
+  //           selectedNetworkId === 11155111
+  //             ? "ETH"
+  //             : selectedNetworkId === 97
+  //             ? "BNB"
+  //             : selectedNetworkId === 80001
+  //             ? "MATIC"
+  //             : ""
+  //         } more to become a Silver Ambassador`
+  //       );
+  //     } else {
+  //       setMsg(null);
+  //     }
+  //   }
+  // }, [formData, chainId]);
 
-  useEffect(() => {
-    if (
-      typeof user?.is_ambassador_eligible === "boolean" &&
-      isAmbassador === null
-    ) {
-      setIsAmbassador(user.is_ambassador_eligible);
-    }
-  }, [user, isConnected, isAmbassador]);
+  // useEffect(() => {
+  //   if (
+  //     typeof user?.is_ambassador_eligible === "boolean" &&
+  //     isAmbassador === null
+  //   ) {
+  //     setIsAmbassador(user.is_ambassador_eligible);
+  //   }
+  // }, [user, isConnected, isAmbassador]);
 
   useEffect(() => {
     // 👇️ scroll to top on page load
@@ -569,58 +389,6 @@ function Home() {
   return (
     <div className="Home">
       <div className="HomeHeroSection d-flex align-items-center position-relative overflow-hidden">
-        <div className="wrapper">
-          <div className="marquee">
-            <p className="m-0 text-uppercase text-white fw-bold me-3">
-              Presale Ending Soon
-            </p>
-            <p className="m-0 text-uppercase text-white fw-bold me-3">
-              Presale Ending Soon
-            </p>
-            <p className="m-0 text-uppercase text-white fw-bold me-3">
-              Presale Ending Soon
-            </p>
-            <p className="m-0 text-uppercase text-white fw-bold me-3">
-              Presale Ending Soon
-            </p>
-            <p className="m-0 text-uppercase text-white fw-bold me-3">
-              Presale Ending Soon
-            </p>
-            <p className="m-0 text-uppercase text-white fw-bold me-3">
-              Presale Ending Soon
-            </p>
-            <p className="m-0 text-uppercase text-white fw-bold me-3">
-              Presale Ending Soon
-            </p>
-            <p className="m-0 text-uppercase text-white fw-bold me-3">
-              Presale Ending Soon
-            </p>
-            <p className="m-0 text-uppercase text-white fw-bold me-3">
-              Presale Ending Soon
-            </p>
-            <p className="m-0 text-uppercase text-white fw-bold me-3">
-              Presale Ending Soon
-            </p>
-            <p className="m-0 text-uppercase text-white fw-bold me-3">
-              Presale Ending Soon
-            </p>
-            <p className="m-0 text-uppercase text-white fw-bold me-3">
-              Presale Ending Soon
-            </p>
-            <p className="m-0 text-uppercase text-white fw-bold me-3">
-              Presale Ending Soon
-            </p>
-            <p className="m-0 text-uppercase text-white fw-bold me-3">
-              Presale Ending Soon
-            </p>
-            <p className="m-0 text-uppercase text-white fw-bold me-3">
-              Presale Ending Soon
-            </p>
-            <p className="m-0 text-uppercase text-white fw-bold me-3">
-              Presale Ending Soon
-            </p>
-          </div>
-        </div>
         <div className="container-lg">
           <section className=" d-flex justify-content-between flex-column align-items-center ">
             <div className="row m-0 w-100 Home_Hero_Section d-flex justify-content-center text-center ">
@@ -685,7 +453,7 @@ function Home() {
                   src={Close}
                   className="position-sticky top-0  start-100"
                   style={{ width: 20 }}
-                  // onClick={closeTransactionModal}
+                  onClick={closeTransactionModal}
                 />
                 {errors?.transaction ? (
                   <div className="d-flex flex-column align-items-center">
@@ -712,10 +480,9 @@ function Home() {
                       </p>
                     </div>
                     <p className="text-start text-black">
-                      You have successfully purchased {noOfToken} $DRIFT Presale
-                      tokens!
+                      You have successfully Claimed $DRIFT tokens!
                     </p>
-                    {formData?.promoCode && formData?.promoCode !== "0x" ? (
+                    {/* {formData?.promoCode && formData?.promoCode !== "0x" ? (
                       <>
                         <p className="text-start text-black mb-0">
                           You got a extra {extraTokens} bonus by using an
@@ -727,8 +494,8 @@ function Home() {
                       </>
                     ) : (
                       <></>
-                    )}
-                    {isAmbassador !== user.is_ambassador_eligible && (
+                    )} */}
+                    {/* {isAmbassador !== user.is_ambassador_eligible && (
                       <>
                         <p className="text-start text-black w-100">
                           {" "}
@@ -776,23 +543,21 @@ function Home() {
                           and publish your code on chain
                         </p>
                       </>
-                    )}
-                    <p className="text-start text-black mb-0 fw-bold">
+                    )} */}
+                    {/* <p className="text-start text-black mb-0 fw-bold">
                       {" "}
                       What to expect next:{" "}
-                    </p>
-                    <p className="text-start text-black ">
+                    </p> */}
+                    {/* <p className="text-start text-black ">
                       {" "}
                       You will receive the Tradable token at the time of launch
-                    </p>
+                    </p> */}
                     <p className="text-start text-black ">
                       <span className="fw-bold">Import contract :</span>{" "}
-                      {selectedNetworkId === 1
-                        ? process.env.REACT_APP_TOKEN_CONTRACT_ETH
-                        : selectedNetworkId === 56
+                      {selectedNetworkId === 11155111
+                        ? process.env.REACT_APP_DRIFT_ETH
+                        : selectedNetworkId === 97
                         ? process.env.REACT_APP_TOKEN_CONTRACT_BNB
-                        : selectedNetworkId === 137
-                        ? process.env.REACT_APP_TOKEN_CONTRACT_POLYGON
                         : null}
                       to view your tokens.{" "}
                     </p>
@@ -802,33 +567,25 @@ function Home() {
                     <Link
                       target="_blank"
                       to={`${
-                        selectedNetworkId === 1
-                          ? "https://etherscan.io"
+                        selectedNetworkId === 11155111
+                          ? "https://sepolia.etherscan.io"
                           : `${
-                              selectedNetworkId === 56
-                                ? "https://bscscan.com"
-                                : `${
-                                    selectedNetworkId === 137
-                                      ? "https://polygonscan.com"
-                                      : ""
-                                  }`
+                              selectedNetworkId === 97
+                                ? "https://testnet.bscscan.com"
+                                : ""
                             }`
                       }/tx/${txHash}`}
                     >
-                      {selectedNetworkId === 1
-                        ? "https://etherscan.io"
+                      {selectedNetworkId === 11155111
+                        ? "https://sepolia.etherscan.io"
                         : `${
-                            selectedNetworkId === 56
-                              ? "https://bscscan.com"
-                              : `${
-                                  selectedNetworkId === 137
-                                    ? "https://polygonscan.com"
-                                    : ""
-                                }`
+                            selectedNetworkId === 97
+                              ? "https://testnet.bscscan.com"
+                              : ""
                           }`}
                       /tx/{txHash}
                     </Link>
-                    <p
+                    {/* <p
                       className="text-start text-black mt-3"
                       style={{ fontSize: 12 }}
                     >
@@ -836,7 +593,7 @@ function Home() {
                       will not be available until the time of token launch.
                       Presale tokens are non transferable and considered the
                       responsibility of the holder to maintain access to.
-                    </p>
+                    </p> */}
                   </>
                 )}
               </>
@@ -1011,7 +768,7 @@ function Home() {
                       <button
                         onClick={() => open({ view: "Networks" })}
                         className={`BtnStyle2 ${
-                          selectedNetworkId === 1 && chainId === 1
+                          selectedNetworkId === 11155111 && chainId === 11155111
                             ? "active"
                             : ""
                         }`}
@@ -1024,7 +781,7 @@ function Home() {
                       <button
                         onClick={() => open({ view: "Networks" })}
                         className={`BtnStyle2 ${
-                          selectedNetworkId === 56 && chainId === 56
+                          selectedNetworkId === 97 && chainId === 97
                             ? "active"
                             : ""
                         }`}
@@ -1037,7 +794,7 @@ function Home() {
                       <button
                         onClick={() => open({ view: "Networks" })}
                         className={`BtnStyle2 ${
-                          selectedNetworkId === 137 && chainId === 137
+                          selectedNetworkId === 80001 && chainId === 80001
                             ? "active"
                             : ""
                         }`}
@@ -1058,11 +815,11 @@ function Home() {
                   <form
                     className="position-relative"
                     // onSubmit={
-                    //   selectedNetworkId === 1 && chainId === 1
+                    //   selectedNetworkId === 11155111 && chainId === 11155111
                     //     ? handleSubmit
-                    //     : selectedNetworkId === 56 && chainId === 56
+                    //     : selectedNetworkId === 97 && chainId === 97
                     //     ? handleBNBSubmit
-                    //     : selectedNetworkId === 137 && chainId === 137
+                    //     : selectedNetworkId === 80001 && chainId === 80001
                     //     ? handlePOLYGONSubmit
                     //     : null
                     // }
@@ -1072,12 +829,12 @@ function Home() {
                         <label>
                           <p>
                             Pay with{" "}
-                            {selectedNetworkId === 1
+                            {selectedNetworkId === 11155111
                               ? "ETH"
                               : `${
-                                  selectedNetworkId === 56
+                                  selectedNetworkId === 97
                                     ? "BNB"
-                                    : selectedNetworkId === 137
+                                    : selectedNetworkId === 80001
                                     ? "MATIC"
                                     : ""
                                 }`}
@@ -1306,9 +1063,9 @@ function Home() {
                     </div>
                   </form>
                   {date >= data?.ico_start_time &&
-                  ((selectedNetworkId === 1 && !data?.is_open) ||
-                    (selectedNetworkId === 56 && !data?.is_openBNB) ||
-                    (selectedNetworkId === 137 && !data?.is_openPOLYGON))
+                  ((selectedNetworkId === 11155111 && !data?.is_open) ||
+                    (selectedNetworkId === 97 && !data?.is_openBNB) ||
+                    (selectedNetworkId === 80001 && !data?.is_openPOLYGON))
                     ? (data?.is_open ||
                         data?.is_openBNB ||
                         data?.is_openPOLYGON) && (
@@ -1327,11 +1084,11 @@ function Home() {
                             />
                             <p className="DTSC_SubHeading fw-bold m-0 lh-0">
                               Presale on{" "}
-                              {selectedNetworkId === 1
+                              {selectedNetworkId === 11155111
                                 ? "ETH"
-                                : selectedNetworkId === 56
+                                : selectedNetworkId === 97
                                 ? "BNB"
-                                : selectedNetworkId === 137
+                                : selectedNetworkId === 80001
                                 ? "POLYGON"
                                 : ""}{" "}
                               is paused
@@ -1340,11 +1097,11 @@ function Home() {
 
                           <p className="DTSC_SubHeading">
                             There may be some allocation remaining on{" "}
-                            {selectedNetworkId === 1
+                            {selectedNetworkId === 11155111
                               ? "BNB/POLYGON"
-                              : selectedNetworkId === 56
+                              : selectedNetworkId === 97
                               ? "ETH/POLYGON"
-                              : selectedNetworkId === 137
+                              : selectedNetworkId === 80001
                               ? "ETH/BNB"
                               : ""}{" "}
                             . Simply switch network through Drift dApp to that
@@ -1388,7 +1145,7 @@ function Home() {
                       <button
                         onClick={() => open({ view: "Networks" })}
                         className={`BtnStyle2 ${
-                          selectedNetworkId === 1 && chainId === 1
+                          selectedNetworkId === 11155111 && chainId === 11155111
                             ? "active"
                             : ""
                         }`}
@@ -1401,7 +1158,7 @@ function Home() {
                       <button
                         onClick={() => open({ view: "Networks" })}
                         className={`BtnStyle2 ${
-                          selectedNetworkId === 56 && chainId === 56
+                          selectedNetworkId === 97 && chainId === 97
                             ? "active"
                             : ""
                         }`}
@@ -1414,7 +1171,7 @@ function Home() {
                       <button
                         onClick={() => open({ view: "Networks" })}
                         className={`BtnStyle2 ${
-                          selectedNetworkId === 137 && chainId === 137
+                          selectedNetworkId === 80001 && chainId === 80001
                             ? "active"
                             : ""
                         }`}
@@ -1428,15 +1185,15 @@ function Home() {
                 <div className="mt-5 position-relative">
                   <form
                     className="position-relative"
-                    // onSubmit={
-                    //   selectedNetworkId === 1 && chainId === 1
-                    //     ? handleSubmit
-                    //     : selectedNetworkId === 56 && chainId === 56
-                    //     ? handleBNBSubmit
-                    //     : selectedNetworkId === 137 && chainId === 137
-                    //     ? handlePOLYGONSubmit
-                    //     : null
-                    // }
+                    onSubmit={
+                      selectedNetworkId === 11155111 && chainId === 11155111
+                        ? handleSubmit
+                        : // : selectedNetworkId === 97 && chainId === 97
+                          // ? handleBNBSubmit
+                          // : selectedNetworkId === 80001 && chainId === 80001
+                          // ? handlePOLYGONSubmit
+                          null
+                    }
                   >
                     <div className="row p-0 m-0 ">
                       <div className="col-12 p-0">
@@ -1513,54 +1270,6 @@ function Home() {
                       </Link>
                     </div>
                   </form>
-                  {date >= data?.ico_start_time &&
-                  ((selectedNetworkId === 1 && !data?.is_open) ||
-                    (selectedNetworkId === 56 && !data?.is_openBNB) ||
-                    (selectedNetworkId === 137 && !data?.is_openPOLYGON))
-                    ? (data?.is_open ||
-                        data?.is_openBNB ||
-                        data?.is_openPOLYGON) && (
-                        <div
-                          className="DTSC_Col bg-white  h-100 w-100 d-flex flex-column justify-content-center align-items-center text-center mt-3"
-                          style={{
-                            zIndex: 9,
-                          }}
-                        >
-                          <div className="d-flex pb-3 align-items-center">
-                            <img
-                              src={iButton}
-                              width={20}
-                              className="me-3"
-                              alt=""
-                            />
-                            <p className="DTSC_SubHeading fw-bold m-0 lh-0">
-                              Presale on{" "}
-                              {selectedNetworkId === 1
-                                ? "ETH"
-                                : selectedNetworkId === 56
-                                ? "BNB"
-                                : selectedNetworkId === 137
-                                ? "POLYGON"
-                                : ""}{" "}
-                              is paused
-                            </p>
-                          </div>
-
-                          <p className="DTSC_SubHeading">
-                            There may be some allocation remaining on{" "}
-                            {selectedNetworkId === 1
-                              ? "BNB/POLYGON"
-                              : selectedNetworkId === 56
-                              ? "ETH/POLYGON"
-                              : selectedNetworkId === 137
-                              ? "ETH/BNB"
-                              : ""}{" "}
-                            . Simply switch network through Drift dApp to that
-                            chain and participate in presale round.
-                          </p>
-                        </div>
-                      )
-                    : ""}
                 </div>
               </div>
             </div>
