@@ -119,8 +119,8 @@ function App() {
             LoadUser({
               contractInst,
               address: address.trim(),
-
               contractInstToken,
+              claim_address: process.env.REACT_APP_CLAIM_ETH,
             })
           )
         : selectedNetworkId === 56
@@ -128,8 +128,8 @@ function App() {
             LoadUser({
               contractInst: contractInstBNB,
               address: address.trim(),
-
               contractInstToken: contractInstTokenBNB,
+              claim_address: process.env.REACT_APP_CLAIM_BNB,
             })
           )
         : selectedNetworkId === 137
@@ -137,8 +137,8 @@ function App() {
             LoadUser({
               contractInst: contractInstPOLYGON,
               address: address.trim(),
-
               contractInstToken: contractInstTokenPOLYGON,
+              claim_address: process.env.REACT_APP_CLAIM_POLYGON,
             })
           )
         : dispatch(UpdateUser(null));
@@ -155,7 +155,7 @@ function App() {
     }
     dispatch(GetUSDPrice());
     getBlockchainData();
-  }, [contractInst, contractInstBNB]);
+  }, [contractInst, contractInstBNB, contractInstPOLYGON]);
 
   useEffect(() => {
     if (isConnected && walletProvider?.provider && !isWeb3InstanceConnect) {

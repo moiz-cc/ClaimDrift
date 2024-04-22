@@ -1,6 +1,9 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import Web3 from "web3";
 import {
+  claimAbi_BNB,
+  claimAbi_ETH,
+  claimAbi_POLYGON,
   crowdSaleAbi_BNB,
   crowdSaleAbi_ETH,
   crowdSaleAbi_POLYGON,
@@ -15,18 +18,21 @@ const initialState = {
   contractInst: null,
   web3Inst: null,
   contractInstToken: null,
+  contractInstClaim: null,
   contractInstBNB: null,
   web3InstBNB: null,
   contractInstTokenBNB: null,
+  contractInstClaimBNB: null,
   contractInstPOLYGON: null,
   web3InstPOLYGON: null,
   contractInstTokenPOLYGON: null,
+  contractInstClaimPOLYGON: null,
   user: null,
   publicBlockchainData: null,
   ethPrice: null,
   bnbPrice: null,
   maticPrice: null,
-  ambassadorList: null,
+
   isLoading: false,
   error: null,
 };
@@ -63,176 +69,39 @@ export const LoadBlockchainData = createAsyncThunk(
     { rejectWithValue }
   ) => {
     try {
-      const stage = parseInt(await contractInst.methods.icoStage().call());
       // const stage = 4;
 
       const [
-        totalFunds,
-        ico_start_time,
-        is_open,
-        target,
-        price,
-        tokensTransferred,
         tokensTransferredLap2,
         tokensTransferredLap1,
         tokensTransferredWarmup,
-        noOfAmbassadors,
-        goldTierRaised,
-        silverTierRaised,
-        bronzeTierRaised,
-        ambassadors_payout,
-        silver_eligible,
-        bronze_eligible,
-        silver_commission,
-        bronze_commission,
-        staking_limit,
+
         token_staked,
       ] = await makeBatchRequest(web3Inst, [
-        contractInst.methods.totalReceivedFunds().call,
-        contractInst.methods.icoStartTime().call,
-        contractInst.methods.isOpen().call,
-        contractInst.methods.icoTarget(stage == 3 ? 2 : stage).call,
-        contractInst.methods.prices(stage == 3 ? 2 : stage).call,
-        contractInst.methods.tokensTransferred(stage == 3 ? 2 : stage).call,
         contractInst.methods.tokensTransferred(4).call,
         contractInst.methods.tokensTransferred(2).call,
         contractInst.methods.tokensTransferred(1).call,
-        contractInst.methods.noOfAmbassadors().call,
-        contractInst.methods.totalTierRaised(stage == 3 ? 2 : stage, 1).call,
-        contractInst.methods.totalTierRaised(stage == 3 ? 2 : stage, 2).call,
-        contractInst.methods.totalTierRaised(stage == 3 ? 2 : stage, 3).call,
-        contractInst.methods.AmbassadorPayout().call,
-        contractInst.methods.eligibleSilverAmbassador().call,
-        contractInst.methods.eligibleBronzeAmbassador().call,
-        contractInst.methods.percent(2, 0).call,
-        contractInst.methods.percent(3, 0).call,
-        contractInst.methods.stakingLimit().call,
+
         contractInst.methods.noOfTokens(1).call,
       ]);
       const [
-        totalFundsBNB,
-        is_openBNB,
-        targetBNB,
-        tokensTransferredBNB,
         tokensTransferredLap2BNB,
         tokensTransferredLap1BNB,
-        noOfAmbassadorsBNB,
-        goldTierRaisedBNB,
-        silverTierRaisedBNB,
-        bronzeTierRaisedBNB,
-        ambassadors_payoutBNB,
-        silver_eligibleBNB,
-        bronze_eligibleBNB,
+
         token_stakedBNB,
       ] = await makeBatchRequest(web3InstBNB, [
-        contractInstBNB.methods.totalReceivedFunds().call,
-        contractInstBNB.methods.isOpen().call,
-        contractInstBNB.methods.icoTarget(stage == 3 ? 2 : stage).call,
-        contractInstBNB.methods.tokensTransferred(stage == 3 ? 2 : stage).call,
         contractInstBNB.methods.tokensTransferred(4).call,
         contractInstBNB.methods.tokensTransferred(2).call,
-        contractInstBNB.methods.noOfAmbassadors().call,
-        contractInstBNB.methods.totalTierRaised(stage == 3 ? 2 : stage, 1).call,
-        contractInstBNB.methods.totalTierRaised(stage == 3 ? 2 : stage, 2).call,
-        contractInstBNB.methods.totalTierRaised(stage == 3 ? 2 : stage, 3).call,
-        contractInstBNB.methods.AmbassadorPayout().call,
-        contractInstBNB.methods.eligibleSilverAmbassador().call,
-        contractInstBNB.methods.eligibleBronzeAmbassador().call,
+
         contractInstBNB.methods.noOfTokens(1).call,
       ]);
-      const [
-        totalFundsPOLYGON,
-        is_openPOLYGON,
-        targetPOLYGON,
-        tokensTransferredPOLYGON,
-        tokensTransferredLap2POLYGON,
-        noOfAmbassadorsPOLYGON,
-        goldTierRaisedPOLYGON,
-        silverTierRaisedPOLYGON,
-        bronzeTierRaisedPOLYGON,
-        ambassadors_payoutPOLYGON,
-        silver_eligiblePOLYGON,
-        bronze_eligiblePOLYGON,
-        token_stakedPOLYGON,
-      ] = await makeBatchRequest(web3InstPOLYGON, [
-        contractInstPOLYGON.methods.totalReceivedFunds().call,
-        contractInstPOLYGON.methods.isOpen().call,
-        contractInstPOLYGON.methods.icoTarget(stage == 3 ? 2 : stage).call,
-        contractInstPOLYGON.methods.tokensTransferred(stage == 3 ? 2 : stage)
-          .call,
-        contractInstPOLYGON.methods.tokensTransferred(4).call,
-        contractInstPOLYGON.methods.noOfAmbassadors().call,
-        contractInstPOLYGON.methods.totalTierRaised(stage == 3 ? 2 : stage, 1)
-          .call,
-        contractInstPOLYGON.methods.totalTierRaised(stage == 3 ? 2 : stage, 2)
-          .call,
-        contractInstPOLYGON.methods.totalTierRaised(stage == 3 ? 2 : stage, 3)
-          .call,
-        contractInstPOLYGON.methods.AmbassadorPayout().call,
-        contractInstPOLYGON.methods.eligibleSilverAmbassador().call,
-        contractInstPOLYGON.methods.eligibleBronzeAmbassador().call,
-        contractInstPOLYGON.methods.noOfTokens(1).call,
-      ]);
-
-      const ambassadorsList = await contractInst.methods
-        .getAmbassadorList()
-        .call();
-      const ambassadorsListBNB = await contractInstBNB.methods
-        .getAmbassadorList()
-        .call();
-      const ambassadorsListPOLYGON = await contractInstPOLYGON.methods
-        .getAmbassadorList()
-        .call();
-
-      let batch = [];
-      let batchBNB = [];
-      let batchPOLYGON = [];
-
-      ambassadorsList.forEach((item) => {
-        batch.push(contractInst.methods.getAmbassadorInfo(item).call);
-      });
-      const ambassadors =
-        batch.length > 0 ? await makeBatchRequest(web3Inst, batch) : [];
-
-      ambassadorsListBNB.forEach((item) => {
-        batchBNB.push(contractInstBNB.methods.getAmbassadorInfo(item).call);
-      });
-      const ambassadorsBNB =
-        batchBNB.length > 0
-          ? await makeBatchRequest(web3InstBNB, batchBNB)
-          : [];
-
-      ambassadorsListPOLYGON.forEach((item) => {
-        batchPOLYGON.push(
-          contractInstPOLYGON.methods.getAmbassadorInfo(item).call
-        );
-      });
-      const ambassadorsPOLYGON =
-        batchPOLYGON.length > 0
-          ? await makeBatchRequest(web3InstPOLYGON, batchPOLYGON)
-          : [];
+      const [tokensTransferredLap2POLYGON, token_stakedPOLYGON] =
+        await makeBatchRequest(web3InstPOLYGON, [
+          contractInstPOLYGON.methods.tokensTransferred(4).call,
+          contractInstPOLYGON.methods.noOfTokens(1).call,
+        ]);
 
       return {
-        total_funds_raised: ConvertNumber(totalFunds, true),
-        total_funds_raisedBNB: ConvertNumber(totalFundsBNB, true),
-        total_funds_raisedPOLYGON: ConvertNumber(totalFundsPOLYGON, true),
-        ico_stage: stage,
-        is_open,
-        is_openBNB,
-        is_openPOLYGON,
-        ico_start_time,
-        ico_price: Web3.utils.fromWei(price, "ether"),
-        ico_target: ConvertNumber(
-          Number(target) + Number(targetBNB) + Number(targetPOLYGON),
-          true
-        ),
-        ico_token_transferred: ConvertNumber(
-          Number(tokensTransferred) +
-            Number(tokensTransferredBNB) +
-            Number(tokensTransferredPOLYGON),
-          true
-        ),
-
         tokensTransferredLap2: ConvertNumber(
           Number(tokensTransferredLap2) +
             Number(tokensTransferredLap2BNB) +
@@ -247,41 +116,6 @@ export const LoadBlockchainData = createAsyncThunk(
           Number(tokensTransferredWarmup),
           true
         ),
-        ico_targetBNB: ConvertNumber(targetBNB, true),
-        ico_targetPOLYGON: ConvertNumber(targetPOLYGON, true),
-        no_of_ambassadors: parseInt(noOfAmbassadors),
-        no_of_ambassadorsBNB: parseInt(noOfAmbassadorsBNB),
-        no_of_ambassadorsPOLYGON: parseInt(noOfAmbassadorsPOLYGON),
-        gold_tier_raised: ConvertNumber(goldTierRaised, true),
-        silver_tier_raised: ConvertNumber(silverTierRaised, true),
-        bronze_tier_raised: ConvertNumber(bronzeTierRaised, true),
-        ambassadors_payout: ConvertNumber(ambassadors_payout, true),
-        gold_tier_raisedBNB: ConvertNumber(goldTierRaisedBNB, true),
-        silver_tier_raisedBNB: ConvertNumber(silverTierRaisedBNB, true),
-        bronze_tier_raisedBNB: ConvertNumber(bronzeTierRaisedBNB, true),
-        ambassadors_payoutBNB: ConvertNumber(ambassadors_payoutBNB, true),
-        gold_tier_raisedPOLYGON: ConvertNumber(goldTierRaisedPOLYGON, true),
-        silver_tier_raisedPOLYGON: ConvertNumber(silverTierRaisedPOLYGON, true),
-        bronze_tier_raisedPOLYGON: ConvertNumber(bronzeTierRaisedPOLYGON, true),
-        ambassadors_payoutPOLYGON: ConvertNumber(
-          ambassadors_payoutPOLYGON,
-          true
-        ),
-        silver_eligible,
-        bronze_eligible,
-        silver_eligibleBNB,
-        bronze_eligibleBNB,
-        silver_eligiblePOLYGON,
-        bronze_eligiblePOLYGON,
-        // ambassadors_list: abc.slice(0, 10),
-        ambassadors_list: {
-          ETH: ambassadors,
-          BNB: ambassadorsBNB,
-          POLYGON: ambassadorsPOLYGON,
-        },
-        silver_commission: silver_commission / 100,
-        bronze_commission: bronze_commission / 100,
-        // staking_limit: ConvertNumber(staking_limit, true),
         staking_limit: 2000000000,
         token_staked: ConvertNumber(
           Number(token_staked) +
@@ -300,7 +134,7 @@ export const LoadBlockchainData = createAsyncThunk(
 export const LoadUser = createAsyncThunk(
   "LoadUser",
   async (data, { rejectWithValue }) => {
-    const { contractInst, address, contractInstToken } = data;
+    const { contractInst, address, contractInstToken, claim_address } = data;
 
     try {
       const balance = await contractInstToken.methods.balanceOf(address).call();
@@ -325,13 +159,19 @@ export const LoadUser = createAsyncThunk(
 
       const info = contractInst.methods.getAmbassadorInfo(address).call();
 
+      const is_allowed = await contractInstToken.methods
+        .allowance(address, claim_address)
+        .call();
+
       return {
-        balance: ConvertNumber(balance, true),
+        balance,
         Staked: ConvertNumber(Staked, true),
         Dynamic: ConvertNumber(Dynamic, true),
         invest_amount: total_investment,
         is_ambassador_eligible,
         ambassador_code,
+        claimed: balance == 0 && (Staked > 0 || Dynamic > 0) ? true : false,
+        is_allowed: is_allowed >= balance && (Staked > 0 || Dynamic > 0),
         tier: parseInt(info._tier),
       };
     } catch (error) {
@@ -382,6 +222,10 @@ export const blockchainSlice = createSlice({
         tokenAbi_ETH,
         process.env.REACT_APP_TOKEN_CONTRACT_ETH
       );
+      state.contractInstClaim = new web3Instance.eth.Contract(
+        claimAbi_ETH,
+        process.env.REACT_APP_CLAIM_ETH
+      );
 
       // BNB INS
       let web3InstanceBNB = new Web3(process.env.REACT_APP_RPC_BNB);
@@ -399,6 +243,11 @@ export const blockchainSlice = createSlice({
         tokenAbi_BNB,
         process.env.REACT_APP_TOKEN_CONTRACT_BNB
       );
+
+      state.contractInstClaimBNB = new web3InstanceBNB.eth.Contract(
+        claimAbi_BNB,
+        process.env.REACT_APP_CLAIM_BNB
+      );
       // POLYGON INS
       let web3InstancePOLYGON = new Web3(process.env.REACT_APP_RPC_POLYGON);
       if (action.payload?.walletProvider) {
@@ -413,6 +262,11 @@ export const blockchainSlice = createSlice({
       state.contractInstTokenPOLYGON = new web3InstancePOLYGON.eth.Contract(
         tokenAbi_POLYGON,
         process.env.REACT_APP_TOKEN_CONTRACT_POLYGON
+      );
+
+      state.contractInstClaimPOLYGON = new web3InstancePOLYGON.eth.Contract(
+        claimAbi_POLYGON,
+        process.env.REACT_APP_CLAIM_POLYGON
       );
     },
 

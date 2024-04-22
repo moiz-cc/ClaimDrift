@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { MetaMaskAvatar } from "react-metamask-avatar";
-import ReactSpeedometer from "react-d3-speedometer";
 import dot from "../Assets/Images/Dot.svg";
 import eth from "../Assets/Images/Ethereum.svg";
 import polygon from "../Assets/Images/Polygon.svg";
 import presale_ended from "../Assets/Images/PresaleEnded.png";
-import pulse from "../Assets/Images/Pulse.svg";
+import driftLogo from "../Assets/Images/Drift Logo Spin.svg";
+
 import bnb from "../Assets/Images/BNB.svg";
 // import ambassadorIcon from "../Assets/Images/AmbassadorIcon.svg";
 import calendar from "../Assets/Images/calendar-icon.svg";
@@ -17,9 +16,7 @@ import twitter from "../Assets/Images/Twitter_Icon.png";
 import breakdown from "../Assets/Images/AllocationBreakdown.png";
 import presaleFunds from "../Assets/Images/PresaleUseofFunds.png";
 import token from "../Assets/Images/Drift_Icon.svg";
-import ether from "../Assets/Images/Eth input.svg";
-import ambassador from "../Assets/Images/I.svg";
-import iButton from "../Assets/Images/iButton.svg";
+
 import Presale from "../Assets/Images/Presale.svg";
 import Lp from "../Assets/Images/Lp.svg";
 import ReserveTank from "../Assets/Images/ReserveTank.svg";
@@ -31,11 +28,6 @@ import Loading from "../Assets/Images/loading.gif";
 import paul from "../Assets/Images/paul.svg";
 import michael from "../Assets/Images/michael.svg";
 import sophie from "../Assets/Images/sophie.svg";
-// import ProfileIcon from "../Assets/Images/GreyCircle_Icon.svg";
-import GoldCircle_Icon from "../Assets/Images/GoldTier.png";
-import GreyCircle_Icon from "../Assets/Images/SilverTier.png";
-import BronzeCircle_Icon from "../Assets/Images/BronzeTier.png";
-import Badge_Icon from "../Assets/Images/Badge_Icon.svg";
 import checked from "../Assets/Images/marked.png";
 import unchecked from "../Assets/Images/unmarked.png";
 
@@ -49,10 +41,8 @@ import {
   useWeb3ModalState,
 } from "@web3modal/ethers5/react";
 import ConvertNumber from "../Helpers/ConvertNumber";
-import CalcPercenteage from "../Helpers/CalcPercentage";
 
 import { LoadBlockchainData, LoadUser } from "../Store/blockchainSlice";
-import Timer from "../Component/Timer";
 
 function Home() {
   const dispatch = useDispatch();
@@ -60,8 +50,15 @@ function Home() {
     publicBlockchainData: data,
     user,
     contractInst,
+    contractInstToken,
     contractInstBNB,
+    contractInstTokenBNB,
     contractInstPOLYGON,
+    contractInstTokenPOLYGON,
+
+    contractInstClaim,
+    contractInstClaimBNB,
+    contractInstClaimPOLYGON,
     ethPrice,
     bnbPrice,
     maticPrice,
@@ -70,54 +67,6 @@ function Home() {
     web3InstPOLYGON,
     ambassadorList,
   } = useSelector((state) => state.Blockchain);
-
-  const usdETH = ambassadorList?.ETH.map((v, i) => {
-    return { ...v, _raised: ConvertNumber(v._raised, true) * ethPrice };
-  });
-  const usdBNB = ambassadorList?.BNB.map((v, i) => {
-    return { ...v, _raised: ConvertNumber(v._raised, true) * bnbPrice };
-  });
-  const usdPOLYGON = ambassadorList?.POLYGON.map((v, i) => {
-    return { ...v, _raised: ConvertNumber(v._raised, true) * maticPrice };
-  });
-
-  const h = [];
-  const v = {};
-  usdETH?.map((ele) => {
-    v[ele._ambassador] = ele;
-    h.push(ele._ambassador);
-  });
-
-  usdBNB?.map((ele) => {
-    if (v[ele?._ambassador]?._ambassador) {
-      v[ele._ambassador]._raised =
-        Number(v[ele._ambassador]._raised) + Number(ele._raised);
-      return;
-    }
-    v[ele._ambassador] = ele;
-    if (!h.includes(ele._ambassador)) {
-      h.push(ele._ambassador);
-    }
-  });
-
-  usdPOLYGON?.map((ele) => {
-    if (v[ele?._ambassador]?._ambassador) {
-      v[ele._ambassador]._raised =
-        Number(v[ele._ambassador]._raised) + Number(ele._raised);
-      return;
-    }
-    v[ele._ambassador] = ele;
-    if (!h.includes(ele._ambassador)) {
-      h.push(ele._ambassador);
-    }
-  });
-
-  let abc = h.sort(function (a, b) {
-    return v[b]._raised - v[a]._raised;
-  });
-
-  abc = abc.slice(0, 10);
-  const ambsData = v;
 
   const date = Date.now() / 1000;
 
@@ -131,19 +80,9 @@ function Home() {
   const [noOfToken, setNoOfToken] = useState(0);
   const [extraTokens, setExtraTokens] = useState(0);
   const [isAmbassador, setIsAmbassador] = useState(null);
-  const [msg, setMsg] = useState("");
-  const [isTimerOff, setIsTimerOff] = useState(false);
 
   const [errors, setErrors] = useState({
-    amountInETH: "",
-    promoCode: "",
-    isStake: "",
     transaction: "",
-  });
-  const [formData, setFormData] = useState({
-    amountInETH: 0,
-    promoCode: "",
-    isStake: null,
   });
 
   function scroll() {
@@ -159,150 +98,127 @@ function Home() {
     return x;
   }
 
-  const onChange = (e) => {
-    const { name, value } = e.target;
+  const allow = async (e) => {
+    e.preventDefault();
 
-    if (name == "isStake" && value == 1) {
-      setFormData({ ...formData, [name]: true });
-    } else if (name == "isStake" && value == 2) {
-      setFormData({ ...formData, [name]: false });
-    } else {
-      setFormData({ ...formData, [name]: value });
+    let presale_TokenAddress;
+    let claim_TokenAddress;
+    let token_Inst;
+    let ico_Inst;
+
+    if (selectedNetworkId === 1 && chainId === 1) {
+      presale_TokenAddress = process.env.REACT_APP_TOKEN_CONTRACT_ETH;
+      claim_TokenAddress = process.env.REACT_APP_CLAIM_ETH;
+      token_Inst = contractInstToken;
+      ico_Inst = contractInst;
+    } else if (selectedNetworkId === 56 && chainId === 56) {
+      presale_TokenAddress = process.env.REACT_APP_TOKEN_CONTRACT_BNB;
+      claim_TokenAddress = process.env.REACT_APP_CLAIM_BNB;
+      token_Inst = contractInstTokenBNB;
+      ico_Inst = contractInstBNB;
+    } else if (selectedNetworkId === 137 && chainId === 137) {
+      presale_TokenAddress = process.env.REACT_APP_TOKEN_CONTRACT_POLYGON;
+      claim_TokenAddress = process.env.REACT_APP_CLAIM_POLYGON;
+      token_Inst = contractInstTokenPOLYGON;
+      ico_Inst = contractInstPOLYGON;
+    } else return;
+
+    try {
+      setTransactionModal(true);
+      setLoading(true);
+
+      const approve = await contractInstToken.methods.approve(
+        claim_TokenAddress,
+        user?.balance
+      );
+
+      const estimateGas = await approve.estimateGas({
+        from: address,
+      });
+
+      const transaction = approve.send({
+        from: address,
+        to: presale_TokenAddress,
+        gas: estimateGas,
+        maxPriorityFeePerGas: 50000000000,
+      });
+
+      transaction
+        .on("transactionHash", (txHash) => {
+          console.log(txHash);
+          // setTxHash(txHash);
+        })
+        .on("receipt", async (receipt) => {
+          console.log("RECEIPT => \n", receipt);
+
+          setErrors((state) => ({ ...state, transaction: "" }));
+          dispatch(
+            LoadUser({
+              contractInst: ico_Inst,
+              address,
+              contractInstToken: token_Inst,
+              claim_address: claim_TokenAddress,
+            })
+          );
+
+          handleSubmit(e);
+        })
+        .on("error", async (error, receipt) => {
+          console.log("ERROR => \n", error);
+
+          setLoading(false);
+
+          const errorMsg = await getErrorMessage(error, chainId);
+          setErrors({ ...errors, transaction: errorMsg });
+          console.log("RECEIPT ERROR => \n", receipt);
+
+          if (receipt?.transactionHash) {
+            setTxHash(receipt.transactionHash);
+          }
+        });
+    } catch (error) {
+      const errorMsg = await getErrorMessage(error, chainId);
+      console.log(errorMsg);
+      setErrors((state) => ({ ...state, transaction: errorMsg }));
+      setLoading(false);
     }
-    setErrors({ ...errors, [name]: "" });
   };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!address) {
-      open();
-      return;
+    let claimAddress;
+    let claimInst;
+
+    if (selectedNetworkId === 1 && chainId === 1) {
+      claimInst = contractInstClaim;
+      claimAddress = process.env.REACT_APP_CLAIM_ETH;
+    } else if (selectedNetworkId === 56 && chainId === 56) {
+      claimInst = contractInstClaimBNB;
+      claimAddress = process.env.REACT_APP_CLAIM_BNB;
+    } else if (selectedNetworkId === 137 && chainId === 137) {
+      claimInst = contractInstClaimPOLYGON;
+      claimAddress = process.env.REACT_APP_CLAIM_POLYGON;
     }
-
-    if (formData?.amountInETH === "" || formData?.amountInETH == 0) {
-      setErrors((state) => ({ ...state, amountInETH: "Amount is required" }));
-
-      return;
-    }
-
-    if (formData?.isStake === null) {
-      setErrors((state) => ({ ...state, isStake: "Select any one option" }));
-
-      return;
-    }
-
-    try {
-      const isStake = formData?.isStake;
-      const promoCode =
-        formData?.promoCode.length > 0 ? formData?.promoCode : "";
-
-      setTransactionModal(true);
-      setLoading(true);
-      const transferTokens = await contractInst.methods.buyTokens(
-        promoCode,
-        isStake
-      );
-
-      const estimateGas = await transferTokens.estimateGas({
-        from: address,
-        value: ConvertNumber(formData?.amountInETH, false),
-      });
-
-      const transaction = transferTokens.send({
-        from: address,
-        to: process.env.REACT_APP_CROWDSALE_ETH,
-        gas: estimateGas,
-        maxPriorityFeePerGas: 50000000000,
-        value: ConvertNumber(formData?.amountInETH, false),
-      });
-
-      transaction
-        .on("transactionHash", (txHash) => {
-          console.log(txHash);
-          setTxHash(txHash);
-        })
-        .on("receipt", async (receipt) => {
-          console.log("RECEIPT => \n", receipt);
-
-          setErrors((state) => ({ ...state, transaction: "" }));
-          dispatch(LoadUser({ contractInst, address, web3Inst }));
-          dispatch(
-            LoadBlockchainData({
-              contractInst,
-              web3Inst,
-              contractInstBNB,
-              web3InstBNB,
-              contractInstPOLYGON,
-              web3InstPOLYGON,
-            })
-          );
-          setLoading(false);
-        })
-        .on("error", async (error, receipt) => {
-          console.log("ERROR => \n", error);
-
-          setLoading(false);
-
-          const errorMsg = await getErrorMessage(error, chainId);
-          setErrors({ ...errors, transaction: errorMsg });
-          console.log("RECEIPT ERROR => \n", receipt);
-
-          if (receipt?.transactionHash) {
-            setTxHash(receipt.transactionHash);
-          }
-        });
-    } catch (error) {
-      const errorMsg = await getErrorMessage(error, chainId);
-
-      setErrors((state) => ({ ...state, transaction: errorMsg }));
-      setLoading(false);
-    }
-  };
-
-  const handleBNBSubmit = async (e) => {
-    e.preventDefault();
 
     if (!address) {
       open();
       return;
     }
 
-    if (formData?.amountInETH === "" || formData?.amountInETH == 0) {
-      setErrors((state) => ({ ...state, amountInETH: "Amount is required" }));
-
-      return;
-    }
-
-    if (formData?.isStake === null) {
-      setErrors((state) => ({ ...state, isStake: "Select any one option" }));
-
-      return;
-    }
-
     try {
-      const isStake = formData?.isStake;
-      const promoCode =
-        formData?.promoCode.length > 0 ? formData?.promoCode : "";
-
       setTransactionModal(true);
       setLoading(true);
-      const transferTokens = await contractInstBNB.methods.buyTokens(
-        promoCode,
-        isStake
-      );
+      const claimTokens = await claimInst.methods.claimTokens();
 
-      const estimateGas = await transferTokens.estimateGas({
+      const estimateGas = await claimTokens.estimateGas({
         from: address,
-        value: ConvertNumber(formData?.amountInETH, false),
       });
 
-      const transaction = transferTokens.send({
+      const transaction = claimTokens.send({
         from: address,
-        to: process.env.REACT_APP_CROWDSALE_BNB,
+        to: claimAddress,
         gas: estimateGas,
         maxPriorityFeePerGas: 50000000000,
-        value: ConvertNumber(formData?.amountInETH, false),
       });
 
       transaction
@@ -316,9 +232,10 @@ function Home() {
           setErrors((state) => ({ ...state, transaction: "" }));
           dispatch(
             LoadUser({
-              contractInst: contractInstBNB,
+              contractInst,
               address,
-              web3Inst: web3InstBNB,
+              contractInstToken,
+              claim_address: claimAddress,
             })
           );
           dispatch(
@@ -353,213 +270,15 @@ function Home() {
       setLoading(false);
     }
   };
-
-  const handlePOLYGONSubmit = async (e) => {
-    e.preventDefault();
-
-    if (!address) {
-      open();
-      return;
-    }
-
-    if (formData?.amountInETH === "" || formData?.amountInETH == 0) {
-      setErrors((state) => ({ ...state, amountInETH: "Amount is required" }));
-
-      return;
-    }
-
-    if (formData?.isStake === null) {
-      setErrors((state) => ({ ...state, isStake: "Select any one option" }));
-
-      return;
-    }
-
-    try {
-      const isStake = formData?.isStake;
-      const promoCode =
-        formData?.promoCode.length > 0 ? formData?.promoCode : "";
-
-      setTransactionModal(true);
-      setLoading(true);
-      const transferTokens = await contractInstPOLYGON.methods.buyTokens(
-        promoCode,
-        isStake
-      );
-
-      const estimateGas = await transferTokens.estimateGas({
-        from: address,
-        value: ConvertNumber(formData?.amountInETH, false),
-      });
-
-      const transaction = transferTokens.send({
-        from: address,
-        to: process.env.REACT_APP_CROWDSALE_POLYGON,
-        gas: estimateGas,
-        maxPriorityFeePerGas: 50000000000,
-        value: ConvertNumber(formData?.amountInETH, false),
-      });
-
-      transaction
-        .on("transactionHash", (txHash) => {
-          console.log(txHash);
-          setTxHash(txHash);
-        })
-        .on("receipt", async (receipt) => {
-          console.log("RECEIPT => \n", receipt);
-
-          setErrors((state) => ({ ...state, transaction: "" }));
-          dispatch(
-            LoadUser({
-              contractInst: contractInstPOLYGON,
-              address,
-              web3Inst: web3InstPOLYGON,
-            })
-          );
-          dispatch(
-            LoadBlockchainData({
-              contractInst,
-              web3Inst,
-              contractInstBNB,
-              web3InstBNB,
-              contractInstPOLYGON,
-              web3InstPOLYGON,
-            })
-          );
-          setLoading(false);
-        })
-        .on("error", async (error, receipt) => {
-          console.log("ERROR => \n", error);
-
-          setLoading(false);
-
-          const errorMsg = await getErrorMessage(error, chainId);
-          setErrors({ ...errors, transaction: errorMsg });
-          console.log("RECEIPT ERROR => \n", receipt);
-
-          if (receipt?.transactionHash) {
-            setTxHash(receipt.transactionHash);
-          }
-        });
-    } catch (error) {
-      const errorMsg = await getErrorMessage(error, chainId);
-
-      setErrors((state) => ({ ...state, transaction: errorMsg }));
-      setLoading(false);
-    }
-  };
-
   const closeTransactionModal = () => {
     setTransactionModal(false);
     setIsAmbassador(null);
-    setExtraTokens(0);
-    setNoOfToken(0);
-    setFormData({
-      amountInETH: 0,
-      promoCode: "",
-      isStake: null,
-    });
+
     setErrors({
-      amountInETH: "",
-      promoCode: "",
-      isStake: "",
       transaction: "",
     });
     setTxHash("");
-
-    const Stake = document.getElementById("stake");
-    const Dynamic = document.getElementById("dynamic");
-
-    Dynamic.checked = false;
-    Stake.checked = false;
-    // window.location.reload();
   };
-
-  useEffect(() => {
-    let tokens =
-      (selectedNetworkId === 1
-        ? formData?.amountInETH * ethPrice
-        : selectedNetworkId === 56
-        ? formData?.amountInETH * bnbPrice
-        : selectedNetworkId === 137
-        ? formData?.amountInETH * maticPrice
-        : 0) / data?.ico_price;
-
-    setNoOfToken(tokens);
-
-    if (
-      formData?.promoCode &&
-      formData?.promoCode !== "0x" &&
-      formData?.promoCode !== "0"
-    ) {
-      let extraTokens = (tokens * 5) / 100;
-
-      setExtraTokens(extraTokens);
-    }
-
-    if (user) {
-      const eligible_bronze = parseInt(
-        selectedNetworkId === 1
-          ? data?.bronze_eligible
-          : selectedNetworkId === 56
-          ? data?.bronze_eligibleBNB
-          : selectedNetworkId === 137
-          ? data?.bronze_eligiblePOLYGON
-          : ""
-      );
-      const eligible_silver = parseInt(
-        selectedNetworkId === 1
-          ? data?.silver_eligible
-          : selectedNetworkId === 56
-          ? data?.silver_eligibleBNB
-          : selectedNetworkId === 137
-          ? data?.silver_eligiblePOLYGON
-          : ""
-      );
-
-      let totalInvested = parseInt(user.invest_amount);
-      const newTransaction = parseInt(ConvertNumber(formData.amountInETH));
-      totalInvested += newTransaction;
-
-      if (formData.amountInETH > 0 && totalInvested < eligible_bronze) {
-        const needMore = ConvertNumber(eligible_bronze - totalInvested, true);
-        setMsg(
-          `Invest ${needMore} ${
-            selectedNetworkId === 1
-              ? "ETH"
-              : selectedNetworkId === 56
-              ? "BNB"
-              : selectedNetworkId === 137
-              ? "MATIC"
-              : ""
-          } more to become a Bronze Ambassador`
-        );
-      } else if (formData.amountInETH > 0 && totalInvested < eligible_silver) {
-        const needMore = ConvertNumber(eligible_silver - totalInvested, true);
-        setMsg(
-          `Invest ${needMore} ${
-            selectedNetworkId === 1
-              ? "ETH"
-              : selectedNetworkId === 56
-              ? "BNB"
-              : selectedNetworkId === 137
-              ? "MATIC"
-              : ""
-          } more to become a Silver Ambassador`
-        );
-      } else {
-        setMsg(null);
-      }
-    }
-  }, [formData, chainId]);
-
-  useEffect(() => {
-    if (
-      typeof user?.is_ambassador_eligible === "boolean" &&
-      isAmbassador === null
-    ) {
-      setIsAmbassador(user.is_ambassador_eligible);
-    }
-  }, [user, isConnected, isAmbassador]);
 
   useEffect(() => {
     // 👇️ scroll to top on page load
@@ -569,58 +288,6 @@ function Home() {
   return (
     <div className="Home">
       <div className="HomeHeroSection d-flex align-items-center position-relative overflow-hidden">
-        <div className="wrapper">
-          <div className="marquee">
-            <p className="m-0 text-uppercase text-white fw-bold me-3">
-              Presale Ending Soon
-            </p>
-            <p className="m-0 text-uppercase text-white fw-bold me-3">
-              Presale Ending Soon
-            </p>
-            <p className="m-0 text-uppercase text-white fw-bold me-3">
-              Presale Ending Soon
-            </p>
-            <p className="m-0 text-uppercase text-white fw-bold me-3">
-              Presale Ending Soon
-            </p>
-            <p className="m-0 text-uppercase text-white fw-bold me-3">
-              Presale Ending Soon
-            </p>
-            <p className="m-0 text-uppercase text-white fw-bold me-3">
-              Presale Ending Soon
-            </p>
-            <p className="m-0 text-uppercase text-white fw-bold me-3">
-              Presale Ending Soon
-            </p>
-            <p className="m-0 text-uppercase text-white fw-bold me-3">
-              Presale Ending Soon
-            </p>
-            <p className="m-0 text-uppercase text-white fw-bold me-3">
-              Presale Ending Soon
-            </p>
-            <p className="m-0 text-uppercase text-white fw-bold me-3">
-              Presale Ending Soon
-            </p>
-            <p className="m-0 text-uppercase text-white fw-bold me-3">
-              Presale Ending Soon
-            </p>
-            <p className="m-0 text-uppercase text-white fw-bold me-3">
-              Presale Ending Soon
-            </p>
-            <p className="m-0 text-uppercase text-white fw-bold me-3">
-              Presale Ending Soon
-            </p>
-            <p className="m-0 text-uppercase text-white fw-bold me-3">
-              Presale Ending Soon
-            </p>
-            <p className="m-0 text-uppercase text-white fw-bold me-3">
-              Presale Ending Soon
-            </p>
-            <p className="m-0 text-uppercase text-white fw-bold me-3">
-              Presale Ending Soon
-            </p>
-          </div>
-        </div>
         <div className="container-lg">
           <section className=" d-flex justify-content-between flex-column align-items-center ">
             <div className="row m-0 w-100 Home_Hero_Section d-flex justify-content-center text-center ">
@@ -685,7 +352,7 @@ function Home() {
                   src={Close}
                   className="position-sticky top-0  start-100"
                   style={{ width: 20 }}
-                  // onClick={closeTransactionModal}
+                  onClick={closeTransactionModal}
                 />
                 {errors?.transaction ? (
                   <div className="d-flex flex-column align-items-center">
@@ -712,88 +379,18 @@ function Home() {
                       </p>
                     </div>
                     <p className="text-start text-black">
-                      You have successfully purchased {noOfToken} $DRIFT Presale
-                      tokens!
+                      You have successfully Claimed $DRIFT tokens!
                     </p>
-                    {formData?.promoCode && formData?.promoCode !== "0x" ? (
-                      <>
-                        <p className="text-start text-black mb-0">
-                          You got a extra {extraTokens} bonus by using an
-                          AMBA$$ADOR CODE!{" "}
-                        </p>
-                        <p className="text-start text-black ">
-                          Your total is {noOfToken + extraTokens}
-                        </p>
-                      </>
-                    ) : (
-                      <></>
-                    )}
-                    {isAmbassador !== user.is_ambassador_eligible && (
-                      <>
-                        <p className="text-start text-black w-100">
-                          {" "}
-                          Congratulations! Your investment amount has qualified
-                          you for{" "}
-                          {user?.tier === 2 ? (
-                            <>Silver</>
-                          ) : (
-                            <>{user?.tier === 3 ? <>Bronze</> : <></>}</>
-                          )}{" "}
-                          tier in our ambassador program
-                        </p>
-                        <p className="text-start text-black w-100">
-                          To activate your promo code{" "}
-                          <div className="Info d-inline">
-                            <img src={iButton} alt="" />
 
-                            <div className="Claimimg_Option_Info position-absolute bg-white rounded-4 p-3 mx-3">
-                              <p className="Info_Box_Text m-0">
-                                you are now eligible to earn{" "}
-                                {user?.tier === 2 ? (
-                                  <>{data.silver_commission}</>
-                                ) : (
-                                  <>
-                                    {user?.tier === 3 ? (
-                                      <>{data.bronze_commission}</>
-                                    ) : (
-                                      <></>
-                                    )}
-                                  </>
-                                )}
-                                % commission from all investment brought in
-                                through your promocode. your followers will be
-                                awarded 5% bonus supply
-                              </p>
-                            </div>
-                          </div>
-                          , head over to{" "}
-                          <Link
-                            target="_blank"
-                            to={"https://influ3nce.me/ambassador"}
-                          >
-                            influ3nce.me/ambassador
-                          </Link>{" "}
-                          and publish your code on chain
-                        </p>
-                      </>
-                    )}
-                    <p className="text-start text-black mb-0 fw-bold">
-                      {" "}
-                      What to expect next:{" "}
-                    </p>
-                    <p className="text-start text-black ">
-                      {" "}
-                      You will receive the Tradable token at the time of launch
-                    </p>
                     <p className="text-start text-black ">
                       <span className="fw-bold">Import contract :</span>{" "}
                       {selectedNetworkId === 1
-                        ? process.env.REACT_APP_TOKEN_CONTRACT_ETH
+                        ? process.env.REACT_APP_DRIFT_ETH
                         : selectedNetworkId === 56
-                        ? process.env.REACT_APP_TOKEN_CONTRACT_BNB
+                        ? process.env.REACT_APP_DRIFT_BNB
                         : selectedNetworkId === 137
-                        ? process.env.REACT_APP_TOKEN_CONTRACT_POLYGON
-                        : null}
+                        ? process.env.REACT_APP_DRIFT_POLYGON
+                        : null}{" "}
                       to view your tokens.{" "}
                     </p>
                     <p className="text-start text-black mb-0 fw-bold">
@@ -828,15 +425,6 @@ function Home() {
                           }`}
                       /tx/{txHash}
                     </Link>
-                    <p
-                      className="text-start text-black mt-3"
-                      style={{ fontSize: 12 }}
-                    >
-                      Note this is just representative of your true claim, which
-                      will not be available until the time of token launch.
-                      Presale tokens are non transferable and considered the
-                      responsibility of the holder to maintain access to.
-                    </p>
                   </>
                 )}
               </>
@@ -899,462 +487,6 @@ function Home() {
               className=" col-12 col-md-6 p-0 pe-md-3 rounded-4"
               id="Presale_Form"
             >
-              {/* <div className="DTSC_Col rounded-4 bg-white mt-4 mt-md-0 position-relative shadow-none">
-                {data?.ico_stage === 0 ? (
-                  ""
-                ) : (
-                  <>
-                    {!data?.is_open &&
-                      !data?.is_openBNB &&
-                      !data?.is_openPOLYGON && (
-                        <div
-                          className="d-flex justify-content-center align-items-center position-absolute background-dark w-100 h-100 top-0 start-0 rounded-4"
-                          style={{
-                            background: "rgba(0,0,0,0.5)",
-                            zIndex: 99,
-                          }}
-                        >
-                          <h4
-                            className="DTSC_Heading text-white fw-bolder text-center m-0 p-0 text-uppercase"
-                            style={{
-                              fontSize: "2em",
-                            }}
-                          >
-                            Presale is paused
-                          </h4>
-                        </div>
-                      )}
-                  </>
-                )}
-
-                <p
-                  className="DTSC_SubHeading mb-0 text-uppercase fw-bold "
-                  style={{ color: "#8e8e8e" }}
-                >
-                  FINAL PRESALE LAP...CLOSING SOON!{" "}
-                </p>
-                <h2 className="DTSC_Heading text-black mt-3 mb-0 text-uppercase">
-                  Buy $DRIFT Token
-                </h2>
-                <div className="row m-0 mt-5 w-100">
-                  <div className="d-flex align-items-start p-0">
-                    <img alt="" src={dot} style={{ marginRight: 10 }} />
-                    <p className="m-0">
-                      Total Raised{" "}
-                      <span style={{ fontWeight: "bold" }}>
-                        $
-                        {numberWithCommas(
-                          (
-                            Number(data?.tokensTransferredLap2 * 0.0007 || 0) +
-                            Number(data?.tokensTransferredLap1 * 0.00065 || 0) +
-                            Number(data?.tokensTransferredWarmup * 0.0006 || 0)
-                          ).toFixed()
-                        )}
-                      </span>
-                    </p>
-                  </div>
-                  <div className="d-flex align-items-start p-0">
-                    <img alt="" src={dot} style={{ marginRight: 10 }} />
-                    <p className="m-0">
-                      Last Presale Lap Price{" "}
-                      <span style={{ fontWeight: "bold" }}>
-                        ${data?.ico_price || 0}
-                      </span>
-                      / Launch Price{" "}
-                      <span style={{ fontWeight: "bold" }}>$0.00087</span>
-                    </p>
-                  </div>
-                </div>
-                <div className="mt-5 d-flex justify-content-center align-items-center">
-                  <ReactSpeedometer
-                    width={320}
-                    height={200}
-                    needleHeightRatio={0.7}
-                    value={650}
-                    customSegmentStops={[0, 250, 500, 750, 1000]}
-                    segmentColors={["#ffb3dd", "#ff80c6", "#ff4daf", "#ff1a98"]}
-                    currentValueText="Current Price"
-                    customSegmentLabels={[
-                      {
-                        text: "$0.0006",
-                        position: "INSIDE",
-                        color: "#ffffff",
-                      },
-                      {
-                        text: "$0.00065",
-                        position: "INSIDE",
-                        color: "#ffffff",
-                      },
-                      {
-                        text: "$0.0007",
-                        position: "INSIDE",
-                        color: "#ffffff",
-                      },
-                      {
-                        text: "Launch",
-                        position: "INSIDE",
-                        color: "#ffffff",
-                      },
-                    ]}
-                    ringWidth={47}
-                    needleTransitionDuration={3333}
-                    needleTransition="easeElastic"
-                    needleColor={"#ff008c"}
-                    textColor={"#000"}
-                  />
-                </div>
-
-                <div className="mt-5">
-                  <div className="NetworkButtons_Row row m-0 w-100">
-                    <p className="p-0">Select Network</p>
-                    <div className="col-12 col-xl-3 col-lg-6 col-sm-6  p-0 pe-lg-2 pe-sm-2 mb-2 mb-xl-0">
-                      <button
-                        onClick={() => open({ view: "Networks" })}
-                        className={`BtnStyle2 ${
-                          selectedNetworkId === 1 && chainId === 1
-                            ? "active"
-                            : ""
-                        }`}
-                      >
-                        <img alt="" src={eth} className="me-1" />
-                        ETH
-                      </button>
-                    </div>
-                    <div className="col-12 col-xl-3 col-lg-6 col-sm-6 p-0 pe-xl-2 mb-2 mb-xl-0">
-                      <button
-                        onClick={() => open({ view: "Networks" })}
-                        className={`BtnStyle2 ${
-                          selectedNetworkId === 56 && chainId === 56
-                            ? "active"
-                            : ""
-                        }`}
-                      >
-                        <img alt="" src={bnb} className="me-1" />
-                        BNB
-                      </button>
-                    </div>
-                    <div className="col-12 col-xl-3 col-lg-6 col-sm-6  p-0 pe-lg-2 pe-sm-2 mb-2 mb-sm-0">
-                      <button
-                        onClick={() => open({ view: "Networks" })}
-                        className={`BtnStyle2 ${
-                          selectedNetworkId === 137 && chainId === 137
-                            ? "active"
-                            : ""
-                        }`}
-                      >
-                        <img alt="" src={polygon} className="me-1" />
-                        Polygon
-                      </button>
-                    </div>
-                    <div className="col-12 col-xl-3 col-lg-6 col-sm-6 p-0">
-                      <button className="btn BtnStyle2" disabled>
-                        <img alt="" src={pulse} className="me-1" />
-                        Pulse
-                      </button>
-                    </div>
-                  </div>
-                </div>
-                <div className="mt-5 position-relative">
-                  <form
-                    className="position-relative"
-                    // onSubmit={
-                    //   selectedNetworkId === 1 && chainId === 1
-                    //     ? handleSubmit
-                    //     : selectedNetworkId === 56 && chainId === 56
-                    //     ? handleBNBSubmit
-                    //     : selectedNetworkId === 137 && chainId === 137
-                    //     ? handlePOLYGONSubmit
-                    //     : null
-                    // }
-                  >
-                    <div className="row p-0 m-0 ">
-                      <div className="col-12 col-xl-6 ps-0 pe-0 pe-xl-2">
-                        <label>
-                          <p>
-                            Pay with{" "}
-                            {selectedNetworkId === 1
-                              ? "ETH"
-                              : `${
-                                  selectedNetworkId === 56
-                                    ? "BNB"
-                                    : selectedNetworkId === 137
-                                    ? "MATIC"
-                                    : ""
-                                }`}
-                            <span className="ms-1" style={{ color: "#ff98d1" }}>
-                              *
-                            </span>
-                          </p>
-                        </label>
-                        <div className="input align-items-center">
-                          <input
-                            className="input-field"
-                            type="number"
-                            step="any"
-                            onWheel={(e) => e.target.blur()}
-                            min={0}
-                            value={formData?.amountInETH}
-                            name="amountInETH"
-                            id="amountInETH"
-                            onChange={onChange}
-                            style={{ marginRight: 15 }}
-                          />
-                          <img src={ether} alt="" width={32} height={32} />
-                        </div>
-                        {errors?.amountInETH && (
-                          <p
-                            className="m-0 position-absolute "
-                            style={{ color: "#ff98d1" }}
-                          >
-                            {errors?.amountInETH}
-                          </p>
-                        )}
-                        {msg && (
-                          <p
-                            className="m-0 position-absolute "
-                            style={{ color: "#ff98d1" }}
-                          >
-                            {msg}
-                          </p>
-                        )}
-                      </div>
-                      <div
-                        className="
-                      col-12 col-xl-6 mt-4 mt-xl-0 pe-0 ps-0 ps-xl-2"
-                      >
-                        <label>
-                          <p>Receive Drift</p>
-                        </label>
-                        <div className="input align-items-center">
-                          <input
-                            readOnly
-                            className="input-field"
-                            type="number"
-                            name="no_of_tokens"
-                            id="no_of_tokens"
-                            value={noOfToken || 0}
-                            style={{ marginRight: 15 }}
-                          />
-                          <img src={token} alt="" width={32} height={32} />
-                        </div>
-                      </div>
-                    </div>
-                    <div className="row w-100 p-0 m-0 mt-4 mt-xl-5">
-                      <div className="p-0">
-                        <div className="mb-3">
-                          <label style={{ marginBottom: 0 }}>
-                            Ambassador Code
-                          </label>
-                          <img
-                            alt=""
-                            style={{ marginLeft: 30, width: 29 }}
-                            src={ambassador}
-                          />
-                        </div>
-                        <div className="input">
-                          <input
-                            className="input-field"
-                            type="text"
-                            name="promoCode"
-                            id="promoCode"
-                            autoComplete="false"
-                            value={formData?.promoCode}
-                            onChange={onChange}
-                          />
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="mt-5 position-relative">
-                      <label className="me-2">
-                        Claiming Options
-                        <span className="ms-1" style={{ color: "#ff98d1" }}>
-                          *
-                        </span>
-                      </label>
-
-                      <div className="Info d-inline">
-                        <img src={iButton} alt="" />
-
-                        <div
-                          className="Claimimg_Option_Info position-absolute bg-white rounded-4 p-3"
-                          style={{ zIndex: 99999 }}
-                        >
-                          <p className="Info_Box_Text">
-                            The two claim options are aimed at incentivizing
-                            presale investors with different intentions (short
-                            or long-term). Additionally, these options will
-                            protect presale investors by mitigating initial sell
-                            pressure.
-                          </p>
-
-                          <p className="Info_Box_Text">
-                            Those who want to hold for at least 30 days via
-                            staking for an aggressive ETH return (claimable as
-                            soon as the token launches) should select the stake
-                            option.
-                          </p>
-
-                          <p className="Info_Box_Text">
-                            Those who want immediate access to their tokens at
-                            the start of trading should select to Receive their
-                            $DRIFT prior to open trading. These investors will
-                            face an elevated 25% sell fee for the first week of
-                            token trading. That reduces incrementally to the
-                            standard 5%. (This tax will go towards ETH staking
-                            rewards and in-game event prizes.)
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="row m-0 mt-3 ">
-                      <div className="RadioText TeamMember_Profile_Container  col-12 col-xxl-6 ps-0 pe-0 pe-xl-2 lh-1 ">
-                        <div className="d-flex align-items-start">
-                          <input
-                            className="me-2"
-                            type="radio"
-                            value={1}
-                            disabled={
-                              Number(data?.token_staked) >=
-                              Number(data?.staking_limit)
-                            }
-                            id="stake"
-                            name="isStake"
-                            onChange={onChange}
-                          />
-                          Stake Your Claim min 120% APY
-                        </div>
-                        <div className="mt-3">
-                          <p className="mb-2">
-                            Only 20% of Initial Sale can be staked.
-                          </p>
-                          <div
-                            className="progress ProgressBar position-relative"
-                            style={{ maxWidth: 230 }}
-                          >
-                            <div
-                              className="progress-bar ProgressDone"
-                              role="progressbar"
-                              style={{
-                                width: `${CalcPercenteage(
-                                  data?.token_staked || 0,
-                                  data?.staking_limit || 0
-                                )}%`,
-                              }}
-                              aria-valuenow={CalcPercenteage(
-                                data?.token_staked,
-                                data?.staking_limit
-                              )}
-                              aria-valuemin="0"
-                              aria-valuemax="100"
-                            ></div>
-                            <p className="PercentProgress position-absolute start-50 top-50 translate-middle mb-0">
-                              {CalcPercenteage(
-                                data?.token_staked,
-                                data?.staking_limit
-                              ).toFixed(2)}
-                              %
-                            </p>
-                          </div>
-                        </div>
-                        <p className="TeamMemberProfile_Bio m-0 mt-3 ">
-                          Stake Your $DRIFT at Launch for 30 days (earn min.
-                          120% APY in ETH for 30 days and earn a share of game
-                          revenue by staking longer)
-                        </p>
-                      </div>
-                      <div className="RadioText TeamMember_Profile_Container col-12 col-xxl-6 mt-2 mt-xxl-0 pe-0 ps-0 ps-xl-2 lh-1">
-                        <div className="d-flex align-items-start">
-                          <input
-                            type="radio"
-                            className="me-2"
-                            value={2}
-                            name="isStake"
-                            id="dynamic"
-                            onChange={onChange}
-                          />
-                          Claim for Dynamic Sell Fee Structure
-                        </div>
-                        <p className="TeamMemberProfile_Bio m-0 mt-3">
-                          Receive $DRIFT Airdrop Prior to Open Trading (and pay
-                          a Dynamic Sell Fee when you sell)
-                        </p>
-                      </div>
-                    </div>
-                    {errors?.isStake && (
-                      <p
-                        className="m-0 position-absolute"
-                        style={{ color: "#ff98d1" }}
-                      >
-                        {errors?.isStake}
-                      </p>
-                    )}
-                    <div className="d-flex mt-5 flex-column align-items-baseline justify-content-between flex-xxl-row align-items-xxl-center">
-                      <div className="mb-3 mb-xxl-0">
-                        <button type="submit" className="pinkBtn BtnStyle1">
-                          buy presale
-                        </button>
-                      </div>
-                      <Link
-                        to="/utilities"
-                        style={{ fontWeight: 800 }}
-                        className="text-uppercase"
-                      >
-                        Learn About Coin Utility
-                      </Link>
-                    </div>
-                  </form>
-                  {date >= data?.ico_start_time &&
-                  ((selectedNetworkId === 1 && !data?.is_open) ||
-                    (selectedNetworkId === 56 && !data?.is_openBNB) ||
-                    (selectedNetworkId === 137 && !data?.is_openPOLYGON))
-                    ? (data?.is_open ||
-                        data?.is_openBNB ||
-                        data?.is_openPOLYGON) && (
-                        <div
-                          className="DTSC_Col bg-white  h-100 w-100 d-flex flex-column justify-content-center align-items-center text-center mt-3"
-                          style={{
-                            zIndex: 9,
-                          }}
-                        >
-                          <div className="d-flex pb-3 align-items-center">
-                            <img
-                              src={iButton}
-                              width={20}
-                              className="me-3"
-                              alt=""
-                            />
-                            <p className="DTSC_SubHeading fw-bold m-0 lh-0">
-                              Presale on{" "}
-                              {selectedNetworkId === 1
-                                ? "ETH"
-                                : selectedNetworkId === 56
-                                ? "BNB"
-                                : selectedNetworkId === 137
-                                ? "POLYGON"
-                                : ""}{" "}
-                              is paused
-                            </p>
-                          </div>
-
-                          <p className="DTSC_SubHeading">
-                            There may be some allocation remaining on{" "}
-                            {selectedNetworkId === 1
-                              ? "BNB/POLYGON"
-                              : selectedNetworkId === 56
-                              ? "ETH/POLYGON"
-                              : selectedNetworkId === 137
-                              ? "ETH/BNB"
-                              : ""}{" "}
-                            . Simply switch network through Drift dApp to that
-                            chain and participate in presale round.
-                          </p>
-                        </div>
-                      )
-                    : ""}
-                </div>
-              </div> */}
               <div
                 className="DTSC_Col rounded-4 bg-white mt-4 mt-md-0 position-relative shadow-none "
                 id="claim"
@@ -1425,142 +557,123 @@ function Home() {
                     </div>
                   </div>
                 </div>
+
                 <div className="mt-5 position-relative">
-                  <form
-                    className="position-relative"
-                    // onSubmit={
-                    //   selectedNetworkId === 1 && chainId === 1
-                    //     ? handleSubmit
-                    //     : selectedNetworkId === 56 && chainId === 56
-                    //     ? handleBNBSubmit
-                    //     : selectedNetworkId === 137 && chainId === 137
-                    //     ? handlePOLYGONSubmit
-                    //     : null
-                    // }
-                  >
-                    <div className="row p-0 m-0 ">
-                      <div className="col-12 p-0">
-                        <label>
-                          <p>PreDrift Tokens</p>
-                        </label>
-                        <div className="input align-items-center">
-                          <input
-                            readOnly
-                            className="input-field"
-                            type="number"
-                            name="no_of_tokens"
-                            id="no_of_tokens"
-                            value={user?.balance || 0}
-                            style={{ marginRight: 15 }}
-                          />
-                          <img src={token} alt="" width={32} height={32} />
-                        </div>
-                      </div>
-                    </div>
-                    <div className="row p-0 m-0 mt-3">
-                      <div className="col-12 col-xl-6 ps-0 pe-0 pe-xl-2">
-                        <label>
-                          <p>Staked Tokens</p>
-                        </label>
-                        <div className="input align-items-center">
-                          <input
-                            readOnly
-                            className="input-field"
-                            type="number"
-                            name="no_of_tokens"
-                            id="no_of_tokens"
-                            value={user?.Staked || 0}
-                            style={{ marginRight: 15 }}
-                          />
-                          <img src={token} alt="" width={32} height={32} />
-                        </div>
-                      </div>
-                      <div
-                        className="
-                      col-12 col-xl-6 mt-4 mt-xl-0 pe-0 ps-0 ps-xl-2"
-                      >
-                        <label>
-                          <p>Dynamic Tokens</p>
-                        </label>
-                        <div className="input align-items-center">
-                          <input
-                            readOnly
-                            className="input-field"
-                            type="number"
-                            name="no_of_tokens"
-                            id="no_of_tokens"
-                            value={user?.Dynamic || 0}
-                            style={{ marginRight: 15 }}
-                          />
-
-                          <img src={token} alt="" width={32} height={32} />
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="d-flex mt-5 flex-column align-items-baseline justify-content-between flex-xxl-row align-items-xxl-center">
-                      <div className="mb-3 mb-xxl-0">
-                        <button type="submit" className="pinkBtn BtnStyle1">
-                          Claim $Drift
-                        </button>
-                      </div>
-                      <Link
-                        to="/utilities"
-                        style={{ fontWeight: 800 }}
-                        className="text-uppercase"
-                      >
-                        Learn About Coin Utility
-                      </Link>
-                    </div>
-                  </form>
-                  {date >= data?.ico_start_time &&
-                  ((selectedNetworkId === 1 && !data?.is_open) ||
-                    (selectedNetworkId === 56 && !data?.is_openBNB) ||
-                    (selectedNetworkId === 137 && !data?.is_openPOLYGON))
-                    ? (data?.is_open ||
-                        data?.is_openBNB ||
-                        data?.is_openPOLYGON) && (
-                        <div
-                          className="DTSC_Col bg-white  h-100 w-100 d-flex flex-column justify-content-center align-items-center text-center mt-3"
-                          style={{
-                            zIndex: 9,
-                          }}
-                        >
-                          <div className="d-flex pb-3 align-items-center">
-                            <img
-                              src={iButton}
-                              width={20}
-                              className="me-3"
-                              alt=""
+                  {user?.balance != 0 ? (
+                    <form className="position-relative">
+                      <div className="row p-0 m-0 ">
+                        <div className="col-12 p-0">
+                          <label>
+                            <p>PreDrift Tokens</p>
+                          </label>
+                          <div className="input align-items-center">
+                            <input
+                              readOnly
+                              className="input-field"
+                              type="number"
+                              name="no_of_tokens"
+                              id="no_of_tokens"
+                              value={ConvertNumber(user?.balance, true) || 0}
+                              style={{ marginRight: 15 }}
                             />
-                            <p className="DTSC_SubHeading fw-bold m-0 lh-0">
-                              Presale on{" "}
-                              {selectedNetworkId === 1
-                                ? "ETH"
-                                : selectedNetworkId === 56
-                                ? "BNB"
-                                : selectedNetworkId === 137
-                                ? "POLYGON"
-                                : ""}{" "}
-                              is paused
-                            </p>
+                            <img src={token} alt="" width={32} height={32} />
                           </div>
+                        </div>
+                      </div>
+                      <div className="row p-0 m-0 mt-3">
+                        <div className="col-12 col-xl-6 ps-0 pe-0 pe-xl-2">
+                          <label>
+                            <p>Staked Tokens</p>
+                          </label>
+                          <div className="input align-items-center">
+                            <input
+                              readOnly
+                              className="input-field"
+                              type="number"
+                              name="no_of_tokens"
+                              id="no_of_tokens"
+                              value={user?.Staked || 0}
+                              style={{ marginRight: 15 }}
+                            />
+                            <img src={token} alt="" width={32} height={32} />
+                          </div>
+                        </div>
+                        <div
+                          className="
+                      col-12 col-xl-6 mt-4 mt-xl-0 pe-0 ps-0 ps-xl-2"
+                        >
+                          <label>
+                            <p>Dynamic Tokens</p>
+                          </label>
+                          <div className="input align-items-center">
+                            <input
+                              readOnly
+                              className="input-field"
+                              type="number"
+                              name="no_of_tokens"
+                              id="no_of_tokens"
+                              value={user?.Dynamic || 0}
+                              style={{ marginRight: 15 }}
+                            />
 
-                          <p className="DTSC_SubHeading">
-                            There may be some allocation remaining on{" "}
-                            {selectedNetworkId === 1
-                              ? "BNB/POLYGON"
-                              : selectedNetworkId === 56
-                              ? "ETH/POLYGON"
-                              : selectedNetworkId === 137
-                              ? "ETH/BNB"
-                              : ""}{" "}
-                            . Simply switch network through Drift dApp to that
-                            chain and participate in presale round.
+                            <img src={token} alt="" width={32} height={32} />
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="d-flex mt-5 flex-column align-items-baseline justify-content-between flex-xxl-row align-items-xxl-center">
+                        <div className="mb-3 mb-xxl-0">
+                          {user?.is_allowed ? (
+                            <button
+                              className="pinkBtn BtnStyle1"
+                              onClick={handleSubmit}
+                            >
+                              Claim $Drift
+                            </button>
+                          ) : (
+                            <button
+                              className="pinkBtn BtnStyle1"
+                              onClick={allow}
+                            >
+                              Allow pre $drift
+                            </button>
+                          )}
+                        </div>
+                        <Link
+                          to="/utilities"
+                          style={{ fontWeight: 800 }}
+                          className="text-uppercase"
+                        >
+                          Learn About Coin Utility
+                        </Link>
+                      </div>
+                    </form>
+                  ) : (
+                    <div
+                      style={{ height: 264 }}
+                      className="white rounded-4  p-3 d-flex align-items-center justify-content-center"
+                    >
+                      {user?.claimed && user?.balance == 0 ? (
+                        <div className="d-flex flex-column justify-content-center align-items-center">
+                          <img src={driftLogo} height={100} />
+                          <p className="m-0 p-0 mt-3 text-center  align-self-center">
+                            🎉{" "}
+                            <span className="Home_Hero_Section_SubHeading fw-bold text-uppercase text-black">
+                              Congratulations!
+                            </span>
+                            <br />
+                            You've successfully claimed your Drift Token!{" "}
                           </p>
                         </div>
-                      )
-                    : ""}
+                      ) : (
+                        <div>
+                          <p className="m-0 p-0 mt-3 text-center  ">
+                            Unable to claim tokens at the moment.
+                          </p>
+                        </div>
+                      )}
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
