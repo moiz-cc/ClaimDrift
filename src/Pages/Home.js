@@ -5,6 +5,8 @@ import dot from "../Assets/Images/Dot.svg";
 import eth from "../Assets/Images/Ethereum.svg";
 import polygon from "../Assets/Images/Polygon.svg";
 import presale_ended from "../Assets/Images/PresaleEnded.png";
+import driftLogo from "../Assets/Images/Drift Logo Spin.svg";
+
 import pulse from "../Assets/Images/Pulse.svg";
 import bnb from "../Assets/Images/BNB.svg";
 // import ambassadorIcon from "../Assets/Images/AmbassadorIcon.svg";
@@ -60,8 +62,13 @@ function Home() {
     publicBlockchainData: data,
     user,
     contractInst,
+    contractInstToken,
+    contractInstTokenBNB,
+    contractInstTokenPOLYGON,
 
     contractInstClaim,
+    contractInstClaimBNB,
+    contractInstClaimPOLYGON,
 
     web3Inst,
   } = useSelector((state) => state.Blockchain);
@@ -108,38 +115,38 @@ function Home() {
   //   setErrors({ ...errors, [name]: "" });
   // };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const allow = async (e) => {
+    let presale_TokenAddress;
+    let claim_TokenAddress;
+    let token_Inst;
 
-    if (!address) {
-      open();
-      return;
-    }
-
-    // if (formData?.amountInETH === "" || formData?.amountInETH == 0) {
-    //   setErrors((state) => ({ ...state, amountInETH: "Amount is required" }));
-
-    //   return;
-    // }
-
-    // if (formData?.isStake === null) {
-    //   setErrors((state) => ({ ...state, isStake: "Select any one option" }));
-
-    //   return;
-    // }
+    if (selectedNetworkId === 11155111 && chainId === 11155111) {
+      presale_TokenAddress = process.env.REACT_APP_TOKEN_CONTRACT_ETH;
+      claim_TokenAddress = process.env.REACT_APP_CLAIM_ETH;
+      token_Inst = contractInstToken;
+    } else if (selectedNetworkId === 97 && chainId === 97) {
+      presale_TokenAddress = process.env.REACT_APP_TOKEN_CONTRACT_BNB;
+      claim_TokenAddress = process.env.REACT_APP_CLAIM_BNB;
+      token_Inst = contractInstTokenBNB;
+    } else if (selectedNetworkId === 80001 && chainId === 80001) {
+      presale_TokenAddress = process.env.REACT_APP_TOKEN_CONTRACT_POLYGON;
+      claim_TokenAddress = process.env.REACT_APP_CLAIM_POLYGON;
+      token_Inst = contractInstTokenPOLYGON;
+    } else return;
 
     try {
-      setTransactionModal(true);
-      setLoading(true);
-      const claimTokens = await contractInstClaim.methods.claimTokens();
+      const approve = await token_Inst.methods.approve(
+        claim_TokenAddress,
+        user?.balance
+      );
 
-      const estimateGas = await claimTokens.estimateGas({
+      const estimateGas = await approve.estimateGas({
         from: address,
       });
 
-      const transaction = claimTokens.send({
+      const transaction = approve.send({
         from: address,
-        to: process.env.REACT_APP_CLAIM_ETH,
+        to: presale_TokenAddress,
         gas: estimateGas,
         maxPriorityFeePerGas: 50000000000,
       });
@@ -153,7 +160,78 @@ function Home() {
           console.log("RECEIPT => \n", receipt);
 
           setErrors((state) => ({ ...state, transaction: "" }));
-          dispatch(LoadUser({ contractInst, address, web3Inst }));
+          dispatch(LoadUser({ contractInst, address, contractInstToken }));
+
+          // setLoading(false);
+        })
+        .on("error", async (error, receipt) => {
+          console.log("ERROR => \n", error);
+
+          // setLoading(false);
+
+          const errorMsg = await getErrorMessage(error, chainId);
+          // setErrors({ ...errors, transaction: errorMsg });
+          console.log("RECEIPT ERROR => \n", receipt);
+
+          if (receipt?.transactionHash) {
+            setTxHash(receipt.transactionHash);
+          }
+        });
+    } catch (error) {
+      const errorMsg = await getErrorMessage(error, chainId);
+
+      setErrors((state) => ({ ...state, transaction: errorMsg }));
+    }
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    let claimAddress;
+    let claimInst;
+
+    if (selectedNetworkId === 11155111 && chainId === 11155111) {
+      claimInst = contractInstClaim;
+      claimAddress = process.env.REACT_APP_CLAIM_ETH;
+    } else if (selectedNetworkId === 97 && chainId === 97) {
+      claimInst = contractInstClaimBNB;
+      claimAddress = process.env.REACT_APP_CLAIM_BNB;
+    } else if (selectedNetworkId === 80001 && chainId === 80001) {
+      claimInst = contractInstClaimPOLYGON;
+      claimAddress = process.env.REACT_APP_CLAIM_POLYGON;
+    }
+
+    if (!address) {
+      open();
+      return;
+    }
+
+    try {
+      setTransactionModal(true);
+      setLoading(true);
+      const claimTokens = await claimInst.methods.claimTokens();
+
+      const estimateGas = await claimTokens.estimateGas({
+        from: address,
+      });
+
+      const transaction = claimTokens.send({
+        from: address,
+        to: claimAddress,
+        gas: estimateGas,
+        maxPriorityFeePerGas: 50000000000,
+      });
+
+      transaction
+        .on("transactionHash", (txHash) => {
+          console.log(txHash);
+          setTxHash(txHash);
+        })
+        .on("receipt", async (receipt) => {
+          console.log("RECEIPT => \n", receipt);
+
+          setErrors((state) => ({ ...state, transaction: "" }));
+          dispatch(LoadUser({ contractInst, address, contractInstToken }));
           dispatch(
             LoadBlockchainData({
               contractInst,
@@ -656,462 +734,6 @@ function Home() {
               className=" col-12 col-md-6 p-0 pe-md-3 rounded-4"
               id="Presale_Form"
             >
-              {/* <div className="DTSC_Col rounded-4 bg-white mt-4 mt-md-0 position-relative shadow-none">
-                {data?.ico_stage === 0 ? (
-                  ""
-                ) : (
-                  <>
-                    {!data?.is_open &&
-                      !data?.is_openBNB &&
-                      !data?.is_openPOLYGON && (
-                        <div
-                          className="d-flex justify-content-center align-items-center position-absolute background-dark w-100 h-100 top-0 start-0 rounded-4"
-                          style={{
-                            background: "rgba(0,0,0,0.5)",
-                            zIndex: 99,
-                          }}
-                        >
-                          <h4
-                            className="DTSC_Heading text-white fw-bolder text-center m-0 p-0 text-uppercase"
-                            style={{
-                              fontSize: "2em",
-                            }}
-                          >
-                            Presale is paused
-                          </h4>
-                        </div>
-                      )}
-                  </>
-                )}
-
-                <p
-                  className="DTSC_SubHeading mb-0 text-uppercase fw-bold "
-                  style={{ color: "#8e8e8e" }}
-                >
-                  FINAL PRESALE LAP...CLOSING SOON!{" "}
-                </p>
-                <h2 className="DTSC_Heading text-black mt-3 mb-0 text-uppercase">
-                  Buy $DRIFT Token
-                </h2>
-                <div className="row m-0 mt-5 w-100">
-                  <div className="d-flex align-items-start p-0">
-                    <img alt="" src={dot} style={{ marginRight: 10 }} />
-                    <p className="m-0">
-                      Total Raised{" "}
-                      <span style={{ fontWeight: "bold" }}>
-                        $
-                        {numberWithCommas(
-                          (
-                            Number(data?.tokensTransferredLap2 * 0.0007 || 0) +
-                            Number(data?.tokensTransferredLap1 * 0.00065 || 0) +
-                            Number(data?.tokensTransferredWarmup * 0.0006 || 0)
-                          ).toFixed()
-                        )}
-                      </span>
-                    </p>
-                  </div>
-                  <div className="d-flex align-items-start p-0">
-                    <img alt="" src={dot} style={{ marginRight: 10 }} />
-                    <p className="m-0">
-                      Last Presale Lap Price{" "}
-                      <span style={{ fontWeight: "bold" }}>
-                        ${data?.ico_price || 0}
-                      </span>
-                      / Launch Price{" "}
-                      <span style={{ fontWeight: "bold" }}>$0.00087</span>
-                    </p>
-                  </div>
-                </div>
-                <div className="mt-5 d-flex justify-content-center align-items-center">
-                  <ReactSpeedometer
-                    width={320}
-                    height={200}
-                    needleHeightRatio={0.7}
-                    value={650}
-                    customSegmentStops={[0, 250, 500, 750, 1000]}
-                    segmentColors={["#ffb3dd", "#ff80c6", "#ff4daf", "#ff1a98"]}
-                    currentValueText="Current Price"
-                    customSegmentLabels={[
-                      {
-                        text: "$0.0006",
-                        position: "INSIDE",
-                        color: "#ffffff",
-                      },
-                      {
-                        text: "$0.00065",
-                        position: "INSIDE",
-                        color: "#ffffff",
-                      },
-                      {
-                        text: "$0.0007",
-                        position: "INSIDE",
-                        color: "#ffffff",
-                      },
-                      {
-                        text: "Launch",
-                        position: "INSIDE",
-                        color: "#ffffff",
-                      },
-                    ]}
-                    ringWidth={47}
-                    needleTransitionDuration={3333}
-                    needleTransition="easeElastic"
-                    needleColor={"#ff008c"}
-                    textColor={"#000"}
-                  />
-                </div>
-
-                <div className="mt-5">
-                  <div className="NetworkButtons_Row row m-0 w-100">
-                    <p className="p-0">Select Network</p>
-                    <div className="col-12 col-xl-3 col-lg-6 col-sm-6  p-0 pe-lg-2 pe-sm-2 mb-2 mb-xl-0">
-                      <button
-                        onClick={() => open({ view: "Networks" })}
-                        className={`BtnStyle2 ${
-                          selectedNetworkId === 11155111 && chainId === 11155111
-                            ? "active"
-                            : ""
-                        }`}
-                      >
-                        <img alt="" src={eth} className="me-1" />
-                        ETH
-                      </button>
-                    </div>
-                    <div className="col-12 col-xl-3 col-lg-6 col-sm-6 p-0 pe-xl-2 mb-2 mb-xl-0">
-                      <button
-                        onClick={() => open({ view: "Networks" })}
-                        className={`BtnStyle2 ${
-                          selectedNetworkId === 97 && chainId === 97
-                            ? "active"
-                            : ""
-                        }`}
-                      >
-                        <img alt="" src={bnb} className="me-1" />
-                        BNB
-                      </button>
-                    </div>
-                    <div className="col-12 col-xl-3 col-lg-6 col-sm-6  p-0 pe-lg-2 pe-sm-2 mb-2 mb-sm-0">
-                      <button
-                        onClick={() => open({ view: "Networks" })}
-                        className={`BtnStyle2 ${
-                          selectedNetworkId === 80001 && chainId === 80001
-                            ? "active"
-                            : ""
-                        }`}
-                      >
-                        <img alt="" src={polygon} className="me-1" />
-                        Polygon
-                      </button>
-                    </div>
-                    <div className="col-12 col-xl-3 col-lg-6 col-sm-6 p-0">
-                      <button className="btn BtnStyle2" disabled>
-                        <img alt="" src={pulse} className="me-1" />
-                        Pulse
-                      </button>
-                    </div>
-                  </div>
-                </div>
-                <div className="mt-5 position-relative">
-                  <form
-                    className="position-relative"
-                    // onSubmit={
-                    //   selectedNetworkId === 11155111 && chainId === 11155111
-                    //     ? handleSubmit
-                    //     : selectedNetworkId === 97 && chainId === 97
-                    //     ? handleBNBSubmit
-                    //     : selectedNetworkId === 80001 && chainId === 80001
-                    //     ? handlePOLYGONSubmit
-                    //     : null
-                    // }
-                  >
-                    <div className="row p-0 m-0 ">
-                      <div className="col-12 col-xl-6 ps-0 pe-0 pe-xl-2">
-                        <label>
-                          <p>
-                            Pay with{" "}
-                            {selectedNetworkId === 11155111
-                              ? "ETH"
-                              : `${
-                                  selectedNetworkId === 97
-                                    ? "BNB"
-                                    : selectedNetworkId === 80001
-                                    ? "MATIC"
-                                    : ""
-                                }`}
-                            <span className="ms-1" style={{ color: "#ff98d1" }}>
-                              *
-                            </span>
-                          </p>
-                        </label>
-                        <div className="input align-items-center">
-                          <input
-                            className="input-field"
-                            type="number"
-                            step="any"
-                            onWheel={(e) => e.target.blur()}
-                            min={0}
-                            value={formData?.amountInETH}
-                            name="amountInETH"
-                            id="amountInETH"
-                            onChange={onChange}
-                            style={{ marginRight: 15 }}
-                          />
-                          <img src={ether} alt="" width={32} height={32} />
-                        </div>
-                        {errors?.amountInETH && (
-                          <p
-                            className="m-0 position-absolute "
-                            style={{ color: "#ff98d1" }}
-                          >
-                            {errors?.amountInETH}
-                          </p>
-                        )}
-                        {msg && (
-                          <p
-                            className="m-0 position-absolute "
-                            style={{ color: "#ff98d1" }}
-                          >
-                            {msg}
-                          </p>
-                        )}
-                      </div>
-                      <div
-                        className="
-                      col-12 col-xl-6 mt-4 mt-xl-0 pe-0 ps-0 ps-xl-2"
-                      >
-                        <label>
-                          <p>Receive Drift</p>
-                        </label>
-                        <div className="input align-items-center">
-                          <input
-                            readOnly
-                            className="input-field"
-                            type="number"
-                            name="no_of_tokens"
-                            id="no_of_tokens"
-                            value={noOfToken || 0}
-                            style={{ marginRight: 15 }}
-                          />
-                          <img src={token} alt="" width={32} height={32} />
-                        </div>
-                      </div>
-                    </div>
-                    <div className="row w-100 p-0 m-0 mt-4 mt-xl-5">
-                      <div className="p-0">
-                        <div className="mb-3">
-                          <label style={{ marginBottom: 0 }}>
-                            Ambassador Code
-                          </label>
-                          <img
-                            alt=""
-                            style={{ marginLeft: 30, width: 29 }}
-                            src={ambassador}
-                          />
-                        </div>
-                        <div className="input">
-                          <input
-                            className="input-field"
-                            type="text"
-                            name="promoCode"
-                            id="promoCode"
-                            autoComplete="false"
-                            value={formData?.promoCode}
-                            onChange={onChange}
-                          />
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="mt-5 position-relative">
-                      <label className="me-2">
-                        Claiming Options
-                        <span className="ms-1" style={{ color: "#ff98d1" }}>
-                          *
-                        </span>
-                      </label>
-
-                      <div className="Info d-inline">
-                        <img src={iButton} alt="" />
-
-                        <div
-                          className="Claimimg_Option_Info position-absolute bg-white rounded-4 p-3"
-                          style={{ zIndex: 99999 }}
-                        >
-                          <p className="Info_Box_Text">
-                            The two claim options are aimed at incentivizing
-                            presale investors with different intentions (short
-                            or long-term). Additionally, these options will
-                            protect presale investors by mitigating initial sell
-                            pressure.
-                          </p>
-
-                          <p className="Info_Box_Text">
-                            Those who want to hold for at least 30 days via
-                            staking for an aggressive ETH return (claimable as
-                            soon as the token launches) should select the stake
-                            option.
-                          </p>
-
-                          <p className="Info_Box_Text">
-                            Those who want immediate access to their tokens at
-                            the start of trading should select to Receive their
-                            $DRIFT prior to open trading. These investors will
-                            face an elevated 25% sell fee for the first week of
-                            token trading. That reduces incrementally to the
-                            standard 5%. (This tax will go towards ETH staking
-                            rewards and in-game event prizes.)
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="row m-0 mt-3 ">
-                      <div className="RadioText TeamMember_Profile_Container  col-12 col-xxl-6 ps-0 pe-0 pe-xl-2 lh-1 ">
-                        <div className="d-flex align-items-start">
-                          <input
-                            className="me-2"
-                            type="radio"
-                            value={1}
-                            disabled={
-                              Number(data?.token_staked) >=
-                              Number(data?.staking_limit)
-                            }
-                            id="stake"
-                            name="isStake"
-                            onChange={onChange}
-                          />
-                          Stake Your Claim min 120% APY
-                        </div>
-                        <div className="mt-3">
-                          <p className="mb-2">
-                            Only 20% of Initial Sale can be staked.
-                          </p>
-                          <div
-                            className="progress ProgressBar position-relative"
-                            style={{ maxWidth: 230 }}
-                          >
-                            <div
-                              className="progress-bar ProgressDone"
-                              role="progressbar"
-                              style={{
-                                width: `${CalcPercenteage(
-                                  data?.token_staked || 0,
-                                  data?.staking_limit || 0
-                                )}%`,
-                              }}
-                              aria-valuenow={CalcPercenteage(
-                                data?.token_staked,
-                                data?.staking_limit
-                              )}
-                              aria-valuemin="0"
-                              aria-valuemax="100"
-                            ></div>
-                            <p className="PercentProgress position-absolute start-50 top-50 translate-middle mb-0">
-                              {CalcPercenteage(
-                                data?.token_staked,
-                                data?.staking_limit
-                              ).toFixed(2)}
-                              %
-                            </p>
-                          </div>
-                        </div>
-                        <p className="TeamMemberProfile_Bio m-0 mt-3 ">
-                          Stake Your $DRIFT at Launch for 30 days (earn min.
-                          120% APY in ETH for 30 days and earn a share of game
-                          revenue by staking longer)
-                        </p>
-                      </div>
-                      <div className="RadioText TeamMember_Profile_Container col-12 col-xxl-6 mt-2 mt-xxl-0 pe-0 ps-0 ps-xl-2 lh-1">
-                        <div className="d-flex align-items-start">
-                          <input
-                            type="radio"
-                            className="me-2"
-                            value={2}
-                            name="isStake"
-                            id="dynamic"
-                            onChange={onChange}
-                          />
-                          Claim for Dynamic Sell Fee Structure
-                        </div>
-                        <p className="TeamMemberProfile_Bio m-0 mt-3">
-                          Receive $DRIFT Airdrop Prior to Open Trading (and pay
-                          a Dynamic Sell Fee when you sell)
-                        </p>
-                      </div>
-                    </div>
-                    {errors?.isStake && (
-                      <p
-                        className="m-0 position-absolute"
-                        style={{ color: "#ff98d1" }}
-                      >
-                        {errors?.isStake}
-                      </p>
-                    )}
-                    <div className="d-flex mt-5 flex-column align-items-baseline justify-content-between flex-xxl-row align-items-xxl-center">
-                      <div className="mb-3 mb-xxl-0">
-                        <button type="submit" className="pinkBtn BtnStyle1">
-                          buy presale
-                        </button>
-                      </div>
-                      <Link
-                        to="/utilities"
-                        style={{ fontWeight: 800 }}
-                        className="text-uppercase"
-                      >
-                        Learn About Coin Utility
-                      </Link>
-                    </div>
-                  </form>
-                  {date >= data?.ico_start_time &&
-                  ((selectedNetworkId === 11155111 && !data?.is_open) ||
-                    (selectedNetworkId === 97 && !data?.is_openBNB) ||
-                    (selectedNetworkId === 80001 && !data?.is_openPOLYGON))
-                    ? (data?.is_open ||
-                        data?.is_openBNB ||
-                        data?.is_openPOLYGON) && (
-                        <div
-                          className="DTSC_Col bg-white  h-100 w-100 d-flex flex-column justify-content-center align-items-center text-center mt-3"
-                          style={{
-                            zIndex: 9,
-                          }}
-                        >
-                          <div className="d-flex pb-3 align-items-center">
-                            <img
-                              src={iButton}
-                              width={20}
-                              className="me-3"
-                              alt=""
-                            />
-                            <p className="DTSC_SubHeading fw-bold m-0 lh-0">
-                              Presale on{" "}
-                              {selectedNetworkId === 11155111
-                                ? "ETH"
-                                : selectedNetworkId === 97
-                                ? "BNB"
-                                : selectedNetworkId === 80001
-                                ? "POLYGON"
-                                : ""}{" "}
-                              is paused
-                            </p>
-                          </div>
-
-                          <p className="DTSC_SubHeading">
-                            There may be some allocation remaining on{" "}
-                            {selectedNetworkId === 11155111
-                              ? "BNB/POLYGON"
-                              : selectedNetworkId === 97
-                              ? "ETH/POLYGON"
-                              : selectedNetworkId === 80001
-                              ? "ETH/BNB"
-                              : ""}{" "}
-                            . Simply switch network through Drift dApp to that
-                            chain and participate in presale round.
-                          </p>
-                        </div>
-                      )
-                    : ""}
-                </div>
-              </div> */}
               <div
                 className="DTSC_Col rounded-4 bg-white mt-4 mt-md-0 position-relative shadow-none "
                 id="claim"
@@ -1182,94 +804,121 @@ function Home() {
                     </div>
                   </div>
                 </div>
+
                 <div className="mt-5 position-relative">
-                  <form
-                    className="position-relative"
-                    onSubmit={
-                      selectedNetworkId === 11155111 && chainId === 11155111
-                        ? handleSubmit
-                        : // : selectedNetworkId === 97 && chainId === 97
-                          // ? handleBNBSubmit
-                          // : selectedNetworkId === 80001 && chainId === 80001
-                          // ? handlePOLYGONSubmit
-                          null
-                    }
-                  >
-                    <div className="row p-0 m-0 ">
-                      <div className="col-12 p-0">
-                        <label>
-                          <p>PreDrift Tokens</p>
-                        </label>
-                        <div className="input align-items-center">
-                          <input
-                            readOnly
-                            className="input-field"
-                            type="number"
-                            name="no_of_tokens"
-                            id="no_of_tokens"
-                            value={user?.balance || 0}
-                            style={{ marginRight: 15 }}
-                          />
-                          <img src={token} alt="" width={32} height={32} />
+                  {user?.balance != 0 ? (
+                    <form className="position-relative" onSubmit={handleSubmit}>
+                      <div className="row p-0 m-0 ">
+                        <div className="col-12 p-0">
+                          <label>
+                            <p>PreDrift Tokens</p>
+                          </label>
+                          <div className="input align-items-center">
+                            <input
+                              readOnly
+                              className="input-field"
+                              type="number"
+                              name="no_of_tokens"
+                              id="no_of_tokens"
+                              value={ConvertNumber(user?.balance, true) || 0}
+                              style={{ marginRight: 15 }}
+                            />
+                            <img src={token} alt="" width={32} height={32} />
+                          </div>
                         </div>
                       </div>
-                    </div>
-                    <div className="row p-0 m-0 mt-3">
-                      <div className="col-12 col-xl-6 ps-0 pe-0 pe-xl-2">
-                        <label>
-                          <p>Staked Tokens</p>
-                        </label>
-                        <div className="input align-items-center">
-                          <input
-                            readOnly
-                            className="input-field"
-                            type="number"
-                            name="no_of_tokens"
-                            id="no_of_tokens"
-                            value={user?.Staked || 0}
-                            style={{ marginRight: 15 }}
-                          />
-                          <img src={token} alt="" width={32} height={32} />
+                      <div className="row p-0 m-0 mt-3">
+                        <div className="col-12 col-xl-6 ps-0 pe-0 pe-xl-2">
+                          <label>
+                            <p>Staked Tokens</p>
+                          </label>
+                          <div className="input align-items-center">
+                            <input
+                              readOnly
+                              className="input-field"
+                              type="number"
+                              name="no_of_tokens"
+                              id="no_of_tokens"
+                              value={user?.Staked || 0}
+                              style={{ marginRight: 15 }}
+                            />
+                            <img src={token} alt="" width={32} height={32} />
+                          </div>
                         </div>
-                      </div>
-                      <div
-                        className="
+                        <div
+                          className="
                       col-12 col-xl-6 mt-4 mt-xl-0 pe-0 ps-0 ps-xl-2"
-                      >
-                        <label>
-                          <p>Dynamic Tokens</p>
-                        </label>
-                        <div className="input align-items-center">
-                          <input
-                            readOnly
-                            className="input-field"
-                            type="number"
-                            name="no_of_tokens"
-                            id="no_of_tokens"
-                            value={user?.Dynamic || 0}
-                            style={{ marginRight: 15 }}
-                          />
+                        >
+                          <label>
+                            <p>Dynamic Tokens</p>
+                          </label>
+                          <div className="input align-items-center">
+                            <input
+                              readOnly
+                              className="input-field"
+                              type="number"
+                              name="no_of_tokens"
+                              id="no_of_tokens"
+                              value={user?.Dynamic || 0}
+                              style={{ marginRight: 15 }}
+                            />
 
-                          <img src={token} alt="" width={32} height={32} />
+                            <img src={token} alt="" width={32} height={32} />
+                          </div>
                         </div>
                       </div>
-                    </div>
 
-                    <div className="d-flex mt-5 flex-column align-items-baseline justify-content-between flex-xxl-row align-items-xxl-center">
-                      <div className="mb-3 mb-xxl-0">
-                        <button type="submit" className="pinkBtn BtnStyle1">
-                          Claim $Drift
-                        </button>
+                      <div className="d-flex mt-5 flex-column align-items-baseline justify-content-between flex-xxl-row align-items-xxl-center">
+                        <div className="mb-3 mb-xxl-0">
+                          {user?.is_allowed ? (
+                            <button type="submit" className="pinkBtn BtnStyle1">
+                              Claim $Drift
+                            </button>
+                          ) : (
+                            <button
+                              className="pinkBtn BtnStyle1"
+                              onClick={() => allow}
+                            >
+                              Allow
+                            </button>
+                          )}
+                        </div>
+                        <Link
+                          to="/utilities"
+                          style={{ fontWeight: 800 }}
+                          className="text-uppercase"
+                        >
+                          Learn About Coin Utility
+                        </Link>
                       </div>
-                      <Link
-                        to="/utilities"
-                        style={{ fontWeight: 800 }}
-                        className="text-uppercase"
-                      >
-                        Learn About Coin Utility
-                      </Link>
+                    </form>
+                  ) : (
+                    <div
+                      style={{ height: 264 }}
+                      className="white rounded-4  p-3 d-flex align-items-center justify-content-center"
+                    >
+                      {user?.claimed && user?.balance == 0 ? <div className="d-flex flex-column justify-content-center align-items-center">
+                        <img src={driftLogo} height={100} />
+                        <p className="m-0 p-0 mt-3 text-center  align-self-center">
+                          🎉{" "}
+                          <span className="Home_Hero_Section_SubHeading fw-bold text-uppercase text-black">
+                            Congratulations!
+                          </span>
+                          <br />
+                          You've successfully claimed your Drift Token!{" "}
+                        </p>
+                      </div>
+                      :
+                      <div>
+                        <p className="m-0 p-0 mt-3 text-center  ">                          
+                        Unable to claim tokens at the moment.
+                        </p>
+                      </div>
+                      
+                      }
+                      
                     </div>
-                  </form>
+                  )}
                 </div>
               </div>
             </div>

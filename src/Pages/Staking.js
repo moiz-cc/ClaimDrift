@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 
 import { useState } from "react";
 import { useSelector } from "react-redux";
+import ConvertNumber from "../Helpers/ConvertNumber";
 
 const Staking = () => {
   const [tokens, setTokens] = useState(0);
@@ -106,9 +107,9 @@ col-12 col-sm-6 pe-0 ps-0 ps-sm-2 d-flex justify-content-end align-items-end "
                         className="m-0 p-0 me-2 fw-bold"
                         style={{ color: "#ff4bae" }}
                       >
-                        $3.0
+                        120%
                       </h4>
-                      <p className="m-0 p-0">3.8%</p>
+                      <p className="m-0 p-0">APY</p>
                     </div>
                   </div>
                 </div>
@@ -131,7 +132,7 @@ col-12 col-sm-6 pe-0 ps-0 ps-sm-2 d-flex justify-content-end align-items-end "
                           fontSize: 12,
                         }}
                       >
-                        Current Staked Amount
+                        Your Staked Tokens
                       </p>
                       <p
                         className="
@@ -153,14 +154,14 @@ col-12 col-sm-6 pe-0 ps-0 ps-sm-2 d-flex justify-content-end align-items-end "
                           fontSize: 12,
                         }}
                       >
-                        total balance
+                        Your Dynamic Tokens
                       </p>
                       <p
                         className="
                       DTSC_SubHeading mb-0 text-uppercase fw-bold "
                         style={{ color: "#ff4bae" }}
                       >
-                        {user?.balance} $Drift
+                   {user?.Dynamic} $Drift
                       </p>
                     </div>
                   </div>

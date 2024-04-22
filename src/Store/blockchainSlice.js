@@ -139,13 +139,18 @@ export const LoadUser = createAsyncThunk(
 
       const info = await contractInst.methods.getAmbassadorInfo(address).call();
 
+      const is_allowed = await contractInstToken.methods.allowance(address, process.env.REACT_APP_CLAIM_ETH).call()
+      
+
       return {
-        balance: ConvertNumber(balance, true),
+        balance,
         Staked: ConvertNumber(Staked, true),
         Dynamic: ConvertNumber(Dynamic, true),
         invest_amount: total_investment,
         is_ambassador_eligible,
         ambassador_code,
+        claimed: balance == 0 && Staked>0 || Dynamic > 0 ?true:false,
+        is_allowed:is_allowed>0?true:false,
         tier: parseInt(info._tier),
       };
     } catch (error) {
