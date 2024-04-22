@@ -15,9 +15,14 @@ const initialState = {
   web3Inst: null,
   contractInstToken: null,
   contractInstClaim: null,
-  // contractInstBNB: null,
-  // web3InstBNB: null,
-  // contractInstTokenBNB: null,
+  contractInstBNB: null,
+  web3InstBNB: null,
+  contractInstTokenBNB: null,
+  contractInstClaimBNB: null,
+  contractInstPOLYGON: null,
+  web3InstPOLYGON: null,
+  contractInstTokenPOLYGON: null,
+  contractInstClaimPOLYGON: null,
 
   user: null,
   publicBlockchainData: null,
@@ -114,7 +119,7 @@ export const LoadBlockchainData = createAsyncThunk(
 export const LoadUser = createAsyncThunk(
   "LoadUser",
   async (data, { rejectWithValue }) => {
-    const { contractInst, address, contractInstToken } = data;
+    const { contractInst, address, contractInstToken, claim_address } = data;
 
     try {
       const balance = await contractInstToken.methods.balanceOf(address).call();
@@ -139,8 +144,9 @@ export const LoadUser = createAsyncThunk(
 
       const info = await contractInst.methods.getAmbassadorInfo(address).call();
 
-      const is_allowed = await contractInstToken.methods.allowance(address, process.env.REACT_APP_CLAIM_ETH).call()
-      
+      const is_allowed = await contractInstToken.methods
+        .allowance(address, claim_address)
+        .call();
 
       return {
         balance,
@@ -149,8 +155,8 @@ export const LoadUser = createAsyncThunk(
         invest_amount: total_investment,
         is_ambassador_eligible,
         ambassador_code,
-        claimed: balance == 0 && Staked>0 || Dynamic > 0 ?true:false,
-        is_allowed:is_allowed>0?true:false,
+        claimed: (balance == 0 && Staked > 0) || Dynamic > 0 ? true : false,
+        is_allowed: is_allowed >= balance,
         tier: parseInt(info._tier),
       };
     } catch (error) {

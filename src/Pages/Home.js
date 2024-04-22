@@ -1,13 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { MetaMaskAvatar } from "react-metamask-avatar";
-import ReactSpeedometer from "react-d3-speedometer";
 import dot from "../Assets/Images/Dot.svg";
 import eth from "../Assets/Images/Ethereum.svg";
 import polygon from "../Assets/Images/Polygon.svg";
 import presale_ended from "../Assets/Images/PresaleEnded.png";
 import driftLogo from "../Assets/Images/Drift Logo Spin.svg";
 
-import pulse from "../Assets/Images/Pulse.svg";
 import bnb from "../Assets/Images/BNB.svg";
 // import ambassadorIcon from "../Assets/Images/AmbassadorIcon.svg";
 import calendar from "../Assets/Images/calendar-icon.svg";
@@ -19,9 +16,6 @@ import twitter from "../Assets/Images/Twitter_Icon.png";
 import breakdown from "../Assets/Images/AllocationBreakdown.png";
 import presaleFunds from "../Assets/Images/PresaleUseofFunds.png";
 import token from "../Assets/Images/Drift_Icon.svg";
-import ether from "../Assets/Images/Eth input.svg";
-import ambassador from "../Assets/Images/I.svg";
-import iButton from "../Assets/Images/iButton.svg";
 import Presale from "../Assets/Images/Presale.svg";
 import Lp from "../Assets/Images/Lp.svg";
 import ReserveTank from "../Assets/Images/ReserveTank.svg";
@@ -33,11 +27,7 @@ import Loading from "../Assets/Images/loading.gif";
 import paul from "../Assets/Images/paul.svg";
 import michael from "../Assets/Images/michael.svg";
 import sophie from "../Assets/Images/sophie.svg";
-// import ProfileIcon from "../Assets/Images/GreyCircle_Icon.svg";
-import GoldCircle_Icon from "../Assets/Images/GoldTier.png";
-import GreyCircle_Icon from "../Assets/Images/SilverTier.png";
-import BronzeCircle_Icon from "../Assets/Images/BronzeTier.png";
-import Badge_Icon from "../Assets/Images/Badge_Icon.svg";
+
 import checked from "../Assets/Images/marked.png";
 import unchecked from "../Assets/Images/unmarked.png";
 
@@ -51,10 +41,8 @@ import {
   useWeb3ModalState,
 } from "@web3modal/ethers5/react";
 import ConvertNumber from "../Helpers/ConvertNumber";
-import CalcPercenteage from "../Helpers/CalcPercentage";
 
 import { LoadBlockchainData, LoadUser } from "../Store/blockchainSlice";
-import Timer from "../Component/Timer";
 
 function Home() {
   const dispatch = useDispatch();
@@ -62,15 +50,18 @@ function Home() {
     publicBlockchainData: data,
     user,
     contractInst,
+    contractInstBNB,
+    contractInstPOLYGON,
     contractInstToken,
     contractInstTokenBNB,
     contractInstTokenPOLYGON,
-
     contractInstClaim,
     contractInstClaimBNB,
     contractInstClaimPOLYGON,
 
     web3Inst,
+    web3InstBNB,
+    web3InstPOLYGON,
   } = useSelector((state) => state.Blockchain);
 
   const date = Date.now() / 1000;
@@ -80,6 +71,7 @@ function Home() {
   const { open } = useWeb3Modal();
 
   const [transactionModal, setTransactionModal] = useState(false);
+
   const [loading, setLoading] = useState(false);
   const [txHash, setTxHash] = useState("");
 
@@ -102,40 +94,39 @@ function Home() {
     return x;
   }
 
-  // const onChange = (e) => {
-  //   const { name, value } = e.target;
-
-  //   if (name == "isStake" && value == 1) {
-  //     setFormData({ ...formData, [name]: true });
-  //   } else if (name == "isStake" && value == 2) {
-  //     setFormData({ ...formData, [name]: false });
-  //   } else {
-  //     setFormData({ ...formData, [name]: value });
-  //   }
-  //   setErrors({ ...errors, [name]: "" });
-  // };
-
   const allow = async (e) => {
+    e.preventDefault();
+
     let presale_TokenAddress;
     let claim_TokenAddress;
     let token_Inst;
+    let ico_Inst;
 
     if (selectedNetworkId === 11155111 && chainId === 11155111) {
       presale_TokenAddress = process.env.REACT_APP_TOKEN_CONTRACT_ETH;
       claim_TokenAddress = process.env.REACT_APP_CLAIM_ETH;
       token_Inst = contractInstToken;
+      ico_Inst = contractInst;
     } else if (selectedNetworkId === 97 && chainId === 97) {
       presale_TokenAddress = process.env.REACT_APP_TOKEN_CONTRACT_BNB;
       claim_TokenAddress = process.env.REACT_APP_CLAIM_BNB;
+      token_Inst = contractInstTokenBNB;
+      ico_Inst = contractInstBNB;
+
       token_Inst = contractInstTokenBNB;
     } else if (selectedNetworkId === 80001 && chainId === 80001) {
       presale_TokenAddress = process.env.REACT_APP_TOKEN_CONTRACT_POLYGON;
       claim_TokenAddress = process.env.REACT_APP_CLAIM_POLYGON;
       token_Inst = contractInstTokenPOLYGON;
+      token_Inst = contractInstTokenPOLYGON;
+      ico_Inst = contractInstPOLYGON;
     } else return;
 
     try {
-      const approve = await token_Inst.methods.approve(
+      setTransactionModal(true);
+      setLoading(true);
+
+      const approve = await contractInstToken.methods.approve(
         claim_TokenAddress,
         user?.balance
       );
@@ -154,23 +145,30 @@ function Home() {
       transaction
         .on("transactionHash", (txHash) => {
           console.log(txHash);
-          setTxHash(txHash);
+          // setTxHash(txHash);
         })
         .on("receipt", async (receipt) => {
           console.log("RECEIPT => \n", receipt);
 
           setErrors((state) => ({ ...state, transaction: "" }));
-          dispatch(LoadUser({ contractInst, address, contractInstToken }));
+          dispatch(
+            LoadUser({
+              contractInst: ico_Inst,
+              address,
+              contractInstToken: token_Inst,
+              claim_address: claim_TokenAddress,
+            })
+          );
 
-          // setLoading(false);
+          handleSubmit(e);
         })
         .on("error", async (error, receipt) => {
           console.log("ERROR => \n", error);
 
-          // setLoading(false);
+          setLoading(false);
 
           const errorMsg = await getErrorMessage(error, chainId);
-          // setErrors({ ...errors, transaction: errorMsg });
+          setErrors({ ...errors, transaction: errorMsg });
           console.log("RECEIPT ERROR => \n", receipt);
 
           if (receipt?.transactionHash) {
@@ -179,8 +177,9 @@ function Home() {
         });
     } catch (error) {
       const errorMsg = await getErrorMessage(error, chainId);
-
+      console.log(errorMsg);
       setErrors((state) => ({ ...state, transaction: errorMsg }));
+      setLoading(false);
     }
   };
 
@@ -231,7 +230,14 @@ function Home() {
           console.log("RECEIPT => \n", receipt);
 
           setErrors((state) => ({ ...state, transaction: "" }));
-          dispatch(LoadUser({ contractInst, address, contractInstToken }));
+          dispatch(
+            LoadUser({
+              contractInst,
+              address,
+              contractInstToken,
+              claim_address: claimAddress,
+            })
+          );
           dispatch(
             LoadBlockchainData({
               contractInst,
@@ -263,201 +269,16 @@ function Home() {
     }
   };
 
-  // const handleBNBSubmit = async (e) => {
-  //   e.preventDefault();
-
-  //   if (!address) {
-  //     open();
-  //     return;
-  //   }
-
-  //   if (formData?.amountInETH === "" || formData?.amountInETH == 0) {
-  //     setErrors((state) => ({ ...state, amountInETH: "Amount is required" }));
-
-  //     return;
-  //   }
-
-  //   if (formData?.isStake === null) {
-  //     setErrors((state) => ({ ...state, isStake: "Select any one option" }));
-
-  //     return;
-  //   }
-
-  //   try {
-  //     const isStake = formData?.isStake;
-  //     const promoCode =
-  //       formData?.promoCode.length > 0 ? formData?.promoCode : "";
-
-  //     setTransactionModal(true);
-  //     setLoading(true);
-  //     const transferTokens = await contractInstBNB.methods.buyTokens(
-  //       promoCode,
-  //       isStake
-  //     );
-
-  //     const estimateGas = await transferTokens.estimateGas({
-  //       from: address,
-  //       value: ConvertNumber(formData?.amountInETH, false),
-  //     });
-
-  //     const transaction = transferTokens.send({
-  //       from: address,
-  //       to: process.env.REACT_APP_CROWDSALE_BNB,
-  //       gas: estimateGas,
-  //       maxPriorityFeePerGas: 50000000000,
-  //       value: ConvertNumber(formData?.amountInETH, false),
-  //     });
-
-  //     transaction
-  //       .on("transactionHash", (txHash) => {
-  //         console.log(txHash);
-  //         setTxHash(txHash);
-  //       })
-  //       .on("receipt", async (receipt) => {
-  //         console.log("RECEIPT => \n", receipt);
-
-  //         setErrors((state) => ({ ...state, transaction: "" }));
-  //         dispatch(
-  //           LoadUser({
-  //             contractInst: contractInstBNB,
-  //             address,
-  //             web3Inst: web3InstBNB,
-  //           })
-  //         );
-  //         dispatch(
-  //           LoadBlockchainData({
-  //             contractInst,
-  //             web3Inst,
-  //             contractInstBNB,
-  //             web3InstBNB,
-  //           })
-  //         );
-  //         setLoading(false);
-  //       })
-  //       .on("error", async (error, receipt) => {
-  //         console.log("ERROR => \n", error);
-
-  //         setLoading(false);
-
-  //         const errorMsg = await getErrorMessage(error, chainId);
-  //         setErrors({ ...errors, transaction: errorMsg });
-  //         console.log("RECEIPT ERROR => \n", receipt);
-
-  //         if (receipt?.transactionHash) {
-  //           setTxHash(receipt.transactionHash);
-  //         }
-  //       });
-  //   } catch (error) {
-  //     const errorMsg = await getErrorMessage(error, chainId);
-
-  //     setErrors((state) => ({ ...state, transaction: errorMsg }));
-  //     setLoading(false);
-  //   }
-  // };
-
   const closeTransactionModal = () => {
     setTransactionModal(false);
+
     setIsAmbassador(null);
-    // setExtraTokens(0);
-    // setNoOfToken(0);
-    // setFormData({
-    //   amountInETH: 0,
-    //   promoCode: "",
-    //   isStake: null,
-    // });
+
     setErrors({
-      // amountInETH: "",
-      // promoCode: "",
-      // isStake: "",
       transaction: "",
     });
     setTxHash("");
-
-    window.location.reload();
   };
-
-  // useEffect(() => {
-  //   let tokens =
-  //     (selectedNetworkId === 11155111
-  //       ? formData?.amountInETH * ethPrice
-  //       : selectedNetworkId === 97
-  //       ? formData?.amountInETH * bnbPrice
-  //       : selectedNetworkId === 80001
-  //       ? formData?.amountInETH * maticPrice
-  //       : 0) / data?.ico_price;
-
-  //   setNoOfToken(tokens);
-
-  //   if (
-  //     formData?.promoCode &&
-  //     formData?.promoCode !== "0x" &&
-  //     formData?.promoCode !== "0"
-  //   ) {
-  //     let extraTokens = (tokens * 5) / 100;
-
-  //     setExtraTokens(extraTokens);
-  //   }
-
-  //   if (user) {
-  //     const eligible_bronze = parseInt(
-  //       selectedNetworkId === 11155111
-  //         ? data?.bronze_eligible
-  //         : selectedNetworkId === 97
-  //         ? data?.bronze_eligibleBNB
-  //         : ""
-  //     );
-  //     const eligible_silver = parseInt(
-  //       selectedNetworkId === 11155111
-  //         ? data?.silver_eligible
-  //         : selectedNetworkId === 97
-  //         ? data?.silver_eligibleBNB
-  //         : ""
-  //     );
-
-  //     let totalInvested = parseInt(user.invest_amount);
-  //     const newTransaction = parseInt(ConvertNumber(formData.amountInETH));
-  //     totalInvested += newTransaction;
-
-  //     if (formData.amountInETH > 0 && totalInvested < eligible_bronze) {
-  //       const needMore = ConvertNumber(eligible_bronze - totalInvested, true);
-  //       setMsg(
-  //         `Invest ${needMore} ${
-  //           selectedNetworkId === 11155111
-  //             ? "ETH"
-  //             : selectedNetworkId === 97
-  //             ? "BNB"
-  //             : selectedNetworkId === 80001
-  //             ? "MATIC"
-  //             : ""
-  //         } more to become a Bronze Ambassador`
-  //       );
-  //     } else if (formData.amountInETH > 0 && totalInvested < eligible_silver) {
-  //       const needMore = ConvertNumber(eligible_silver - totalInvested, true);
-  //       setMsg(
-  //         `Invest ${needMore} ${
-  //           selectedNetworkId === 11155111
-  //             ? "ETH"
-  //             : selectedNetworkId === 97
-  //             ? "BNB"
-  //             : selectedNetworkId === 80001
-  //             ? "MATIC"
-  //             : ""
-  //         } more to become a Silver Ambassador`
-  //       );
-  //     } else {
-  //       setMsg(null);
-  //     }
-  //   }
-  // }, [formData, chainId]);
-
-  // useEffect(() => {
-  //   if (
-  //     typeof user?.is_ambassador_eligible === "boolean" &&
-  //     isAmbassador === null
-  //   ) {
-  //     setIsAmbassador(user.is_ambassador_eligible);
-  //   }
-  // }, [user, isConnected, isAmbassador]);
 
   useEffect(() => {
     // 👇️ scroll to top on page load
@@ -560,83 +381,16 @@ function Home() {
                     <p className="text-start text-black">
                       You have successfully Claimed $DRIFT tokens!
                     </p>
-                    {/* {formData?.promoCode && formData?.promoCode !== "0x" ? (
-                      <>
-                        <p className="text-start text-black mb-0">
-                          You got a extra {extraTokens} bonus by using an
-                          AMBA$$ADOR CODE!{" "}
-                        </p>
-                        <p className="text-start text-black ">
-                          Your total is {noOfToken + extraTokens}
-                        </p>
-                      </>
-                    ) : (
-                      <></>
-                    )} */}
-                    {/* {isAmbassador !== user.is_ambassador_eligible && (
-                      <>
-                        <p className="text-start text-black w-100">
-                          {" "}
-                          Congratulations! Your investment amount has qualified
-                          you for{" "}
-                          {user?.tier === 2 ? (
-                            <>Silver</>
-                          ) : (
-                            <>{user?.tier === 3 ? <>Bronze</> : <></>}</>
-                          )}{" "}
-                          tier in our ambassador program
-                        </p>
-                        <p className="text-start text-black w-100">
-                          To activate your promo code{" "}
-                          <div className="Info d-inline">
-                            <img src={iButton} alt="" />
 
-                            <div className="Claimimg_Option_Info position-absolute bg-white rounded-4 p-3 mx-3">
-                              <p className="Info_Box_Text m-0">
-                                you are now eligible to earn{" "}
-                                {user?.tier === 2 ? (
-                                  <>{data.silver_commission}</>
-                                ) : (
-                                  <>
-                                    {user?.tier === 3 ? (
-                                      <>{data.bronze_commission}</>
-                                    ) : (
-                                      <></>
-                                    )}
-                                  </>
-                                )}
-                                % commission from all investment brought in
-                                through your promocode. your followers will be
-                                awarded 5% bonus supply
-                              </p>
-                            </div>
-                          </div>
-                          , head over to{" "}
-                          <Link
-                            target="_blank"
-                            to={"https://influ3nce.me/ambassador"}
-                          >
-                            influ3nce.me/ambassador
-                          </Link>{" "}
-                          and publish your code on chain
-                        </p>
-                      </>
-                    )} */}
-                    {/* <p className="text-start text-black mb-0 fw-bold">
-                      {" "}
-                      What to expect next:{" "}
-                    </p> */}
-                    {/* <p className="text-start text-black ">
-                      {" "}
-                      You will receive the Tradable token at the time of launch
-                    </p> */}
                     <p className="text-start text-black ">
                       <span className="fw-bold">Import contract :</span>{" "}
                       {selectedNetworkId === 11155111
                         ? process.env.REACT_APP_DRIFT_ETH
                         : selectedNetworkId === 97
-                        ? process.env.REACT_APP_TOKEN_CONTRACT_BNB
-                        : null}
+                        ? process.env.REACT_APP_DRIFT_BNB
+                        : selectedNetworkId === 80001
+                        ? process.env.REACT_APP_DRIFT_POLYGON
+                        : null}{" "}
                       to view your tokens.{" "}
                     </p>
                     <p className="text-start text-black mb-0 fw-bold">
@@ -807,7 +561,7 @@ function Home() {
 
                 <div className="mt-5 position-relative">
                   {user?.balance != 0 ? (
-                    <form className="position-relative" onSubmit={handleSubmit}>
+                    <form className="position-relative">
                       <div className="row p-0 m-0 ">
                         <div className="col-12 p-0">
                           <label>
@@ -871,15 +625,18 @@ function Home() {
                       <div className="d-flex mt-5 flex-column align-items-baseline justify-content-between flex-xxl-row align-items-xxl-center">
                         <div className="mb-3 mb-xxl-0">
                           {user?.is_allowed ? (
-                            <button type="submit" className="pinkBtn BtnStyle1">
+                            <button
+                              className="pinkBtn BtnStyle1"
+                              onClick={handleSubmit}
+                            >
                               Claim $Drift
                             </button>
                           ) : (
                             <button
                               className="pinkBtn BtnStyle1"
-                              onClick={() => allow}
+                              onClick={allow}
                             >
-                              Allow
+                              Allow pre $drift
                             </button>
                           )}
                         </div>
@@ -897,26 +654,25 @@ function Home() {
                       style={{ height: 264 }}
                       className="white rounded-4  p-3 d-flex align-items-center justify-content-center"
                     >
-                      {user?.claimed && user?.balance == 0 ? <div className="d-flex flex-column justify-content-center align-items-center">
-                        <img src={driftLogo} height={100} />
-                        <p className="m-0 p-0 mt-3 text-center  align-self-center">
-                          🎉{" "}
-                          <span className="Home_Hero_Section_SubHeading fw-bold text-uppercase text-black">
-                            Congratulations!
-                          </span>
-                          <br />
-                          You've successfully claimed your Drift Token!{" "}
-                        </p>
-                      </div>
-                      :
-                      <div>
-                        <p className="m-0 p-0 mt-3 text-center  ">                          
-                        Unable to claim tokens at the moment.
-                        </p>
-                      </div>
-                      
-                      }
-                      
+                      {user?.claimed && user?.balance == 0 ? (
+                        <div className="d-flex flex-column justify-content-center align-items-center">
+                          <img src={driftLogo} height={100} />
+                          <p className="m-0 p-0 mt-3 text-center  align-self-center">
+                            🎉{" "}
+                            <span className="Home_Hero_Section_SubHeading fw-bold text-uppercase text-black">
+                              Congratulations!
+                            </span>
+                            <br />
+                            You've successfully claimed your Drift Token!{" "}
+                          </p>
+                        </div>
+                      ) : (
+                        <div>
+                          <p className="m-0 p-0 mt-3 text-center  ">
+                            Unable to claim tokens at the moment.
+                          </p>
+                        </div>
+                      )}
                     </div>
                   )}
                 </div>

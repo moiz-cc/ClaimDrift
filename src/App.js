@@ -133,6 +133,7 @@ function App() {
               contractInst,
               address: address.trim(),
               contractInstToken,
+              claim_address: process.env.REACT_APP_CLAIM_ETH,
             })
           )
         : // : selectedNetworkId === 97
