@@ -55,20 +55,13 @@ function Home() {
     contractInstTokenBNB,
     contractInstPOLYGON,
     contractInstTokenPOLYGON,
-
     contractInstClaim,
     contractInstClaimBNB,
     contractInstClaimPOLYGON,
-    ethPrice,
-    bnbPrice,
-    maticPrice,
     web3Inst,
     web3InstBNB,
     web3InstPOLYGON,
-    ambassadorList,
   } = useSelector((state) => state.Blockchain);
-
-  const date = Date.now() / 1000;
 
   const { address, isConnected, chainId } = useWeb3ModalAccount();
   const { selectedNetworkId } = useWeb3ModalState();
@@ -77,9 +70,6 @@ function Home() {
   const [transactionModal, setTransactionModal] = useState(false);
   const [loading, setLoading] = useState(false);
   const [txHash, setTxHash] = useState("");
-  const [noOfToken, setNoOfToken] = useState(0);
-  const [extraTokens, setExtraTokens] = useState(0);
-  const [isAmbassador, setIsAmbassador] = useState(null);
 
   const [errors, setErrors] = useState({
     transaction: "",
@@ -272,7 +262,6 @@ function Home() {
   };
   const closeTransactionModal = () => {
     setTransactionModal(false);
-    setIsAmbassador(null);
 
     setErrors({
       transaction: "",
@@ -696,13 +685,11 @@ function Home() {
               {/* <div className="py-3">
                 <div className="DTSC_Col rounded-4 bg-white">
                   <p className="DTSC_SubHeading mb-0 text-uppercase fw-bold text-black">
-                    Ambassador Payout to date
+                  Ambassador Payout to date
                   </p>
                   <h2 className="DTSC_Heading text-black mb-0">
-                    ${(data?.ambassadors_payout * ethPrice || 0).toFixed()}
-                  </h2>
-                </div>
-              </div>
+                   ${(data?.ambassadors_payout * ethPrice || 0).toFixed()}
+                  
               <div className="p-0">
                 <div className="DTSC_Col rounded-4 bg-white">
                   <div className="d-flex justify-content-between align-items-center">
