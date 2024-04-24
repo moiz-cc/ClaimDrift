@@ -708,6 +708,9 @@ function Home() {
                         </div>
                       ) : (
                         <div>
+                          <p className="m-0 p-0 mt-3 text-center  fw-bold">
+                            No Presale $DRIFT tokens found in connected wallet.
+                          </p>
                           <p className="m-0 p-0 mt-3 text-center  ">
                             Unable to claim tokens at the moment.
                           </p>
