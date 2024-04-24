@@ -33,15 +33,23 @@ import Staking from "./Pages/Staking.js";
 function App() {
   const dispatch = useDispatch();
   const {
+    web3Inst,
     contractInst,
     contractInstToken,
-    contractInstTokenBNB,
-    contractInstTokenPOLYGON,
-    web3Inst,
-    contractInstBNB,
+    contractInstDrift,
+    contractInstClaim,
+
     web3InstBNB,
-    contractInstPOLYGON,
+    contractInstBNB,
+    contractInstTokenBNB,
+    contractInstDriftBNB,
+    contractInstClaimBNB,
+
     web3InstPOLYGON,
+    contractInstTokenPOLYGON,
+    contractInstPOLYGON,
+    contractInstDriftPOLYGON,
+    contractInstClaimPOLYGON,
   } = useSelector((state) => state.Blockchain);
   const { walletProvider } = useWeb3ModalSigner();
 
@@ -103,10 +111,15 @@ function App() {
         LoadBlockchainData({
           contractInst,
           web3Inst,
+          contractInstDrift,
+
           contractInstBNB,
           web3InstBNB,
+          contractInstDriftBNB,
+
           contractInstPOLYGON,
           web3InstPOLYGON,
+          contractInstDriftPOLYGON,
         })
       );
     }
@@ -121,6 +134,7 @@ function App() {
               address: address.trim(),
               contractInstToken,
               claim_address: process.env.REACT_APP_CLAIM_ETH,
+              contractInstClaim,
             })
           )
         : selectedNetworkId === 56
@@ -130,6 +144,7 @@ function App() {
               address: address.trim(),
               contractInstToken: contractInstTokenBNB,
               claim_address: process.env.REACT_APP_CLAIM_BNB,
+              contractInstClaim: contractInstClaimBNB,
             })
           )
         : selectedNetworkId === 137
@@ -139,6 +154,7 @@ function App() {
               address: address.trim(),
               contractInstToken: contractInstTokenPOLYGON,
               claim_address: process.env.REACT_APP_CLAIM_POLYGON,
+              contractInstClaim: contractInstClaimPOLYGON,
             })
           )
         : dispatch(UpdateUser(null));
