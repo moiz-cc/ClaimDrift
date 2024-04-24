@@ -234,7 +234,7 @@ function Home() {
       .allowance(address, claim_Address)
       .call();
 
-    if (is_allowed < user?.balance) {
+    if (Number(is_allowed) < Number(user?.balance)) {
       console.log("Allowance Required");
       console.log(is_allowed);
       setErrors((state) => ({
