@@ -170,13 +170,8 @@ export const LoadBlockchainData = createAsyncThunk(
 export const LoadUser = createAsyncThunk(
   "LoadUser",
   async (data, { rejectWithValue }) => {
-    const {
-      contractInst,
-      address,
-      contractInstToken,
-      claim_address,
-      contractInstClaim,
-    } = data;
+    const { contractInst, address, contractInstToken, contractInstClaim } =
+      data;
 
     try {
       const balance = await contractInstToken.methods.balanceOf(address).call();
@@ -199,11 +194,7 @@ export const LoadUser = createAsyncThunk(
         .isAmbassadorEligible(address)
         .call();
 
-      const info = contractInst.methods.getAmbassadorInfo(address).call();
-
-      const is_allowed = await contractInstToken.methods
-        .allowance(address, claim_address)
-        .call();
+      const info = await contractInst.methods.getAmbassadorInfo(address).call();
 
       const tokensToMove = await contractInstClaim.methods
         .getStakeAmountOfDynamicToStake(address)
@@ -217,7 +208,6 @@ export const LoadUser = createAsyncThunk(
         is_ambassador_eligible,
         ambassador_code,
         claimed: balance == 0 && (Staked > 0 || Dynamic > 0) ? true : false,
-        is_allowed: is_allowed >= balance && (Staked > 0 || Dynamic > 0),
         tier: parseInt(info._tier),
       };
     } catch (error) {

@@ -170,7 +170,7 @@ function Home() {
               contractInst: ico_Inst,
               address,
               contractInstToken: token_Inst,
-              claim_address: claim_TokenAddress,
+
               contractInstClaim: claim_Inst,
             })
           );
@@ -283,7 +283,7 @@ function Home() {
               contractInst: ico_Inst,
               address,
               contractInstToken: token_Inst,
-              claim_address: claim_Address,
+              
               contractInstClaim: claim_Inst,
             })
           );

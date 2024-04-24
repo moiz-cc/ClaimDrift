@@ -133,7 +133,7 @@ function App() {
               contractInst,
               address: address.trim(),
               contractInstToken,
-              claim_address: process.env.REACT_APP_CLAIM_ETH,
+
               contractInstClaim,
             })
           )
@@ -143,7 +143,7 @@ function App() {
               contractInst: contractInstBNB,
               address: address.trim(),
               contractInstToken: contractInstTokenBNB,
-              claim_address: process.env.REACT_APP_CLAIM_BNB,
+
               contractInstClaim: contractInstClaimBNB,
             })
           )
@@ -153,7 +153,7 @@ function App() {
               contractInst: contractInstPOLYGON,
               address: address.trim(),
               contractInstToken: contractInstTokenPOLYGON,
-              claim_address: process.env.REACT_APP_CLAIM_POLYGON,
+
               contractInstClaim: contractInstClaimPOLYGON,
             })
           )
