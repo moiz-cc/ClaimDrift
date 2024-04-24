@@ -220,7 +220,9 @@ function Home() {
       .allowance(address, claim_Address)
       .call();
 
-    if (is_allowed < user?.balance) {
+    console.log(user?.balance, is_allowed);
+
+    if (Number(is_allowed) < Number(user?.balance)) {
       console.log("Allowance Required");
       console.log(is_allowed);
       setErrors((state) => ({
@@ -527,7 +529,7 @@ function Home() {
               {isLoading && (
                 <div
                   className="w-100 h-100 bg-white position-absolute rounded-4 d-flex justify-content-center align-items-center"
-                  style={{ zIndex: 999 }}
+                  style={{ zIndex: 9 }}
                 >
                   <img src={Loading} style={{ width: 50 }} alt="loading" />
                 </div>
