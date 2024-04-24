@@ -35,6 +35,9 @@ function App() {
   const {
     contractInst,
     contractInstToken,
+    contractInstDrift,
+    contractInstClaim,
+    
     // contractInstTokenBNB,
     web3Inst,
     // contractInstBNB,
@@ -118,6 +121,7 @@ function App() {
         LoadBlockchainData({
           contractInst,
           web3Inst,
+          contractInstDrift,
           // contractInstBNB,
           // web3InstBNB,
         })
@@ -134,6 +138,7 @@ function App() {
               address: address.trim(),
               contractInstToken,
               claim_address: process.env.REACT_APP_CLAIM_ETH,
+              contractInstClaim,
             })
           )
         : // : selectedNetworkId === 97
@@ -210,7 +215,7 @@ function App() {
         <Route path="/utilities" element={<Utilities />} />
         <Route path="/ambassador" element={<Ambassador />} />
         <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-        <Route path="/stake" element={<Staking />} />
+        {/* <Route path="/stake" element={<Staking />} /> */}
         <Route
           path="/price-risk-disclosure"
           element={<PriceRiskDisclosure />}

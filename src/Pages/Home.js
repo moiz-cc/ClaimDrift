@@ -58,8 +58,9 @@ function Home() {
     contractInstClaim,
     contractInstClaimBNB,
     contractInstClaimPOLYGON,
-
+    contractInstDrift,
     web3Inst,
+    isLoading,
     web3InstBNB,
     web3InstPOLYGON,
   } = useSelector((state) => state.Blockchain);
@@ -81,6 +82,8 @@ function Home() {
     transaction: "",
   });
 
+  const [needAllowance, setNeedAllowance] = useState(false);
+
   function scroll() {
     document
       .getElementById("Presale_Form")
@@ -96,37 +99,38 @@ function Home() {
 
   const allow = async (e) => {
     e.preventDefault();
+    setTransactionModal(true);
+
+    setLoading(true);
 
     let presale_TokenAddress;
     let claim_TokenAddress;
     let token_Inst;
     let ico_Inst;
+    let claim_Inst;
 
     if (selectedNetworkId === 11155111 && chainId === 11155111) {
       presale_TokenAddress = process.env.REACT_APP_TOKEN_CONTRACT_ETH;
       claim_TokenAddress = process.env.REACT_APP_CLAIM_ETH;
       token_Inst = contractInstToken;
       ico_Inst = contractInst;
+      claim_Inst = contractInstClaim;
     } else if (selectedNetworkId === 97 && chainId === 97) {
       presale_TokenAddress = process.env.REACT_APP_TOKEN_CONTRACT_BNB;
       claim_TokenAddress = process.env.REACT_APP_CLAIM_BNB;
       token_Inst = contractInstTokenBNB;
       ico_Inst = contractInstBNB;
-
-      token_Inst = contractInstTokenBNB;
+      claim_Inst = contractInstClaimBNB;
     } else if (selectedNetworkId === 80001 && chainId === 80001) {
       presale_TokenAddress = process.env.REACT_APP_TOKEN_CONTRACT_POLYGON;
       claim_TokenAddress = process.env.REACT_APP_CLAIM_POLYGON;
       token_Inst = contractInstTokenPOLYGON;
-      token_Inst = contractInstTokenPOLYGON;
       ico_Inst = contractInstPOLYGON;
+      claim_Inst = contractInstClaimPOLYGON;
     } else return;
 
     try {
-      setTransactionModal(true);
-      setLoading(true);
-
-      const approve = await contractInstToken.methods.approve(
+      const approve = await token_Inst.methods.approve(
         claim_TokenAddress,
         user?.balance
       );
@@ -157,9 +161,10 @@ function Home() {
               address,
               contractInstToken: token_Inst,
               claim_address: claim_TokenAddress,
+              contractInstClaim: claim_Inst,
             })
           );
-
+          setNeedAllowance(false);
           handleSubmit(e);
         })
         .on("error", async (error, receipt) => {
@@ -185,30 +190,59 @@ function Home() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    let claimAddress;
-    let claimInst;
-
-    if (selectedNetworkId === 11155111 && chainId === 11155111) {
-      claimInst = contractInstClaim;
-      claimAddress = process.env.REACT_APP_CLAIM_ETH;
-    } else if (selectedNetworkId === 97 && chainId === 97) {
-      claimInst = contractInstClaimBNB;
-      claimAddress = process.env.REACT_APP_CLAIM_BNB;
-    } else if (selectedNetworkId === 80001 && chainId === 80001) {
-      claimInst = contractInstClaimPOLYGON;
-      claimAddress = process.env.REACT_APP_CLAIM_POLYGON;
-    }
-
     if (!address) {
       open();
+
+      return;
+    }
+    setTransactionModal(true);
+    setLoading(true);
+
+    let claim_Address;
+    let claim_Inst;
+    let token_Inst;
+
+    if (selectedNetworkId === 11155111 && chainId === 11155111) {
+      claim_Inst = contractInstClaim;
+      claim_Address = process.env.REACT_APP_CLAIM_ETH;
+      token_Inst = contractInstToken;
+    } else if (selectedNetworkId === 97 && chainId === 97) {
+      claim_Inst = contractInstClaimBNB;
+      claim_Address = process.env.REACT_APP_CLAIM_BNB;
+      token_Inst = contractInstTokenBNB;
+    } else if (selectedNetworkId === 80001 && chainId === 80001) {
+      claim_Inst = contractInstClaimPOLYGON;
+      claim_Address = process.env.REACT_APP_CLAIM_POLYGON;
+      token_Inst = contractInstTokenPOLYGON;
+    }
+
+    const is_allowed = await token_Inst.methods
+      .allowance(address, claim_Address)
+      .call();
+
+    if (is_allowed < user?.balance) {
+      console.log("Allowance Required");
+      console.log(is_allowed);
+      setErrors((state) => ({
+        ...state,
+        transaction: "Allow Presale Token",
+      }));
+      setTimeout(() => {
+        setLoading(false);
+      }, 2000);
+      setTimeout(() => {
+        setTransactionModal(false);
+        setErrors((state) => ({
+          ...state,
+          transaction: "",
+        }));
+        setNeedAllowance(true);
+      }, 5000);
       return;
     }
 
     try {
-      setTransactionModal(true);
-      setLoading(true);
-      const claimTokens = await claimInst.methods.claimTokens();
+      const claimTokens = await claim_Inst.methods.claimTokens();
 
       const estimateGas = await claimTokens.estimateGas({
         from: address,
@@ -216,7 +250,7 @@ function Home() {
 
       const transaction = claimTokens.send({
         from: address,
-        to: claimAddress,
+        to: claim_Address,
         gas: estimateGas,
         maxPriorityFeePerGas: 50000000000,
       });
@@ -235,13 +269,15 @@ function Home() {
               contractInst,
               address,
               contractInstToken,
-              claim_address: claimAddress,
+              claim_address: claim_Address,
+              contractInstClaim: claim_Inst,
             })
           );
           dispatch(
             LoadBlockchainData({
               contractInst,
               web3Inst,
+              contractInstDrift,
               // contractInstBNB,
               // web3InstBNB,
             })
@@ -485,9 +521,18 @@ function Home() {
         <section className="DriftTokenSection pt-3 pt-md-5">
           <div className="DriftTokenSectionContainer row m-0 w-100 align-items-stretch position-relative ">
             <div
-              className=" col-12 col-md-6 p-0 pe-md-3 rounded-4"
+              className=" col-12 col-md-6 p-0 pe-md-3 rounded-4 position-relative"
               id="Presale_Form"
             >
+              {isLoading && (
+                <div
+                  className="w-100 h-100 bg-white position-absolute rounded-4 d-flex justify-content-center align-items-center"
+                  style={{ zIndex: 999 }}
+                >
+                  <img src={Loading} style={{ width: 50 }} alt="loading" />
+                </div>
+              )}
+
               <div
                 className="DTSC_Col rounded-4 bg-white mt-4 mt-md-0 position-relative shadow-none "
                 id="claim"
@@ -499,16 +544,9 @@ function Home() {
                   <div className="d-flex align-items-start p-0">
                     <img alt="" src={dot} style={{ marginRight: 10 }} />
                     <p className="m-0">
-                      Total Raised{" "}
+                      Total Remaining Claims{" "}
                       <span style={{ fontWeight: "bold" }}>
-                        $
-                        {numberWithCommas(
-                          (
-                            Number(data?.tokensTransferredLap2 * 0.0007 || 0) +
-                            Number(data?.tokensTransferredLap1 * 0.00065 || 0) +
-                            Number(data?.tokensTransferredWarmup * 0.0006 || 0)
-                          ).toFixed()
-                        )}
+                        {numberWithCommas(Number(data?.tokensToClaim)) || ""}
                       </span>
                     </p>
                   </div>
@@ -624,7 +662,7 @@ function Home() {
 
                       <div className="d-flex mt-5 flex-column align-items-baseline justify-content-between flex-xxl-row align-items-xxl-center">
                         <div className="mb-3 mb-xxl-0">
-                          {user?.is_allowed ? (
+                          {!needAllowance ? (
                             <button
                               className="pinkBtn BtnStyle1"
                               onClick={handleSubmit}

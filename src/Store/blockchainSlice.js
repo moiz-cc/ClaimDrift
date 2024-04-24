@@ -4,6 +4,7 @@ import {
   claimAbi_ETH,
   crowdSaleAbi_BNB,
   crowdSaleAbi_ETH,
+  driftAbi,
   tokenAbi_BNB,
   tokenAbi_ETH,
 } from "../config/abi";
@@ -23,7 +24,7 @@ const initialState = {
   web3InstPOLYGON: null,
   contractInstTokenPOLYGON: null,
   contractInstClaimPOLYGON: null,
-
+  contractInstDrift: null,
   user: null,
   publicBlockchainData: null,
   ethPrice: null,
@@ -58,6 +59,7 @@ export const LoadBlockchainData = createAsyncThunk(
     {
       contractInst,
       web3Inst,
+      contractInstDrift,
       // , contractInstBNB, web3InstBNB
     },
     { rejectWithValue }
@@ -67,16 +69,19 @@ export const LoadBlockchainData = createAsyncThunk(
 
       const [
         totalFunds,
-
         tokensTransferredLap2,
         tokensTransferredLap1,
         tokensTransferredWarmup,
+        tokensToClaim,
       ] = await makeBatchRequest(web3Inst, [
         contractInst.methods.totalReceivedFunds().call,
-
         contractInst.methods.tokensTransferred(4).call,
         contractInst.methods.tokensTransferred(2).call,
         contractInst.methods.tokensTransferred(1).call,
+        contractInstDrift.methods.allowance(
+          process.env.REACT_APP_OWNER_ADDRESS,
+          process.env.REACT_APP_CLAIM_ETH
+        ).call,
       ]);
       // const [
       //   totalFundsBNB,
@@ -108,6 +113,8 @@ export const LoadBlockchainData = createAsyncThunk(
           Number(tokensTransferredWarmup),
           true
         ),
+
+        tokensToClaim: ConvertNumber(Number(tokensToClaim), true),
       };
     } catch (error) {
       console.log(error);
@@ -119,7 +126,13 @@ export const LoadBlockchainData = createAsyncThunk(
 export const LoadUser = createAsyncThunk(
   "LoadUser",
   async (data, { rejectWithValue }) => {
-    const { contractInst, address, contractInstToken, claim_address } = data;
+    const {
+      contractInst,
+      address,
+      contractInstToken,
+      claim_address,
+      contractInstClaim,
+    } = data;
 
     try {
       const balance = await contractInstToken.methods.balanceOf(address).call();
@@ -148,13 +161,18 @@ export const LoadUser = createAsyncThunk(
         .allowance(address, claim_address)
         .call();
 
+      const tokensToMove = await contractInstClaim.methods
+        .getStakeAmountOfDynamicToStake(address)
+        .call();
+
       return {
         balance,
-        Staked: ConvertNumber(Staked, true),
-        Dynamic: ConvertNumber(Dynamic, true),
+        Staked: ConvertNumber(Staked + tokensToMove, true),
+        Dynamic: ConvertNumber(Dynamic - tokensToMove, true),
         invest_amount: total_investment,
         is_ambassador_eligible,
         ambassador_code,
+
         claimed: (balance == 0 && Staked > 0) || Dynamic > 0 ? true : false,
         is_allowed: is_allowed >= balance,
         tier: parseInt(info._tier),
@@ -211,6 +229,10 @@ export const blockchainSlice = createSlice({
       state.contractInstClaim = new web3Instance.eth.Contract(
         claimAbi_ETH,
         process.env.REACT_APP_CLAIM_ETH
+      );
+      state.contractInstDrift = new web3Instance.eth.Contract(
+        driftAbi,
+        process.env.REACT_APP_DRIFT_ETH
       );
 
       // BNB INS
