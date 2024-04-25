@@ -78,7 +78,6 @@ export const LoadBlockchainData = createAsyncThunk(
   ) => {
     try {
       // const stage = 4;
-      
 
       const [
         tokensTransferredLap2,
@@ -97,7 +96,6 @@ export const LoadBlockchainData = createAsyncThunk(
         ).call,
       ]);
 
-      
       const [
         tokensTransferredLap2BNB,
         tokensTransferredLap1BNB,
@@ -113,8 +111,6 @@ export const LoadBlockchainData = createAsyncThunk(
         ).call,
       ]);
 
-
-      
       const [
         tokensTransferredLap2POLYGON,
         token_stakedPOLYGON,
@@ -127,8 +123,6 @@ export const LoadBlockchainData = createAsyncThunk(
           process.env.REACT_APP_CLAIM_POLYGON
         ).call,
       ]);
-
-      
 
       return {
         tokensTransferredLap2: ConvertNumber(
@@ -170,8 +164,13 @@ export const LoadBlockchainData = createAsyncThunk(
 export const LoadUser = createAsyncThunk(
   "LoadUser",
   async (data, { rejectWithValue }) => {
-    const { contractInst, address, contractInstToken, contractInstClaim } =
-      data;
+    const {
+      contractInst,
+      address,
+      contractInstToken,
+      contractInstClaim,
+      claimAddress,
+    } = data;
 
     try {
       const balance = await contractInstToken.methods.balanceOf(address).call();
@@ -200,12 +199,19 @@ export const LoadUser = createAsyncThunk(
         .getStakeAmountOfDynamicToStake(address)
         .call();
 
+      const is_allowed = await contractInstToken.methods
+        .allowance(address, claimAddress)
+        .call();
+
+      console.log(is_allowed);
+
       return {
         balance,
         Staked: ConvertNumber(Staked + tokensToMove, true),
         Dynamic: ConvertNumber(Dynamic - tokensToMove, true),
         invest_amount: total_investment,
         is_ambassador_eligible,
+        is_allowed: is_allowed > 0 && is_allowed === balance,
         ambassador_code,
         claimed: balance == 0 && (Staked > 0 || Dynamic > 0) ? true : false,
         tier: parseInt(info._tier),
@@ -266,8 +272,6 @@ export const blockchainSlice = createSlice({
         driftAbi,
         process.env.REACT_APP_DRIFT_ETH
       );
-
-    
 
       // BNB INS
       let web3InstanceBNB = new Web3(process.env.REACT_APP_RPC_BNB);

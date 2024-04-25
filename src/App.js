@@ -131,8 +131,8 @@ function App() {
               contractInst,
               address: address.trim(),
               contractInstToken,
-
               contractInstClaim,
+              claimAddress: process.env.REACT_APP_CLAIM_ETH,
             })
           )
         : selectedNetworkId === 56
@@ -142,6 +142,7 @@ function App() {
               address: address.trim(),
               contractInstToken: contractInstTokenBNB,
               contractInstClaim: contractInstClaimBNB,
+              claimAddress: process.env.REACT_APP_CLAIM_BNB,
             })
           )
         : selectedNetworkId === 137
@@ -150,8 +151,8 @@ function App() {
               contractInst: contractInstPOLYGON,
               address: address.trim(),
               contractInstToken: contractInstTokenPOLYGON,
-
               contractInstClaim: contractInstClaimPOLYGON,
+              claimAddress: process.env.REACT_APP_CLAIM_POLYGON,
             })
           )
         : dispatch(UpdateUser(null));
@@ -176,34 +177,41 @@ function App() {
       setIsWeb3InstanceConnect(true);
     }
     loadUserData();
-  }, [isConnected, walletProvider, isWeb3InstanceConnect, address,selectedNetworkId]);
+  }, [
+    isConnected,
+    walletProvider,
+    isWeb3InstanceConnect,
+    address,
+    selectedNetworkId,
+    isConnected,
+  ]);
 
-  useEffect(() => {
-    const InterID = setInterval(() => {
-      if (_timeout.current !== null && _timeout.current > Date.now()) return;
-      _timeout.current = null;
+  // useEffect(() => {
+  //   const InterID = setInterval(() => {
+  //     if (_timeout.current !== null && _timeout.current > Date.now()) return;
+  //     _timeout.current = null;
 
-      axios
-        .get(
-          process.env.REACT_APP_BASE_URL + "ethereum,binancecoin,matic-network",
-          {
-            headers: {
-              "x-cg-pro-api-key": "CG-1EK5GnU4Ka429EFRG5F3m7dy",
-            },
-          }
-        )
-        .then((response) => {
-          dispatch(UpdateUSDPrice(response.data));
-        })
-        .catch((e) => {
-          console.log(e.message);
-          _timeout.current = new Date().getTime() + 60;
-        });
-    }, 10000);
-    return () => {
-      clearInterval(InterID);
-    };
-  }, [selectedNetworkId]);
+  //     axios
+  //       .get(
+  //         process.env.REACT_APP_BASE_URL + "ethereum,binancecoin,matic-network",
+  //         {
+  //           headers: {
+  //             "x-cg-pro-api-key": "CG-1EK5GnU4Ka429EFRG5F3m7dy",
+  //           },
+  //         }
+  //       )
+  //       .then((response) => {
+  //         dispatch(UpdateUSDPrice(response.data));
+  //       })
+  //       .catch((e) => {
+  //         console.log(e.message);
+  //         _timeout.current = new Date().getTime() + 60;
+  //       });
+  //   }, 10000);
+  //   return () => {
+  //     clearInterval(InterID);
+  //   };
+  // }, [selectedNetworkId]);
 
   useEffect(() => {}, [address, isConnected]);
 

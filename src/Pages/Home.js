@@ -67,18 +67,16 @@ function Home() {
     contractInstPOLYGON,
     contractInstDriftPOLYGON,
     contractInstClaimPOLYGON,
-
   } = useSelector((state) => state.Blockchain);
 
   const { address, isConnected, chainId } = useWeb3ModalAccount();
   const { selectedNetworkId } = useWeb3ModalState();
   const { open } = useWeb3Modal();
-  const [needAllowance, setNeedAllowance] = useState(false);
 
   const [transactionModal, setTransactionModal] = useState(false);
+
   const [loading, setLoading] = useState(false);
   const [txHash, setTxHash] = useState("");
-
 
   const [errors, setErrors] = useState({
     transaction: "",
@@ -99,6 +97,11 @@ function Home() {
 
   const allow = async (e) => {
     e.preventDefault();
+    if (!address) {
+      open();
+
+      return;
+    }
     setTransactionModal(true);
 
     setLoading(true);
@@ -161,9 +164,10 @@ function Home() {
               address,
               contractInstToken: token_Inst,
               contractInstClaim: claim_Inst,
+              claimAddress: claim_TokenAddress,
             })
           );
-          setNeedAllowance(false);
+
           handleSubmit(e);
         })
         .on("error", async (error, receipt) => {
@@ -207,49 +211,48 @@ function Home() {
       claim_Address = process.env.REACT_APP_CLAIM_ETH;
       token_Inst = contractInstToken;
       ico_Inst = contractInst;
-      console.log("ETH")
+      console.log("ETH");
     } else if (selectedNetworkId === 56 && chainId === 56) {
-      console.log("BNB")
+      console.log("BNB");
       claim_Inst = contractInstClaimBNB;
       claim_Address = process.env.REACT_APP_CLAIM_BNB;
       token_Inst = contractInstTokenBNB;
       ico_Inst = contractInstBNB;
     } else if (selectedNetworkId === 137 && chainId === 137) {
-      console.log("MAtic")
+      console.log("MAtic");
       claim_Inst = contractInstClaimPOLYGON;
       claim_Address = process.env.REACT_APP_CLAIM_POLYGON;
       token_Inst = contractInstTokenPOLYGON;
       ico_Inst = contractInstPOLYGON;
     }
 
-    const is_allowed = await token_Inst.methods
-      .allowance(address, claim_Address)
-      .call();
+    // const is_allowed = await token_Inst.methods
+    //   .allowance(address, claim_Address)
+    //   .call();
 
-    if (Number(is_allowed) < Number(user?.balance)) {
-      console.log("Allowance Required");
-      console.log(is_allowed);
-      setErrors((state) => ({
-        ...state,
-        transaction: "Allow Presale Token",
-      }));
-      setTimeout(() => {
-        setLoading(false);
-      }, 2000);
-      setTimeout(() => {
-        setTransactionModal(false);
-        setErrors((state) => ({
-          ...state,
-          transaction: "",
-        }));
-        setNeedAllowance(true);
-      }, 5000);
-      return;
-    }
+    // if (Number(is_allowed) < Number(user?.balance)) {
+    //   console.log("Allowance Required");
+    //   console.log(is_allowed);
+    //   setErrors((state) => ({
+    //     ...state,
+    //     transaction: "Allow Presale Token",
+    //   }));
+    //   setTimeout(() => {
+    //     setLoading(false);
+    //   }, 2000);
+    //   setTimeout(() => {
+    //     setTransactionModal(false);
+    //     setErrors((state) => ({
+    //       ...state,
+    //       transaction: "",
+    //     }));
+    //     setNeedAllowance(true);
+    //   }, 5000);
+    //   return;
+    // }
 
     try {
       const claimTokens = await claim_Inst.methods.claimTokens();
-
       const estimateGas = await claimTokens.estimateGas({
         from: address,
       });
@@ -275,8 +278,8 @@ function Home() {
               contractInst: ico_Inst,
               address,
               contractInstToken: token_Inst,
-              
               contractInstClaim: claim_Inst,
+              claimAddress: claim_Address,
             })
           );
           dispatch(
@@ -724,7 +727,7 @@ function Home() {
               )}
 
               <div
-                className="DTSC_Col rounded-4 bg-white mt-4 mt-md-0 position-relative shadow-none "
+                className="DTSC_Col rounded-4 bg-white mt-4 mt-md-0 position-relative  "
                 id="claim"
               >
                 <h2 className="DTSC_Heading text-black mb-0 text-uppercase ">
@@ -788,6 +791,19 @@ function Home() {
                 </div>
 
                 <div className="mt-5 position-relative">
+                  {/* {!address && (
+                    <div
+                      className="w-100 h-100 bg-white position-absolute  d-flex justify-content-center align-items-center shadow-none"
+                      style={{ zIndex: 99 }}
+                    >
+                      <button
+                        className=" BtnStyle1 pinkBtn shadow-none"
+                        onClick={() => open()}
+                      >
+                        Connect Wallet``
+                      </button>
+                    </div>
+                  )} */}
                   {user?.balance != 0 ? (
                     <form className="position-relative">
                       <div className="row p-0 m-0 ">
@@ -852,7 +868,7 @@ function Home() {
 
                       <div className="d-flex mt-5 flex-column align-items-baseline justify-content-between flex-xxl-row align-items-xxl-center">
                         <div className="mb-3 mb-xxl-0">
-                          {!needAllowance ? (
+                          {user?.is_allowed ? (
                             <button
                               className="pinkBtn BtnStyle1"
                               onClick={handleSubmit}

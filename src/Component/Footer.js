@@ -165,7 +165,7 @@ function Footer() {
           </div>
           <div className=" FooterContract_Container mt-4 mt-lg-0">
             <h3 className="FooterHeading mb-4 text-white fw-bolder text-capitalize mb-4 text-white fw-bolder text-capitalize ">
-              Drift Presale Address{" "}
+              Drift Token Address{" "}
             </h3>
             <div
               className="d-flex justify-content-between align-items-center p-2 rounded-2"
@@ -176,14 +176,14 @@ function Footer() {
             >
               <img src={eth} className="me-3" alt="" width={24} height={24} />
               <p className="mb-0 FooterContractAddress text-white">
-                {process.env.REACT_APP_TOKEN_CONTRACT_ETH}
+                {process.env.REACT_APP_DRIFT_ETH}
               </p>
               <img
                 src={copy}
                 className="Copy ms-3 YourCode_Copy_Icon"
                 alt=""
                 onClick={(e) =>
-                  HandleCopyCode(e, process.env.REACT_APP_TOKEN_CONTRACT_ETH)
+                  HandleCopyCode(e, process.env.REACT_APP_DRIFT_ETH)
                 }
                 width={28}
                 height={28}
@@ -198,14 +198,14 @@ function Footer() {
             >
               <img src={bnb} className="me-3" alt="" width={24} height={24} />
               <p className="mb-0 FooterContractAddress text-white">
-                {process.env.REACT_APP_TOKEN_CONTRACT_BNB}
+                {process.env.REACT_APP_DRIFT_BNB}
               </p>
               <img
                 src={copy}
                 className="Copy ms-3 YourCode_Copy_Icon"
                 alt=""
                 onClick={(e) =>
-                  HandleCopyCode(e, process.env.REACT_APP_TOKEN_CONTRACT_BNB)
+                  HandleCopyCode(e, process.env.REACT_APP_DRIFT_BNB)
                 }
                 width={28}
                 height={28}
@@ -226,17 +226,89 @@ function Footer() {
                 height={24}
               />
               <p className="mb-0 FooterContractAddress text-white">
-                {process.env.REACT_APP_TOKEN_CONTRACT_POLYGON}
+                {process.env.REACT_APP_DRIFT_POLYGON}
               </p>
               <img
                 src={copy}
                 className="Copy ms-3 YourCode_Copy_Icon"
                 alt=""
                 onClick={(e) =>
-                  HandleCopyCode(
-                    e,
-                    process.env.REACT_APP_TOKEN_CONTRACT_POLYGON
-                  )
+                  HandleCopyCode(e, process.env.REACT_APP_DRIFT_POLYGON)
+                }
+                width={28}
+                height={28}
+              />
+            </div>
+            <h3 className="FooterHeading my-4 text-white fw-bolder text-capitalize mb-4 text-white fw-bolder text-capitalize ">
+              Stake Drift Token Address{" "}
+            </h3>
+            <div
+              className="d-flex justify-content-between align-items-center p-2 rounded-2"
+              style={{
+                backgroundColor: "#222",
+                border: "1px solid #8b8b8b",
+              }}
+            >
+              <img src={eth} className="me-3" alt="" width={24} height={24} />
+              <p className="mb-0 FooterContractAddress text-white">
+                {process.env.REACT_APP_ST_DRIFT_ETH}
+              </p>
+              <img
+                src={copy}
+                className="Copy ms-3 YourCode_Copy_Icon"
+                alt=""
+                onClick={(e) =>
+                  HandleCopyCode(e, process.env.REACT_APP_ST_DRIFT_ETH)
+                }
+                width={28}
+                height={28}
+              />
+            </div>
+            <div
+              className="d-flex justify-content-between align-items-center p-2 rounded-2 mt-3"
+              style={{
+                backgroundColor: "#222",
+                border: "1px solid #8b8b8b",
+              }}
+            >
+              <img src={bnb} className="me-3" alt="" width={24} height={24} />
+              <p className="mb-0 FooterContractAddress text-white">
+                {process.env.REACT_APP_ST_DRIFT_BNB}
+              </p>
+              <img
+                src={copy}
+                className="Copy ms-3 YourCode_Copy_Icon"
+                alt=""
+                onClick={(e) =>
+                  HandleCopyCode(e, process.env.REACT_APP_ST_DRIFT_BNB)
+                }
+                width={28}
+                height={28}
+              />
+            </div>
+            <div
+              className="d-flex justify-content-between align-items-center p-2 rounded-2 mt-3"
+              style={{
+                backgroundColor: "#222",
+                border: "1px solid #8b8b8b",
+              }}
+            >
+              <img
+                src={polygon}
+                className="me-3"
+                alt=""
+                width={24}
+                height={24}
+              />
+              <p className="mb-0 FooterContractAddress text-white">
+                {process.env.REACT_APP_ST_DRIFT_POLYGON}
+              </p>
+              <img
+                src={copy}
+                className="Copy ms-3 YourCode_Copy_Icon"
+                alt=""
+                onClick={(e) =>
+                  HandleCopyCode(e, process.env.REACT_APP_ST_DRIFT_POLYGON)
                 }
                 width={28}
                 height={28}
