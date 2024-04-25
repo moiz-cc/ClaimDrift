@@ -38,7 +38,6 @@ const initialState = {
   ethPrice: null,
   bnbPrice: null,
   maticPrice: null,
-
   isLoading: false,
   error: null,
 };
@@ -68,11 +67,9 @@ export const LoadBlockchainData = createAsyncThunk(
       contractInst,
       web3Inst,
       contractInstDrift,
-
       contractInstBNB,
       web3InstBNB,
       contractInstDriftBNB,
-
       contractInstPOLYGON,
       web3InstPOLYGON,
       contractInstDriftPOLYGON,
@@ -81,42 +78,43 @@ export const LoadBlockchainData = createAsyncThunk(
   ) => {
     try {
       // const stage = 4;
+      
 
       const [
         tokensTransferredLap2,
         tokensTransferredLap1,
         tokensTransferredWarmup,
-
         token_staked,
         tokensToClaim_ETH,
       ] = await makeBatchRequest(web3Inst, [
         contractInst.methods.tokensTransferred(4).call,
         contractInst.methods.tokensTransferred(2).call,
         contractInst.methods.tokensTransferred(1).call,
-
         contractInst.methods.noOfTokens(1).call,
         contractInstDrift.methods.allowance(
           process.env.REACT_APP_OWNER_ADDRESS,
           process.env.REACT_APP_CLAIM_ETH
         ).call,
       ]);
+
+      
       const [
         tokensTransferredLap2BNB,
         tokensTransferredLap1BNB,
-
         token_stakedBNB,
         tokensToClaim_BNB,
       ] = await makeBatchRequest(web3InstBNB, [
         contractInstBNB.methods.tokensTransferred(4).call,
         contractInstBNB.methods.tokensTransferred(2).call,
-
         contractInstBNB.methods.noOfTokens(1).call,
-
         contractInstDriftBNB.methods.allowance(
           process.env.REACT_APP_OWNER_ADDRESS,
           process.env.REACT_APP_CLAIM_BNB
         ).call,
       ]);
+
+
+      
       const [
         tokensTransferredLap2POLYGON,
         token_stakedPOLYGON,
@@ -129,6 +127,8 @@ export const LoadBlockchainData = createAsyncThunk(
           process.env.REACT_APP_CLAIM_POLYGON
         ).call,
       ]);
+
+      
 
       return {
         tokensTransferredLap2: ConvertNumber(
@@ -266,6 +266,8 @@ export const blockchainSlice = createSlice({
         driftAbi,
         process.env.REACT_APP_DRIFT_ETH
       );
+
+    
 
       // BNB INS
       let web3InstanceBNB = new Web3(process.env.REACT_APP_RPC_BNB);

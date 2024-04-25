@@ -112,11 +112,9 @@ function App() {
           contractInst,
           web3Inst,
           contractInstDrift,
-
           contractInstBNB,
           web3InstBNB,
           contractInstDriftBNB,
-
           contractInstPOLYGON,
           web3InstPOLYGON,
           contractInstDriftPOLYGON,
@@ -143,7 +141,6 @@ function App() {
               contractInst: contractInstBNB,
               address: address.trim(),
               contractInstToken: contractInstTokenBNB,
-
               contractInstClaim: contractInstClaimBNB,
             })
           )
@@ -179,7 +176,7 @@ function App() {
       setIsWeb3InstanceConnect(true);
     }
     loadUserData();
-  }, [isConnected, walletProvider, isWeb3InstanceConnect, address]);
+  }, [isConnected, walletProvider, isWeb3InstanceConnect, address,selectedNetworkId]);
 
   useEffect(() => {
     const InterID = setInterval(() => {
@@ -219,7 +216,7 @@ function App() {
         <Route path="/utilities" element={<Utilities />} />
         <Route path="/ambassador" element={<Ambassador />} />
         <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-        <Route path="/stake" element={<Staking />} />
+        {/* <Route path="/stake" element={<Staking />} /> */}
         <Route
           path="/price-risk-disclosure"
           element={<PriceRiskDisclosure />}

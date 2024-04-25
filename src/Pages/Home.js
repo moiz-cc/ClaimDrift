@@ -67,18 +67,7 @@ function Home() {
     contractInstPOLYGON,
     contractInstDriftPOLYGON,
     contractInstClaimPOLYGON,
-    // contractInst,
-    // contractInstToken,
-    // contractInstBNB,
-    // contractInstTokenBNB,
-    // contractInstPOLYGON,
-    // contractInstTokenPOLYGON,
-    // contractInstClaim,
-    // contractInstClaimBNB,
-    // contractInstClaimPOLYGON,
-    // web3Inst,
-    // web3InstBNB,
-    // web3InstPOLYGON,
+
   } = useSelector((state) => state.Blockchain);
 
   const { address, isConnected, chainId } = useWeb3ModalAccount();
@@ -89,6 +78,7 @@ function Home() {
   const [transactionModal, setTransactionModal] = useState(false);
   const [loading, setLoading] = useState(false);
   const [txHash, setTxHash] = useState("");
+
 
   const [errors, setErrors] = useState({
     transaction: "",
@@ -170,7 +160,6 @@ function Home() {
               contractInst: ico_Inst,
               address,
               contractInstToken: token_Inst,
-
               contractInstClaim: claim_Inst,
             })
           );
@@ -218,12 +207,15 @@ function Home() {
       claim_Address = process.env.REACT_APP_CLAIM_ETH;
       token_Inst = contractInstToken;
       ico_Inst = contractInst;
+      console.log("ETH")
     } else if (selectedNetworkId === 56 && chainId === 56) {
+      console.log("BNB")
       claim_Inst = contractInstClaimBNB;
       claim_Address = process.env.REACT_APP_CLAIM_BNB;
       token_Inst = contractInstTokenBNB;
       ico_Inst = contractInstBNB;
     } else if (selectedNetworkId === 137 && chainId === 137) {
+      console.log("MAtic")
       claim_Inst = contractInstClaimPOLYGON;
       claim_Address = process.env.REACT_APP_CLAIM_POLYGON;
       token_Inst = contractInstTokenPOLYGON;
@@ -292,11 +284,9 @@ function Home() {
               contractInst,
               web3Inst,
               contractInstDrift,
-
               contractInstBNB,
               web3InstBNB,
               contractInstDriftBNB,
-
               contractInstPOLYGON,
               web3InstPOLYGON,
               contractInstDriftPOLYGON,
@@ -619,6 +609,17 @@ function Home() {
                         : null}{" "}
                       to view your tokens.{" "}
                     </p>
+                    <p className="text-start text-black ">
+                      <span className="fw-bold">Import Stake contract :</span>{" "}
+                      {selectedNetworkId === 1
+                        ? process.env.REACT_APP_ST_DRIFT_ETH
+                        : selectedNetworkId === 56
+                        ? process.env.REACT_APP_ST_DRIFT_BNB
+                        : selectedNetworkId === 137
+                        ? process.env.REACT_APP_ST_DRIFT_POLYGON
+                        : null}{" "}
+                      to view your stake tokens.{" "}
+                    </p>
                     <p className="text-start text-black mb-0 fw-bold">
                       Transaction link:
                     </p>
@@ -716,7 +717,7 @@ function Home() {
               {isLoading && (
                 <div
                   className="w-100 h-100 bg-white position-absolute rounded-4 d-flex justify-content-center align-items-center"
-                  style={{ zIndex: 999 }}
+                  style={{ zIndex: 99 }}
                 >
                   <img src={Loading} style={{ width: 50 }} alt="loading" />
                 </div>
