@@ -183,7 +183,6 @@ function App() {
     isWeb3InstanceConnect,
     address,
     selectedNetworkId,
-    isConnected,
   ]);
 
   // useEffect(() => {
@@ -213,7 +212,9 @@ function App() {
   //   };
   // }, [selectedNetworkId]);
 
-  useEffect(() => {}, [address, isConnected]);
+  useEffect(() => {
+    loadUserData();
+  }, [address, isConnected]);
 
   return (
     <div className="App">
