@@ -99,6 +99,11 @@ function Home() {
 
   const allow = async (e) => {
     e.preventDefault();
+    if (!address) {
+      open();
+
+      return;
+    }
     setTransactionModal(true);
 
     setLoading(true);
@@ -164,7 +169,7 @@ function Home() {
               contractInstClaim: claim_Inst,
             })
           );
-          setNeedAllowance(false);
+
           handleSubmit(e);
         })
         .on("error", async (error, receipt) => {
@@ -216,32 +221,32 @@ function Home() {
       token_Inst = contractInstTokenPOLYGON;
     }
 
-    const is_allowed = await token_Inst.methods
-      .allowance(address, claim_Address)
-      .call();
+    // const is_allowed = await token_Inst.methods
+    //   .allowance(address, claim_Address)
+    //   .call();
 
-    console.log(user?.balance, is_allowed);
+    // console.log(user?.balance, is_allowed);
 
-    if (Number(is_allowed) < Number(user?.balance)) {
-      console.log("Allowance Required");
-      console.log(is_allowed);
-      setErrors((state) => ({
-        ...state,
-        transaction: "Allow Presale Token",
-      }));
-      setTimeout(() => {
-        setLoading(false);
-      }, 2000);
-      setTimeout(() => {
-        setTransactionModal(false);
-        setErrors((state) => ({
-          ...state,
-          transaction: "",
-        }));
-        setNeedAllowance(true);
-      }, 5000);
-      return;
-    }
+    // if (Number(is_allowed) < Number(user?.balance)) {
+    //   console.log("Allowance Required");
+    //   console.log(is_allowed);
+    //   setErrors((state) => ({
+    //     ...state,
+    //     transaction: "Allow Presale Token",
+    //   }));
+    //   setTimeout(() => {
+    //     setLoading(false);
+    //   }, 2000);
+    //   setTimeout(() => {
+    //     setTransactionModal(false);
+    //     setErrors((state) => ({
+    //       ...state,
+    //       transaction: "",
+    //     }));
+    //     setNeedAllowance(true);
+    //   }, 5000);
+    //   return;
+    // }
 
     try {
       const claimTokens = await claim_Inst.methods.claimTokens();
@@ -664,7 +669,7 @@ function Home() {
 
                       <div className="d-flex mt-5 flex-column align-items-baseline justify-content-between flex-xxl-row align-items-xxl-center">
                         <div className="mb-3 mb-xxl-0">
-                          {!needAllowance ? (
+                          {user?.is_allowed ? (
                             <button
                               className="pinkBtn BtnStyle1"
                               onClick={handleSubmit}

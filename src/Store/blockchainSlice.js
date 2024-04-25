@@ -174,7 +174,7 @@ export const LoadUser = createAsyncThunk(
         ambassador_code,
 
         claimed: (balance == 0 && Staked > 0) || Dynamic > 0 ? true : false,
-        is_allowed: is_allowed >= balance,
+        is_allowed: is_allowed === balance && balance !== 0,
         tier: parseInt(info._tier),
       };
     } catch (error) {
