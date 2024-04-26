@@ -608,7 +608,7 @@ function Home() {
                               type="number"
                               name="no_of_tokens"
                               id="no_of_tokens"
-                              value={ConvertNumber(user?.balance, true) || 0}
+                              value={ConvertNumber(Number(user?.balance), true) || 0}
                               style={{ marginRight: 15 }}
                             />
                             <img src={token} alt="" width={32} height={32} />

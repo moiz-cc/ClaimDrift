@@ -203,17 +203,19 @@ export const LoadUser = createAsyncThunk(
         .allowance(address, claimAddress)
         .call();
 
-      console.log(is_allowed);
-
       return {
         balance,
-        Staked: ConvertNumber(Staked + tokensToMove, true),
-        Dynamic: ConvertNumber(Dynamic - tokensToMove, true),
-        invest_amount: total_investment,
+        Staked: ConvertNumber(Number(Staked) + Number(tokensToMove), true),
+        Dynamic: ConvertNumber(Number(Dynamic) - Number(tokensToMove), true),
+        invest_amount: Number(total_investment),
         is_ambassador_eligible,
-        is_allowed: is_allowed > 0 && is_allowed === balance,
+        is_allowed:
+          Number(is_allowed) > 0 && Number(is_allowed) === Number(balance),
         ambassador_code,
-        claimed: balance == 0 && (Staked > 0 || Dynamic > 0) ? true : false,
+        claimed:
+          Number(balance) == 0 && (Number(Staked) > 0 || Number(Dynamic) > 0)
+            ? true
+            : false,
         tier: parseInt(info._tier),
       };
     } catch (error) {
