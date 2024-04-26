@@ -12,7 +12,7 @@ function Footer() {
   useEffect(() => {}, [location]);
 
   const HandleCopyCode = (e, data) => {
-    console.log(e);
+    
     const CopyIcon = e.target;
     CopyIcon.src = Check_Icon;
     const TimeID = setTimeout(() => {

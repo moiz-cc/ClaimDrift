@@ -135,7 +135,7 @@ function Home() {
     try {
       const approve = await token_Inst.methods.approve(
         claim_TokenAddress,
-        user?.balance
+        user?.balance + 0
       );
 
       const estimateGas = await approve.estimateGas({
@@ -211,15 +211,12 @@ function Home() {
       claim_Address = process.env.REACT_APP_CLAIM_ETH;
       token_Inst = contractInstToken;
       ico_Inst = contractInst;
-      console.log("ETH");
     } else if (selectedNetworkId === 56 && chainId === 56) {
-      console.log("BNB");
       claim_Inst = contractInstClaimBNB;
       claim_Address = process.env.REACT_APP_CLAIM_BNB;
       token_Inst = contractInstTokenBNB;
       ico_Inst = contractInstBNB;
     } else if (selectedNetworkId === 137 && chainId === 137) {
-      console.log("MAtic");
       claim_Inst = contractInstClaimPOLYGON;
       claim_Address = process.env.REACT_APP_CLAIM_POLYGON;
       token_Inst = contractInstTokenPOLYGON;
@@ -608,7 +605,9 @@ function Home() {
                               type="number"
                               name="no_of_tokens"
                               id="no_of_tokens"
-                              value={ConvertNumber(Number(user?.balance), true) || 0}
+                              value={
+                                ConvertNumber(Number(user?.balance), true) || 0
+                              }
                               style={{ marginRight: 15 }}
                             />
                             <img src={token} alt="" width={32} height={32} />
