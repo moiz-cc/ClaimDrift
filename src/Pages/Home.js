@@ -293,7 +293,6 @@ function Home() {
     }
   };
 
-
   const closeTransactionModal = () => {
     setTransactionModal(false);
 
@@ -595,7 +594,6 @@ function Home() {
                 </div>
 
                 <div className="mt-5 position-relative">
-
                   {user?.balance != 0 ? (
                     <form className="position-relative">
                       <div className="row p-0 m-0 ">
@@ -672,7 +670,7 @@ function Home() {
                               className="pinkBtn BtnStyle1"
                               onClick={allow}
                             >
-                              Allow pre $drift
+                              Claim $Drift
                             </button>
                           )}
                         </div>
