@@ -64,6 +64,8 @@ export const LoadBlockchainData = createAsyncThunk(
       contractInst,
       web3Inst,
       contractInstDrift,
+      contractInstStakePool,
+
       // , contractInstBNB, web3InstBNB
     },
     { rejectWithValue }
@@ -87,6 +89,17 @@ export const LoadBlockchainData = createAsyncThunk(
           process.env.REACT_APP_CLAIM_ETH
         ).call,
       ]);
+      const apy = await contractInstStakePool.methods.calculateAPY().call();
+      const total_pending_reward = await contractInstStakePool.methods
+        .getTotalPendingRewards()
+        .call();
+      const total_staked = await contractInstStakePool.methods
+        .totalStaked()
+        .call();
+      const stake_end_deadline = await contractInstStakePool.methods
+        .stakeEndDeadline()
+        .call();
+
       // const [
       //   totalFundsBNB,
 
@@ -119,6 +132,13 @@ export const LoadBlockchainData = createAsyncThunk(
         ),
 
         tokensToClaim: ConvertNumber(Number(tokensToClaim), true),
+
+        apy,
+
+        total_pending_reward,
+        total_staked,
+
+        stake_end_deadline,
       };
     } catch (error) {
       console.log(error);
@@ -175,22 +195,13 @@ export const LoadUser = createAsyncThunk(
       const Reward = await contractInstStakePool.methods
         .getPendingRewards(address)
         .call();
-      const apy = await contractInstStakePool.methods.calculateAPY().call();
-      console.log(apy);
-
-      console.log(Reward.pendingRewards);
-
-      console.log("is pool allowed", is_pool_allowed);
-
-      console.log("staked Drift tokens", stakeDrift);
-      console.log("dynamic Drift tokens", dynamicDrift);
 
       return {
         balance,
         Staked: ConvertNumber(Number(Staked) + Number(tokensToMove), true),
         Dynamic: ConvertNumber(Number(Dynamic) - Number(tokensToMove), true),
         is_pool_allowed: is_pool_allowed > 0,
-        apy,
+
         remaining_claim: Reward.pendingRewards,
         dynamicDrift,
         stakeDrift,

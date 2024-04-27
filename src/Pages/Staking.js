@@ -35,6 +35,7 @@ const Staking = () => {
   });
 
   const {
+    publicBlockchainData: data,
     user,
     ethPrice,
     bnbPrice,
@@ -55,6 +56,15 @@ const Staking = () => {
     web3Inst,
     isLoading,
   } = useSelector((state) => state.Blockchain);
+  const curret_date_time = Date.now() / 1000;
+  console.log("Current Date", curret_date_time);
+  const remaining_days =
+    data?.stake_end_deadline - curret_date_time > 0
+      ? Math.round(
+          Number(data?.stake_end_deadline - curret_date_time) / 60 / 60 / 24
+        )
+      : 0;
+
   useEffect(() => {
     setTokens(0);
   }, []);
@@ -208,7 +218,7 @@ const Staking = () => {
     try {
       const approve = await stake_inst.methods.approve(
         stakingpool_address,
-        user?.stakeDrift
+        user?.stakeDrift + 0
       );
 
       const estimateGas = await approve.estimateGas({
@@ -598,10 +608,18 @@ const Staking = () => {
 
           <section className="mt-5">
             <div className="row m-0 p-0 ">
-              <div className="col-12 p-0 col-md-5 pe-md-2">
+              <div className="col-12 p-0 col-md-5 pe-md-2 position-relative">
+                {isLoading && (
+                  <div
+                    className="w-100 h-100 bg-white position-absolute rounded-4 d-flex justify-content-center align-items-center"
+                    style={{ zIndex: 9 }}
+                  >
+                    <img src={Loading} style={{ width: 50 }} alt="loading" />
+                  </div>
+                )}
                 <div
                   className="
-              DTSC_Col rounded-4 bg-white  align-items-center p-4"
+              DTSC_Col rounded-4 bg-white  align-items-center p-4 "
                 >
                   <div className="row  m-0 p-0 pb-3 border-bottom">
                     <div
@@ -614,18 +632,17 @@ col-12 ps-0 col-sm-6 pe-0 pe-sm-2"
                           fontSize: 12,
                         }}
                       >
-                        remaining claim
+                        available claim
                       </p>
                       <p
                         className="
                       DTSC_SubHeading mb-0 text-uppercase fw-bold "
                         style={{ color: "#ff4bae" }}
                       >
-                        ${" "}
-                        {ConvertNumber(
-                          Number(user?.remaining_claim) * Number(ethPrice) || 0,
-                          true
-                        ) || 0}
+                        {user?.remaining_claim > 0
+                          ? ConvertNumber(user?.remaining_claim, true)
+                          : 0}{" "}
+                        ETH
                       </p>
                     </div>
                     <div
@@ -661,8 +678,18 @@ col-12 ps-0 "
                       DTSC_SubHeading mb-0 text-uppercase fw-bold "
                         style={{ color: "#ff4bae" }}
                       >
-                        {/* {ConvertNumber(user?.apy, true)} */}
-                        120%
+                        {ConvertNumber(data?.apy, true).toFixed(
+                          ConvertNumber(data?.apy, true)
+                            ?.toString()
+                            ?.split(".")[0] != 0
+                            ? ConvertNumber(data?.apy, true)
+                                ?.toString()
+                                ?.split(".")[1] > 0
+                              ? 3
+                              : 0
+                            : 6
+                        )}
+                        %
                       </p>
                     </div>
                     {/* <div
@@ -680,7 +707,15 @@ col-12 col-sm-6 pe-0 ps-0 ps-sm-2 d-flex justify-content-end align-items-end "
                   </div>
                 </div>
               </div>
-              <div className="col-12 p-0 col-md-7 ps-md-2 mt-3 mt-md-0">
+              <div className="col-12 p-0 col-md-7 ps-md-2 mt-3 mt-md-0 position-relative">
+                {isLoading && (
+                  <div
+                    className="w-100 h-100 bg-white position-absolute rounded-4 d-flex justify-content-center align-items-center"
+                    style={{ zIndex: 9 }}
+                  >
+                    <img src={Loading} style={{ width: 50 }} alt="loading" />
+                  </div>
+                )}
                 <div
                   className="
               DTSC_Col rounded-4 bg-white p-4"
@@ -720,21 +755,21 @@ col-12 col-sm-6 pe-0 ps-0 ps-sm-2 d-flex justify-content-end align-items-end "
                           fontSize: 12,
                         }}
                       >
-                        Your Dynamic Tokens
+                        Total Staked Tokens
                       </p>
+
                       <p
                         className="
                       DTSC_SubHeading mb-0 text-uppercase fw-bold "
                         style={{ color: "#ff4bae" }}
                       >
-                        {ConvertNumber(user?.dynamicDrift || 0, true)} $Drift
+                        {ConvertNumber(data?.total_staked || 0, true)} $Drift
                       </p>
                     </div>
                   </div>
                   <div className="row m-0 p-0 pt-3">
                     <div
                       className="
-
                       col-12 ps-0 col-sm-6 pe-0 pe-sm-2"
                     >
                       <p
@@ -751,7 +786,7 @@ col-12 col-sm-6 pe-0 ps-0 ps-sm-2 d-flex justify-content-end align-items-end "
                         DTSC_SubHeading mb-0 text-uppercase fw-bold"
                         style={{ color: "#ff4bae" }}
                       >
-                        5
+                        {remaining_days}
                       </p>
                     </div>
                   </div>
@@ -761,7 +796,15 @@ col-12 col-sm-6 pe-0 ps-0 ps-sm-2 d-flex justify-content-end align-items-end "
           </section>
           <section className="mt-3">
             <div className="row m-0 p-0 ">
-              <div className="col-12 p-0 col-md-5 pe-md-2">
+              <div className="col-12 p-0 col-md-5 pe-md-2 position-relative">
+                {isLoading && (
+                  <div
+                    className="w-100 h-100 bg-white position-absolute rounded-4 d-flex justify-content-center align-items-center"
+                    style={{ zIndex: 9 }}
+                  >
+                    <img src={Loading} style={{ width: 50 }} alt="loading" />
+                  </div>
+                )}
                 <div className="DTSC_Col StakeToggleContainer rounded-4 bg-white  align-items-center p-4">
                   {/* <div className="d-flex gap-3 p-2 rounded-3 bg-sliver">
                     <button

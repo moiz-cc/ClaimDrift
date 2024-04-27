@@ -125,6 +125,7 @@ function App() {
           contractInst,
           web3Inst,
           contractInstDrift,
+          contractInstStakePool,
           // contractInstBNB,
           // web3InstBNB,
         })

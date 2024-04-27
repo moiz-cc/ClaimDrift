@@ -59,8 +59,10 @@ function Home() {
     contractInstClaimBNB,
     contractInstClaimPOLYGON,
     contractInstDrift,
+    contractInstDriftStake,
     web3Inst,
     isLoading,
+    contractInstStakePool,
     web3InstBNB,
     web3InstPOLYGON,
   } = useSelector((state) => state.Blockchain);
@@ -113,6 +115,10 @@ function Home() {
     let token_Inst;
     let ico_Inst;
     let claim_Inst;
+    let pool_inst;
+    let stake_inst;
+    let drift_inst;
+    let stakingpool_address;
 
     if (selectedNetworkId === 11155111 && chainId === 11155111) {
       presale_TokenAddress = process.env.REACT_APP_TOKEN_CONTRACT_ETH;
@@ -120,6 +126,10 @@ function Home() {
       token_Inst = contractInstPresale;
       ico_Inst = contractInst;
       claim_Inst = contractInstClaim;
+      pool_inst = contractInstStakePool;
+      stake_inst = contractInstDriftStake;
+      drift_inst = contractInstDrift;
+      stakingpool_address = process.env.REACT_APP_ST_POOL_DRIFT_ETH;
     } else if (selectedNetworkId === 97 && chainId === 97) {
       presale_TokenAddress = process.env.REACT_APP_TOKEN_CONTRACT_BNB;
       claim_TokenAddress = process.env.REACT_APP_CLAIM_BNB;
@@ -137,7 +147,7 @@ function Home() {
     try {
       const approve = await token_Inst.methods.approve(
         claim_TokenAddress,
-        user?.balance
+        user?.balance + 0
       );
 
       const estimateGas = await approve.estimateGas({
@@ -162,11 +172,15 @@ function Home() {
           setErrors((state) => ({ ...state, transaction: "" }));
           dispatch(
             LoadUser({
-              contractInst: ico_Inst,
+              contractInst,
               address,
-              contractInstPresale: token_Inst,
+              contractInstPresale,
               claim_address: claim_TokenAddress,
               contractInstClaim: claim_Inst,
+              contractInstStakePool: pool_inst,
+              contractInstDriftStake: stake_inst,
+              contractInstDrift: drift_inst,
+              pool_address: stakingpool_address,
             })
           );
 
@@ -207,10 +221,19 @@ function Home() {
     let claim_Inst;
     let token_Inst;
 
+    let pool_inst;
+    let stake_inst;
+    let drift_inst;
+    let stakingpool_address;
+
     if (selectedNetworkId === 11155111 && chainId === 11155111) {
       claim_Inst = contractInstClaim;
       claim_Address = process.env.REACT_APP_CLAIM_ETH;
       token_Inst = contractInstPresale;
+      pool_inst = contractInstStakePool;
+      stake_inst = contractInstDriftStake;
+      drift_inst = contractInstDrift;
+      stakingpool_address = process.env.REACT_APP_ST_POOL_DRIFT_ETH;
     } else if (selectedNetworkId === 97 && chainId === 97) {
       claim_Inst = contractInstClaimBNB;
       claim_Address = process.env.REACT_APP_CLAIM_BNB;
@@ -278,6 +301,10 @@ function Home() {
               contractInstPresale,
               claim_address: claim_Address,
               contractInstClaim: claim_Inst,
+              contractInstStakePool: pool_inst,
+              contractInstDriftStake: stake_inst,
+              contractInstDrift: drift_inst,
+              pool_address: stakingpool_address,
             })
           );
           dispatch(
@@ -285,6 +312,7 @@ function Home() {
               contractInst,
               web3Inst,
               contractInstDrift,
+              contractInstStakePool,
               // contractInstBNB,
               // web3InstBNB,
             })
