@@ -34,10 +34,13 @@ function App() {
   const dispatch = useDispatch();
   const {
     contractInst,
-    contractInstToken,
+    contractInstPresale,
     contractInstDrift,
     contractInstClaim,
-    
+
+    contractInstStakePool,
+    contractInstDriftStake,
+
     // contractInstTokenBNB,
     web3Inst,
     // contractInstBNB,
@@ -136,9 +139,13 @@ function App() {
             LoadUser({
               contractInst,
               address: address.trim(),
-              contractInstToken,
+              contractInstPresale,
               claim_address: process.env.REACT_APP_CLAIM_ETH,
               contractInstClaim,
+              contractInstStakePool,
+              contractInstDriftStake,
+              contractInstDrift,
+              pool_address: process.env.REACT_APP_ST_POOL_DRIFT_ETH,
             })
           )
         : // : selectedNetworkId === 97
@@ -147,7 +154,7 @@ function App() {
           //       contractInst: contractInstBNB,
           //       address: address.trim(),
 
-          //       contractInstToken: contractInstTokenBNB,
+          //       contractInstPresale: contractInstTokenBNB,
           //     })
           //   )
           dispatch(UpdateUser(null));
@@ -215,7 +222,7 @@ function App() {
         <Route path="/utilities" element={<Utilities />} />
         <Route path="/ambassador" element={<Ambassador />} />
         <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-        {/* <Route path="/stake" element={<Staking />} /> */}
+        <Route path="/stake" element={<Staking />} />
         <Route
           path="/price-risk-disclosure"
           element={<PriceRiskDisclosure />}

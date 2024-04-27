@@ -52,7 +52,7 @@ function Home() {
     contractInst,
     contractInstBNB,
     contractInstPOLYGON,
-    contractInstToken,
+    contractInstPresale,
     contractInstTokenBNB,
     contractInstTokenPOLYGON,
     contractInstClaim,
@@ -117,7 +117,7 @@ function Home() {
     if (selectedNetworkId === 11155111 && chainId === 11155111) {
       presale_TokenAddress = process.env.REACT_APP_TOKEN_CONTRACT_ETH;
       claim_TokenAddress = process.env.REACT_APP_CLAIM_ETH;
-      token_Inst = contractInstToken;
+      token_Inst = contractInstPresale;
       ico_Inst = contractInst;
       claim_Inst = contractInstClaim;
     } else if (selectedNetworkId === 97 && chainId === 97) {
@@ -164,7 +164,7 @@ function Home() {
             LoadUser({
               contractInst: ico_Inst,
               address,
-              contractInstToken: token_Inst,
+              contractInstPresale: token_Inst,
               claim_address: claim_TokenAddress,
               contractInstClaim: claim_Inst,
             })
@@ -210,7 +210,7 @@ function Home() {
     if (selectedNetworkId === 11155111 && chainId === 11155111) {
       claim_Inst = contractInstClaim;
       claim_Address = process.env.REACT_APP_CLAIM_ETH;
-      token_Inst = contractInstToken;
+      token_Inst = contractInstPresale;
     } else if (selectedNetworkId === 97 && chainId === 97) {
       claim_Inst = contractInstClaimBNB;
       claim_Address = process.env.REACT_APP_CLAIM_BNB;
@@ -275,7 +275,7 @@ function Home() {
             LoadUser({
               contractInst,
               address,
-              contractInstToken,
+              contractInstPresale,
               claim_address: claim_Address,
               contractInstClaim: claim_Inst,
             })
