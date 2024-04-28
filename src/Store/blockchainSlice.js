@@ -181,41 +181,41 @@ export const LoadUser = createAsyncThunk(
   "LoadUser",
   async (data, { rejectWithValue }) => {
     const {
-      contractInstICO_ETH,
+      contractInstICO,
       address,
-      contractInstPresaleToken_ETH,
-      contractInstClaim_ETH,
+      contractInstPresaleToken,
+      contractInstClaim,
       claimAddress,
     } = data;
 
     try {
-      const balance = await contractInstPresaleToken_ETH.methods.balanceOf(address).call();
-      const Staked = await contractInstICO_ETH.methods
+      const balance = await contractInstPresaleToken.methods.balanceOf(address).call();
+      const Staked = await contractInstICO.methods
         .amountOfAddressPerType(address, 1)
         .call();
-      const Dynamic = await contractInstICO_ETH.methods
+      const Dynamic = await contractInstICO.methods
         .amountOfAddressPerType(address, 0)
         .call();
 
-      const ambassador_code = await contractInstICO_ETH.methods
+      const ambassador_code = await contractInstICO.methods
         .codeOfAddress(address)
         .call();
 
-      const total_investment = await contractInstICO_ETH.methods
+      const total_investment = await contractInstICO.methods
         .investAmount(address)
         .call();
 
-      const is_ambassador_eligible = await contractInstICO_ETH.methods
+      const is_ambassador_eligible = await contractInstICO.methods
         .isAmbassadorEligible(address)
         .call();
 
-      const info = await contractInstICO_ETH.methods.getAmbassadorInfo(address).call();
+      const info = await contractInstICO.methods.getAmbassadorInfo(address).call();
 
-      const tokensToMove = await contractInstClaim_ETH.methods
+      const tokensToMove = await contractInstClaim.methods
         .getStakeAmountOfDynamicToStake(address)
         .call();
 
-      const is_allowed = await contractInstPresaleToken_ETH.methods
+      const is_allowed = await contractInstPresaleToken.methods
         .allowance(address, claimAddress)
         .call();
 

@@ -128,30 +128,30 @@ function App() {
       selectedNetworkId === 1
         ? dispatch(
             LoadUser({
-              contractInstICO_ETH,
+              contractInstICO:contractInstICO_ETH,
               address: address.trim(),
-              contractInstPresaleToken_ETH,
-              contractInstClaim_ETH,
+              contractInstPresaleToken:contractInstPresaleToken_ETH,
+              contractInstClaim:contractInstClaim_ETH,
               claimAddress: process.env.REACT_APP_CLAIM_ETH,
             })
           )
         : selectedNetworkId === 56
         ? dispatch(
             LoadUser({
-              contractInstICO_ETH: contractInstICO_BNB,
+              contractInstICO: contractInstICO_BNB,
               address: address.trim(),
-              contractInstPresaleToken_ETH: contractInstPresaleToken_BNB,
-              contractInstClaim_ETH: contractInstClaim_BNB,
+              contractInstPresaleToken: contractInstPresaleToken_BNB,
+              contractInstClaim: contractInstClaim_BNB,
               claimAddress: process.env.REACT_APP_CLAIM_BNB,
             })
           )
         : selectedNetworkId === 137
         ? dispatch(
             LoadUser({
-              contractInstICO_ETH: contractInstICO_POLYGON,
+              contractInstICO: contractInstICO_POLYGON,
               address: address.trim(),
-              contractInstPresaleToken_ETH: contractInstPresaleToken_POLYGON,
-              contractInstClaim_ETH: contractInstClaim_POLYGON,
+              contractInstPresaleToken: contractInstPresaleToken_POLYGON,
+              contractInstClaim: contractInstClaim_POLYGON,
               claimAddress: process.env.REACT_APP_CLAIM_POLYGON,
             })
           )

@@ -160,10 +160,10 @@ function Home() {
           setErrors((state) => ({ ...state, transaction: "" }));
           dispatch(
             LoadUser({
-              contractInstICO_ETH: ico_Inst,
+              contractInstICO: ico_Inst,
               address,
-              contractInstPresaleToken_ETH: token_Inst,
-              contractInstClaim_ETH: claim_Inst,
+              contractInstPresaleToken: token_Inst,
+              contractInstClaim: claim_Inst,
               claimAddress: claim_TokenAddress,
             })
           );
@@ -247,10 +247,10 @@ function Home() {
           setErrors((state) => ({ ...state, transaction: "" }));
           dispatch(
             LoadUser({
-              contractInstICO_ETH: ico_Inst,
+              contractInstICO: ico_Inst,
               address,
-              contractInstPresaleToken_ETH: token_Inst,
-              contractInstClaim_ETH: claim_Inst,
+              contractInstPresaleToken: token_Inst,
+              contractInstClaim: claim_Inst,
               claimAddress: claim_Address,
             })
           );
