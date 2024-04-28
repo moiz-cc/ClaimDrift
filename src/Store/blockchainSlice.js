@@ -186,6 +186,7 @@ export const LoadUser = createAsyncThunk(
       contractInstPresaleToken,
       contractInstClaim,
       claimAddress,
+      contractInstStakePool
     } = data;
 
     try {
@@ -218,6 +219,23 @@ export const LoadUser = createAsyncThunk(
       const is_allowed = await contractInstPresaleToken.methods
         .allowance(address, claimAddress)
         .call();
+
+
+ const apy = await contractInstStakePool.methods.calculateAPY().call();
+ console.log("APY ==>",apy)
+ const total_pending_reward = await contractInstStakePool.methods
+ .getTotalPendingRewards()
+ .call();
+ console.log("TOTAL PENDING REWARD ==>",total_pending_reward)
+
+        const total_staked = await contractInstStakePool.methods
+        .totalStaked()
+        .call();
+        console.log("TOTAL STAKED ==>",total_staked)
+        const stake_end_deadline = await contractInstStakePool.methods
+        .stakeEndDeadline()
+        .call();
+        console.log("END DEADLINE ==>",stake_end_deadline)
 
       return {
         balance,
@@ -291,11 +309,11 @@ export const blockchainSlice = createSlice({
         process.env.REACT_APP_DRIFT_ETH
       );
       // New Inst ETH
-      state.contractInstStakePool_ETH = new web3Instance.eth.Contract(
+      state.contractInstDriftStake_ETH = new web3Instance.eth.Contract(
         driftStakeAbi_ETH,
         process.env.REACT_APP_ST_DRIFT_ETH
       );
-      state.contractInstDriftStake_ETH = new web3Instance.eth.Contract(
+      state.contractInstStakePool_ETH = new web3Instance.eth.Contract(
         driftStakePoolAbi_ETH,
         process.env.REACT_APP_ST_POOL_DRIFT_ETH
       );
@@ -327,11 +345,11 @@ export const blockchainSlice = createSlice({
         process.env.REACT_APP_DRIFT_BNB
       );
 
-      state.contractInstStakePool_BNB = new web3InstanceBNB.eth.Contract(
+      state.contractInstDriftStake_BNB = new web3InstanceBNB.eth.Contract(
         driftStakeAbi_BNB,
         process.env.REACT_APP_ST_DRIFT_BNB
       );
-      state.contractInstDriftStake_BNB = new web3InstanceBNB.eth.Contract(
+      state.contractInstStakePool_BNB = new web3InstanceBNB.eth.Contract(
         driftStakePoolAbi_BNB,
         process.env.REACT_APP_ST_POOL_DRIFT_BNB
       );
@@ -363,11 +381,11 @@ export const blockchainSlice = createSlice({
         process.env.REACT_APP_DRIFT_POLYGON
       );
       
-      state.contractInstStakePool_POLYGON = new web3InstancePOLYGON.eth.Contract(
+      state.contractInstDriftStake_POLYGON = new web3InstancePOLYGON.eth.Contract(
         driftStakeAbi_POLYGON,
         process.env.REACT_APP_ST_DRIFT_POLYGON
       );
-      state.contractInstDriftStake_POLYGON = new web3InstancePOLYGON.eth.Contract(
+      state.contractInstStakePool_POLYGON = new web3InstancePOLYGON.eth.Contract(
         driftStakePoolAbi_POLYGON,
         process.env.REACT_APP_ST_POOL_DRIFT_POLYGON
       );

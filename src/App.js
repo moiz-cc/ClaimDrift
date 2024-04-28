@@ -38,18 +38,21 @@ function App() {
     contractInstPresaleToken_ETH,
     contractInstDrift_ETH,
     contractInstClaim_ETH,
+    contractInstStakePool_ETH,
 
     web3Inst_BNB,
     contractInstICO_BNB,
     contractInstPresaleToken_BNB,
     contractInstDrift_BNB,
     contractInstClaim_BNB,
+    contractInstStakePool_BNB,
 
     web3Inst_POLYGON,
     contractInstPresaleToken_POLYGON,
     contractInstICO_POLYGON,
     contractInstDrift_POLYGON,
     contractInstClaim_POLYGON,
+    contractInstStakePool_POLYGON
   } = useSelector((state) => state.Blockchain);
   const { walletProvider } = useWeb3ModalSigner();
 
@@ -133,6 +136,7 @@ function App() {
               contractInstPresaleToken:contractInstPresaleToken_ETH,
               contractInstClaim:contractInstClaim_ETH,
               claimAddress: process.env.REACT_APP_CLAIM_ETH,
+              contractInstStakePool:contractInstStakePool_ETH
             })
           )
         : selectedNetworkId === 56
@@ -143,6 +147,7 @@ function App() {
               contractInstPresaleToken: contractInstPresaleToken_BNB,
               contractInstClaim: contractInstClaim_BNB,
               claimAddress: process.env.REACT_APP_CLAIM_BNB,
+              contractInstStakePool:contractInstStakePool_BNB
             })
           )
         : selectedNetworkId === 137
@@ -153,6 +158,7 @@ function App() {
               contractInstPresaleToken: contractInstPresaleToken_POLYGON,
               contractInstClaim: contractInstClaim_POLYGON,
               claimAddress: process.env.REACT_APP_CLAIM_POLYGON,
+              contractInstStakePool:contractInstStakePool_POLYGON
             })
           )
         : dispatch(UpdateUser(null));
