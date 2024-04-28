@@ -244,7 +244,7 @@ function App() {
         <Route path="/utilities" element={<Utilities />} />
         <Route path="/ambassador" element={<Ambassador />} />
         <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-        {/* <Route path="/stake" element={<Staking />} /> */}
+        <Route path="/stake" element={<Staking />} />
         <Route
           path="/price-risk-disclosure"
           element={<PriceRiskDisclosure />}
