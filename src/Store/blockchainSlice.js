@@ -30,18 +30,24 @@ const initialState = {
   contractInstICO_ETH: null,
   contractInstDrift_ETH: null,
   contractInstClaim_ETH: null,
-
+  contractInstStakePool_ETH: null,
+  contractInstDriftStake_ETH: null,
+  
   web3Inst_BNB: null,
   contractInstPresaleToken_BNB: null,
   contractInstICO_BNB: null,
   contractInstDrift_BNB: null,
   contractInstClaim_BNB: null,
-
+  contractInstStakePool_BNB: null,
+  contractInstDriftStake_BNB: null,
+  
   web3Inst_POLYGON: null,
   contractInstPresaleToken_POLYGON: null,
   contractInstICO_POLYGON: null,
   contractInstDrift_POLYGON: null,
   contractInstClaim_POLYGON: null,
+  contractInstStakePool_POLYGON: null,
+  contractInstDriftStake_POLYGON: null,
   
   user: null,
   publicBlockchainData: null,
@@ -284,6 +290,15 @@ export const blockchainSlice = createSlice({
         driftAbi_ETH,
         process.env.REACT_APP_DRIFT_ETH
       );
+      // New Inst ETH
+      state.contractInstStakePool_ETH = new web3Instance.eth.Contract(
+        driftStakeAbi_ETH,
+        process.env.REACT_APP_ST_DRIFT_ETH
+      );
+      state.contractInstDriftStake_ETH = new web3Instance.eth.Contract(
+        driftStakePoolAbi_ETH,
+        process.env.REACT_APP_ST_POOL_DRIFT_ETH
+      );
 
       // BNB INS
       let web3InstanceBNB = new Web3(process.env.REACT_APP_RPC_BNB);
@@ -311,6 +326,17 @@ export const blockchainSlice = createSlice({
         driftAbi_BNB,
         process.env.REACT_APP_DRIFT_BNB
       );
+
+      state.contractInstStakePool_BNB = new web3InstanceBNB.eth.Contract(
+        driftStakeAbi_BNB,
+        process.env.REACT_APP_ST_DRIFT_BNB
+      );
+      state.contractInstDriftStake_BNB = new web3InstanceBNB.eth.Contract(
+        driftStakePoolAbi_BNB,
+        process.env.REACT_APP_ST_POOL_DRIFT_BNB
+      );
+
+
       // POLYGON INS
       let web3InstancePOLYGON = new Web3(process.env.REACT_APP_RPC_POLYGON);
       if (action.payload?.walletProvider) {
@@ -335,6 +361,15 @@ export const blockchainSlice = createSlice({
       state.contractInstDrift_POLYGON = new web3InstancePOLYGON.eth.Contract(
         driftAbi_POLYGON,
         process.env.REACT_APP_DRIFT_POLYGON
+      );
+      
+      state.contractInstStakePool_POLYGON = new web3InstancePOLYGON.eth.Contract(
+        driftStakeAbi_POLYGON,
+        process.env.REACT_APP_ST_DRIFT_POLYGON
+      );
+      state.contractInstDriftStake_POLYGON = new web3InstancePOLYGON.eth.Contract(
+        driftStakePoolAbi_POLYGON,
+        process.env.REACT_APP_ST_POOL_DRIFT_POLYGON
       );
     },
 
