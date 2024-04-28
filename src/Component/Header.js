@@ -14,7 +14,7 @@ function Header() {
   const { open } = useWeb3Modal();
   const { address, isConnected, chainId } = useWeb3ModalAccount();
   const { selectedNetworkId } = useWeb3ModalState();
-  const { web3Inst } = useSelector((state) => state.Blockchain);
+  const { web3Inst_ETH } = useSelector((state) => state.Blockchain);
 
   const supportChain = [1, 56, 137];
 
@@ -23,18 +23,18 @@ function Header() {
       isConnected &&
       chainId &&
       !supportChain.includes(chainId) &&
-      web3Inst?.currentProvider?.request
+      web3Inst_ETH?.currentProvider?.request
     ) {
       // (async () => await open({ view: "Networks" }))();
       (async () =>
-        web3Inst.currentProvider
+        web3Inst_ETH.currentProvider
           .request({
             method: "wallet_switchEthereumChain",
             params: [{ chainId: "0x1" }],
           })
           .catch((e) => console.log(e)))();
     }
-  }, [selectedNetworkId, chainId, isConnected, web3Inst]);
+  }, [selectedNetworkId, chainId, isConnected, web3Inst_ETH]);
 
   const ToggleSidebar = () => {
     const SideBar = document.querySelector(".SideBar");

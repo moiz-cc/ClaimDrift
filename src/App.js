@@ -33,23 +33,23 @@ import Staking from "./Pages/Staking.js";
 function App() {
   const dispatch = useDispatch();
   const {
-    web3Inst,
-    contractInst,
-    contractInstToken,
-    contractInstDrift,
-    contractInstClaim,
+    web3Inst_ETH,
+    contractInstICO_ETH,
+    contractInstPresaleToken_ETH,
+    contractInstDrift_ETH,
+    contractInstClaim_ETH,
 
-    web3InstBNB,
-    contractInstBNB,
-    contractInstTokenBNB,
-    contractInstDriftBNB,
-    contractInstClaimBNB,
+    web3Inst_BNB,
+    contractInstICO_BNB,
+    contractInstPresaleToken_BNB,
+    contractInstDrift_BNB,
+    contractInstClaim_BNB,
 
-    web3InstPOLYGON,
-    contractInstTokenPOLYGON,
-    contractInstPOLYGON,
-    contractInstDriftPOLYGON,
-    contractInstClaimPOLYGON,
+    web3Inst_POLYGON,
+    contractInstPresaleToken_POLYGON,
+    contractInstICO_POLYGON,
+    contractInstDrift_POLYGON,
+    contractInstClaim_POLYGON,
   } = useSelector((state) => state.Blockchain);
   const { walletProvider } = useWeb3ModalSigner();
 
@@ -106,18 +106,18 @@ function App() {
   const _timeout = useRef(null);
 
   const getBlockchainData = () => {
-    if (contractInst && contractInstBNB && contractInstPOLYGON) {
+    if (contractInstICO_ETH && contractInstICO_BNB && contractInstICO_POLYGON) {
       dispatch(
         LoadBlockchainData({
-          contractInst,
-          web3Inst,
-          contractInstDrift,
-          contractInstBNB,
-          web3InstBNB,
-          contractInstDriftBNB,
-          contractInstPOLYGON,
-          web3InstPOLYGON,
-          contractInstDriftPOLYGON,
+          contractInstICO_ETH,
+          web3Inst_ETH,
+          contractInstDrift_ETH,
+          contractInstICO_BNB,
+          web3Inst_BNB,
+          contractInstDrift_BNB,
+          contractInstICO_POLYGON,
+          web3Inst_POLYGON,
+          contractInstDrift_POLYGON,
         })
       );
     }
@@ -128,30 +128,30 @@ function App() {
       selectedNetworkId === 1
         ? dispatch(
             LoadUser({
-              contractInst,
+              contractInstICO_ETH,
               address: address.trim(),
-              contractInstToken,
-              contractInstClaim,
+              contractInstPresaleToken_ETH,
+              contractInstClaim_ETH,
               claimAddress: process.env.REACT_APP_CLAIM_ETH,
             })
           )
         : selectedNetworkId === 56
         ? dispatch(
             LoadUser({
-              contractInst: contractInstBNB,
+              contractInstICO_ETH: contractInstICO_BNB,
               address: address.trim(),
-              contractInstToken: contractInstTokenBNB,
-              contractInstClaim: contractInstClaimBNB,
+              contractInstPresaleToken_ETH: contractInstPresaleToken_BNB,
+              contractInstClaim_ETH: contractInstClaim_BNB,
               claimAddress: process.env.REACT_APP_CLAIM_BNB,
             })
           )
         : selectedNetworkId === 137
         ? dispatch(
             LoadUser({
-              contractInst: contractInstPOLYGON,
+              contractInstICO_ETH: contractInstICO_POLYGON,
               address: address.trim(),
-              contractInstToken: contractInstTokenPOLYGON,
-              contractInstClaim: contractInstClaimPOLYGON,
+              contractInstPresaleToken_ETH: contractInstPresaleToken_POLYGON,
+              contractInstClaim_ETH: contractInstClaim_POLYGON,
               claimAddress: process.env.REACT_APP_CLAIM_POLYGON,
             })
           )
@@ -164,12 +164,12 @@ function App() {
   };
 
   useEffect(() => {
-    if (!contractInst) {
+    if (!contractInstICO_ETH) {
       loadcontract();
     }
     dispatch(GetUSDPrice());
     getBlockchainData();
-  }, [contractInst, contractInstBNB, contractInstPOLYGON]);
+  }, [contractInstICO_ETH, contractInstICO_BNB, contractInstICO_POLYGON]);
 
   useEffect(() => {
     if (isConnected && walletProvider?.provider && !isWeb3InstanceConnect) {

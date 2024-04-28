@@ -50,23 +50,23 @@ function Home() {
     publicBlockchainData: data,
     user,
     isLoading,
-    web3Inst,
-    contractInst,
-    contractInstToken,
-    contractInstDrift,
-    contractInstClaim,
+    web3Inst_ETH,
+    contractInstICO_ETH,
+    contractInstPresaleToken_ETH,
+    contractInstDrift_ETH,
+    contractInstClaim_ETH,
 
-    web3InstBNB,
-    contractInstBNB,
-    contractInstTokenBNB,
-    contractInstDriftBNB,
-    contractInstClaimBNB,
+    web3Inst_BNB,
+    contractInstICO_BNB,
+    contractInstPresaleToken_BNB,
+    contractInstDrift_BNB,
+    contractInstClaim_BNB,
 
-    web3InstPOLYGON,
-    contractInstTokenPOLYGON,
-    contractInstPOLYGON,
-    contractInstDriftPOLYGON,
-    contractInstClaimPOLYGON,
+    web3Inst_POLYGON,
+    contractInstPresaleToken_POLYGON,
+    contractInstICO_POLYGON,
+    contractInstDrift_POLYGON,
+    contractInstClaim_POLYGON,
   } = useSelector((state) => state.Blockchain);
 
   const { address, isConnected, chainId } = useWeb3ModalAccount();
@@ -115,21 +115,21 @@ function Home() {
     if (selectedNetworkId === 1 && chainId === 1) {
       presale_TokenAddress = process.env.REACT_APP_TOKEN_CONTRACT_ETH;
       claim_TokenAddress = process.env.REACT_APP_CLAIM_ETH;
-      token_Inst = contractInstToken;
-      ico_Inst = contractInst;
-      claim_Inst = contractInstClaim;
+      token_Inst = contractInstPresaleToken_ETH;
+      ico_Inst = contractInstICO_ETH;
+      claim_Inst = contractInstClaim_ETH;
     } else if (selectedNetworkId === 56 && chainId === 56) {
       presale_TokenAddress = process.env.REACT_APP_TOKEN_CONTRACT_BNB;
       claim_TokenAddress = process.env.REACT_APP_CLAIM_BNB;
-      token_Inst = contractInstTokenBNB;
-      ico_Inst = contractInstBNB;
-      claim_Inst = contractInstClaimBNB;
+      token_Inst = contractInstPresaleToken_BNB;
+      ico_Inst = contractInstICO_BNB;
+      claim_Inst = contractInstClaim_BNB;
     } else if (selectedNetworkId === 137 && chainId === 137) {
       presale_TokenAddress = process.env.REACT_APP_TOKEN_CONTRACT_POLYGON;
       claim_TokenAddress = process.env.REACT_APP_CLAIM_POLYGON;
-      token_Inst = contractInstTokenPOLYGON;
-      ico_Inst = contractInstPOLYGON;
-      claim_Inst = contractInstClaimPOLYGON;
+      token_Inst = contractInstPresaleToken_POLYGON;
+      ico_Inst = contractInstICO_POLYGON;
+      claim_Inst = contractInstClaim_POLYGON;
     } else return;
 
     try {
@@ -160,10 +160,10 @@ function Home() {
           setErrors((state) => ({ ...state, transaction: "" }));
           dispatch(
             LoadUser({
-              contractInst: ico_Inst,
+              contractInstICO_ETH: ico_Inst,
               address,
-              contractInstToken: token_Inst,
-              contractInstClaim: claim_Inst,
+              contractInstPresaleToken_ETH: token_Inst,
+              contractInstClaim_ETH: claim_Inst,
               claimAddress: claim_TokenAddress,
             })
           );
@@ -207,20 +207,20 @@ function Home() {
     let ico_Inst;
 
     if (selectedNetworkId === 1 && chainId === 1) {
-      claim_Inst = contractInstClaim;
+      claim_Inst = contractInstClaim_ETH;
       claim_Address = process.env.REACT_APP_CLAIM_ETH;
-      token_Inst = contractInstToken;
-      ico_Inst = contractInst;
+      token_Inst = contractInstPresaleToken_ETH;
+      ico_Inst = contractInstICO_ETH;
     } else if (selectedNetworkId === 56 && chainId === 56) {
-      claim_Inst = contractInstClaimBNB;
+      claim_Inst = contractInstClaim_BNB;
       claim_Address = process.env.REACT_APP_CLAIM_BNB;
-      token_Inst = contractInstTokenBNB;
-      ico_Inst = contractInstBNB;
+      token_Inst = contractInstPresaleToken_BNB;
+      ico_Inst = contractInstICO_BNB;
     } else if (selectedNetworkId === 137 && chainId === 137) {
-      claim_Inst = contractInstClaimPOLYGON;
+      claim_Inst = contractInstClaim_POLYGON;
       claim_Address = process.env.REACT_APP_CLAIM_POLYGON;
-      token_Inst = contractInstTokenPOLYGON;
-      ico_Inst = contractInstPOLYGON;
+      token_Inst = contractInstPresaleToken_POLYGON;
+      ico_Inst = contractInstICO_POLYGON;
     }
 
     try {
@@ -247,24 +247,24 @@ function Home() {
           setErrors((state) => ({ ...state, transaction: "" }));
           dispatch(
             LoadUser({
-              contractInst: ico_Inst,
+              contractInstICO_ETH: ico_Inst,
               address,
-              contractInstToken: token_Inst,
-              contractInstClaim: claim_Inst,
+              contractInstPresaleToken_ETH: token_Inst,
+              contractInstClaim_ETH: claim_Inst,
               claimAddress: claim_Address,
             })
           );
           dispatch(
             LoadBlockchainData({
-              contractInst,
-              web3Inst,
-              contractInstDrift,
-              contractInstBNB,
-              web3InstBNB,
-              contractInstDriftBNB,
-              contractInstPOLYGON,
-              web3InstPOLYGON,
-              contractInstDriftPOLYGON,
+              contractInstICO_ETH,
+              web3Inst_ETH,
+              contractInstDrift_ETH,
+              contractInstICO_BNB,
+              web3Inst_BNB,
+              contractInstDrift_BNB,
+              contractInstICO_POLYGON,
+              web3Inst_POLYGON,
+              contractInstDrift_POLYGON,
             })
           );
           setLoading(false);

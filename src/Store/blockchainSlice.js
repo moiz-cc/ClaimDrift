@@ -25,21 +25,24 @@ import ConvertNumber from "../Helpers/ConvertNumber";
 import axios from "axios";
 
 const initialState = {
-  contractInst: null,
-  web3Inst: null,
-  contractInstToken: null,
-  contractInstClaim: null,
-  contractInstDrift: null,
-  contractInstBNB: null,
-  web3InstBNB: null,
-  contractInstTokenBNB: null,
-  contractInstClaimBNB: null,
-  contractInstPOLYGON: null,
-  web3InstPOLYGON: null,
-  contractInstTokenPOLYGON: null,
-  contractInstClaimPOLYGON: null,
-  contractInstDriftBNB: null,
-  contractInstDriftPOLYGON: null,
+  web3Inst_ETH: null,
+  contractInstPresaleToken_ETH: null,
+  contractInstICO_ETH: null,
+  contractInstDrift_ETH: null,
+  contractInstClaim_ETH: null,
+
+  web3Inst_BNB: null,
+  contractInstPresaleToken_BNB: null,
+  contractInstICO_BNB: null,
+  contractInstDrift_BNB: null,
+  contractInstClaim_BNB: null,
+
+  web3Inst_POLYGON: null,
+  contractInstPresaleToken_POLYGON: null,
+  contractInstICO_POLYGON: null,
+  contractInstDrift_POLYGON: null,
+  contractInstClaim_POLYGON: null,
+  
   user: null,
   publicBlockchainData: null,
   ethPrice: null,
@@ -71,15 +74,15 @@ export const LoadBlockchainData = createAsyncThunk(
   "LoadBlockchainData",
   async (
     {
-      contractInst,
-      web3Inst,
-      contractInstDrift,
-      contractInstBNB,
-      web3InstBNB,
-      contractInstDriftBNB,
-      contractInstPOLYGON,
-      web3InstPOLYGON,
-      contractInstDriftPOLYGON,
+      contractInstICO_ETH,
+      web3Inst_ETH,
+      contractInstDrift_ETH,
+      contractInstICO_BNB,
+      web3Inst_BNB,
+      contractInstDrift_BNB,
+      contractInstICO_POLYGON,
+      web3Inst_POLYGON,
+      contractInstDrift_POLYGON,
     },
     { rejectWithValue }
   ) => {
@@ -92,12 +95,12 @@ export const LoadBlockchainData = createAsyncThunk(
         tokensTransferredWarmup,
         token_staked,
         tokensToClaim_ETH,
-      ] = await makeBatchRequest(web3Inst, [
-        contractInst.methods.tokensTransferred(4).call,
-        contractInst.methods.tokensTransferred(2).call,
-        contractInst.methods.tokensTransferred(1).call,
-        contractInst.methods.noOfTokens(1).call,
-        contractInstDrift.methods.allowance(
+      ] = await makeBatchRequest(web3Inst_ETH, [
+        contractInstICO_ETH.methods.tokensTransferred(4).call,
+        contractInstICO_ETH.methods.tokensTransferred(2).call,
+        contractInstICO_ETH.methods.tokensTransferred(1).call,
+        contractInstICO_ETH.methods.noOfTokens(1).call,
+        contractInstDrift_ETH.methods.allowance(
           process.env.REACT_APP_OWNER_ADDRESS,
           process.env.REACT_APP_CLAIM_ETH
         ).call,
@@ -108,11 +111,11 @@ export const LoadBlockchainData = createAsyncThunk(
         tokensTransferredLap1BNB,
         token_stakedBNB,
         tokensToClaim_BNB,
-      ] = await makeBatchRequest(web3InstBNB, [
-        contractInstBNB.methods.tokensTransferred(4).call,
-        contractInstBNB.methods.tokensTransferred(2).call,
-        contractInstBNB.methods.noOfTokens(1).call,
-        contractInstDriftBNB.methods.allowance(
+      ] = await makeBatchRequest(web3Inst_BNB, [
+        contractInstICO_BNB.methods.tokensTransferred(4).call,
+        contractInstICO_BNB.methods.tokensTransferred(2).call,
+        contractInstICO_BNB.methods.noOfTokens(1).call,
+        contractInstDrift_BNB.methods.allowance(
           process.env.REACT_APP_OWNER_ADDRESS,
           process.env.REACT_APP_CLAIM_BNB
         ).call,
@@ -122,10 +125,10 @@ export const LoadBlockchainData = createAsyncThunk(
         tokensTransferredLap2POLYGON,
         token_stakedPOLYGON,
         tokensToClaim_POLYGON,
-      ] = await makeBatchRequest(web3InstPOLYGON, [
-        contractInstPOLYGON.methods.tokensTransferred(4).call,
-        contractInstPOLYGON.methods.noOfTokens(1).call,
-        contractInstDriftPOLYGON.methods.allowance(
+      ] = await makeBatchRequest(web3Inst_POLYGON, [
+        contractInstICO_POLYGON.methods.tokensTransferred(4).call,
+        contractInstICO_POLYGON.methods.noOfTokens(1).call,
+        contractInstDrift_POLYGON.methods.allowance(
           process.env.REACT_APP_OWNER_ADDRESS,
           process.env.REACT_APP_CLAIM_POLYGON
         ).call,
@@ -172,41 +175,41 @@ export const LoadUser = createAsyncThunk(
   "LoadUser",
   async (data, { rejectWithValue }) => {
     const {
-      contractInst,
+      contractInstICO_ETH,
       address,
-      contractInstToken,
-      contractInstClaim,
+      contractInstPresaleToken_ETH,
+      contractInstClaim_ETH,
       claimAddress,
     } = data;
 
     try {
-      const balance = await contractInstToken.methods.balanceOf(address).call();
-      const Staked = await contractInst.methods
+      const balance = await contractInstPresaleToken_ETH.methods.balanceOf(address).call();
+      const Staked = await contractInstICO_ETH.methods
         .amountOfAddressPerType(address, 1)
         .call();
-      const Dynamic = await contractInst.methods
+      const Dynamic = await contractInstICO_ETH.methods
         .amountOfAddressPerType(address, 0)
         .call();
 
-      const ambassador_code = await contractInst.methods
+      const ambassador_code = await contractInstICO_ETH.methods
         .codeOfAddress(address)
         .call();
 
-      const total_investment = await contractInst.methods
+      const total_investment = await contractInstICO_ETH.methods
         .investAmount(address)
         .call();
 
-      const is_ambassador_eligible = await contractInst.methods
+      const is_ambassador_eligible = await contractInstICO_ETH.methods
         .isAmbassadorEligible(address)
         .call();
 
-      const info = await contractInst.methods.getAmbassadorInfo(address).call();
+      const info = await contractInstICO_ETH.methods.getAmbassadorInfo(address).call();
 
-      const tokensToMove = await contractInstClaim.methods
+      const tokensToMove = await contractInstClaim_ETH.methods
         .getStakeAmountOfDynamicToStake(address)
         .call();
 
-      const is_allowed = await contractInstToken.methods
+      const is_allowed = await contractInstPresaleToken_ETH.methods
         .allowance(address, claimAddress)
         .call();
 
@@ -264,20 +267,20 @@ export const blockchainSlice = createSlice({
         let { walletProvider } = action.payload;
         web3Instance = new Web3(walletProvider.provider);
       }
-      state.web3Inst = web3Instance;
-      state.contractInst = new web3Instance.eth.Contract(
+      state.web3Inst_ETH = web3Instance;
+      state.contractInstICO_ETH = new web3Instance.eth.Contract(
         crowdSaleAbi_ETH,
         process.env.REACT_APP_CROWDSALE_ETH
       );
-      state.contractInstToken = new web3Instance.eth.Contract(
+      state.contractInstPresaleToken_ETH = new web3Instance.eth.Contract(
         presaletokenAbi_ETH,
         process.env.REACT_APP_TOKEN_CONTRACT_ETH
       );
-      state.contractInstClaim = new web3Instance.eth.Contract(
+      state.contractInstClaim_ETH = new web3Instance.eth.Contract(
         claimAbi_ETH,
         process.env.REACT_APP_CLAIM_ETH
       );
-      state.contractInstDrift = new web3Instance.eth.Contract(
+      state.contractInstDrift_ETH = new web3Instance.eth.Contract(
         driftAbi_ETH,
         process.env.REACT_APP_DRIFT_ETH
       );
@@ -288,23 +291,23 @@ export const blockchainSlice = createSlice({
         let { walletProvider } = action.payload;
         web3InstanceBNB = new Web3(walletProvider.provider);
       }
-      state.web3InstBNB = web3InstanceBNB;
-      state.contractInstBNB = new web3InstanceBNB.eth.Contract(
+      state.web3Inst_BNB = web3InstanceBNB;
+      state.contractInstICO_BNB = new web3InstanceBNB.eth.Contract(
         crowdSaleAbi_BNB,
         process.env.REACT_APP_CROWDSALE_BNB
       );
 
-      state.contractInstTokenBNB = new web3InstanceBNB.eth.Contract(
+      state.contractInstPresaleToken_BNB = new web3InstanceBNB.eth.Contract(
         presaletokenAbi_BNB,
         process.env.REACT_APP_TOKEN_CONTRACT_BNB
       );
 
-      state.contractInstClaimBNB = new web3InstanceBNB.eth.Contract(
+      state.contractInstClaim_BNB = new web3InstanceBNB.eth.Contract(
         claimAbi_BNB,
         process.env.REACT_APP_CLAIM_BNB
       );
 
-      state.contractInstDriftBNB = new web3InstanceBNB.eth.Contract(
+      state.contractInstDrift_BNB = new web3InstanceBNB.eth.Contract(
         driftAbi_BNB,
         process.env.REACT_APP_DRIFT_BNB
       );
@@ -314,22 +317,22 @@ export const blockchainSlice = createSlice({
         let { walletProvider } = action.payload;
         web3InstancePOLYGON = new Web3(walletProvider.provider);
       }
-      state.web3InstPOLYGON = web3InstancePOLYGON;
-      state.contractInstPOLYGON = new web3InstancePOLYGON.eth.Contract(
+      state.web3Inst_POLYGON = web3InstancePOLYGON;
+      state.contractInstICO_POLYGON = new web3InstancePOLYGON.eth.Contract(
         crowdSaleAbi_POLYGON,
         process.env.REACT_APP_CROWDSALE_POLYGON
       );
-      state.contractInstTokenPOLYGON = new web3InstancePOLYGON.eth.Contract(
+      state.contractInstPresaleToken_POLYGON = new web3InstancePOLYGON.eth.Contract(
         presaletokenAbi_POLYGON,
         process.env.REACT_APP_TOKEN_CONTRACT_POLYGON
       );
 
-      state.contractInstClaimPOLYGON = new web3InstancePOLYGON.eth.Contract(
+      state.contractInstClaim_POLYGON = new web3InstancePOLYGON.eth.Contract(
         claimAbi_POLYGON,
         process.env.REACT_APP_CLAIM_POLYGON
       );
 
-      state.contractInstDriftPOLYGON = new web3InstancePOLYGON.eth.Contract(
+      state.contractInstDrift_POLYGON = new web3InstancePOLYGON.eth.Contract(
         driftAbi_POLYGON,
         process.env.REACT_APP_DRIFT_POLYGON
       );
