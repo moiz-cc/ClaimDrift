@@ -60,11 +60,11 @@ function Home() {
     contractInstClaimPOLYGON,
     contractInstDrift_ETH,
     contractInstDriftStake_ETH,
-    web3Inst,
+    web3Inst_ETH,
     isLoading,
     contractInstStakePool_ETH,
-    web3InstBNB,
-    web3InstPOLYGON,
+    web3Inst_BNB,
+    web3Inst_POLYGON,
   } = useSelector((state) => state.Blockchain);
 
   const date = Date.now() / 1000;
@@ -310,11 +310,11 @@ function Home() {
           dispatch(
             LoadBlockchainData({
               contractInstICO_ETH,
-              web3Inst,
+              web3Inst_ETH,
               contractInstDrift_ETH,
               contractInstStakePool_ETH,
               // contractInstICO_BNB,
-              // web3InstBNB,
+              // web3Inst_BNB,
             })
           );
           setLoading(false);

@@ -14,21 +14,23 @@ import ConvertNumber from "../Helpers/ConvertNumber";
 import axios from "axios";
 
 const initialState = {
-  contractInstICO_ETH: null,
-  web3Inst: null,
+  web3Inst_ETH: null,
   contractInstPresaleToken_ETH: null,
+  contractInstICO_ETH: null,
+  contractInstDrift_ETH: null,
   contractInstClaim_ETH: null,
+  contractInstStakePool_ETH: null,
+  contractInstDriftStake_ETH: null,
+
+
   contractInstICO_BNB: null,
-  web3InstBNB: null,
+  web3Inst_BNB: null,
   contractInstTokenBNB: null,
   contractInstClaimBNB: null,
   contractInstICO_POLYGON: null,
-  web3InstPOLYGON: null,
+  web3Inst_POLYGON: null,
   contractInstTokenPOLYGON: null,
   contractInstClaimPOLYGON: null,
-  contractInstDrift_ETH: null,
-  contractInstDriftStake_ETH: null,
-  contractInstStakePool_ETH: null,
   user: null,
   publicBlockchainData: null,
   ethPrice: null,
@@ -62,11 +64,11 @@ export const LoadBlockchainData = createAsyncThunk(
   async (
     {
       contractInstICO_ETH,
-      web3Inst,
+      web3Inst_ETH,
       contractInstDrift_ETH,
       contractInstStakePool_ETH,
 
-      // , contractInstICO_BNB, web3InstBNB
+      // , contractInstICO_BNB, web3Inst_BNB
     },
     { rejectWithValue }
   ) => {
@@ -79,7 +81,7 @@ export const LoadBlockchainData = createAsyncThunk(
         tokensTransferredLap1,
         tokensTransferredWarmup,
         tokensToClaim,
-      ] = await makeBatchRequest(web3Inst, [
+      ] = await makeBatchRequest(web3Inst_ETH, [
         contractInstICO_ETH.methods.totalReceivedFunds().call,
         contractInstICO_ETH.methods.tokensTransferred(4).call,
         contractInstICO_ETH.methods.tokensTransferred(2).call,
@@ -105,7 +107,7 @@ export const LoadBlockchainData = createAsyncThunk(
 
       //   tokensTransferredLap2BNB,
       //   tokensTransferredLap1BNB,
-      // ] = await makeBatchRequest(web3InstBNB, [
+      // ] = await makeBatchRequest(web3Inst_BNB, [
       //   contractInstICO_BNB.methods.totalReceivedFunds().call,
 
       //   contractInstICO_BNB.methods.tokensTransferred(4).call,
@@ -247,7 +249,7 @@ export const blockchainSlice = createSlice({
         let { walletProvider } = action.payload;
         web3Instance = new Web3(walletProvider.provider);
       }
-      state.web3Inst = web3Instance;
+      state.web3Inst_ETH = web3Instance;
       state.contractInstICO_ETH = new web3Instance.eth.Contract(
         crowdSaleAbi_ETH,
         process.env.REACT_APP_CROWDSALE_ETH
@@ -280,7 +282,7 @@ export const blockchainSlice = createSlice({
       //   let { walletProvider } = action.payload;
       //   web3InstanceBNB = new Web3(walletProvider.provider);
       // }
-      // state.web3InstBNB = web3InstanceBNB;
+      // state.web3Inst_BNB = web3InstanceBNB;
       // state.contractInstICO_BNB = new web3InstanceBNB.eth.Contract(
       //   crowdSaleAbi_BNB,
       //   process.env.REACT_APP_CROWDSALE_BNB

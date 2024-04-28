@@ -42,9 +42,9 @@ function App() {
     contractInstDriftStake_ETH,
 
     // contractInstTokenBNB,
-    web3Inst,
+    web3Inst_ETH,
     // contractInstICO_BNB,
-    // web3InstBNB,
+    // web3Inst_BNB,
   } = useSelector((state) => state.Blockchain);
   const { walletProvider } = useWeb3ModalSigner();
 
@@ -123,11 +123,11 @@ function App() {
       dispatch(
         LoadBlockchainData({
           contractInstICO_ETH,
-          web3Inst,
+          web3Inst_ETH,
           contractInstDrift_ETH,
           contractInstStakePool_ETH,
           // contractInstICO_BNB,
-          // web3InstBNB,
+          // web3Inst_BNB,
         })
       );
     }
