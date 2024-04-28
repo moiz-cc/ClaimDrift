@@ -1,6 +1,6 @@
 // TOKEN ABI
 
-export const tokenAbi_ETH = [
+export const presaletokenAbi_ETH = [
   {
     inputs: [],
     stateMutability: "nonpayable",
@@ -463,7 +463,7 @@ export const tokenAbi_ETH = [
     type: "function",
   },
 ];
-export const tokenAbi_BNB = [
+export const presaletokenAbi_BNB = [
   {
     inputs: [],
     stateMutability: "nonpayable",
@@ -926,7 +926,7 @@ export const tokenAbi_BNB = [
     type: "function",
   },
 ];
-export const tokenAbi_POLYGON = [
+export const presaletokenAbi_POLYGON = [
   {
     inputs: [],
     stateMutability: "nonpayable",

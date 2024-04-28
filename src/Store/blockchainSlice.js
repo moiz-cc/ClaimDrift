@@ -10,9 +10,9 @@ import {
   driftAbi,
   driftAbi_BNB,
   driftAbi_POLYGON,
-  tokenAbi_BNB,
-  tokenAbi_ETH,
-  tokenAbi_POLYGON,
+  presaletokenAbi_BNB,
+  presaletokenAbi_ETH,
+  presaletokenAbi_POLYGON,
 } from "../config/abi";
 import ConvertNumber from "../Helpers/ConvertNumber";
 import axios from "axios";
@@ -263,7 +263,7 @@ export const blockchainSlice = createSlice({
         process.env.REACT_APP_CROWDSALE_ETH
       );
       state.contractInstToken = new web3Instance.eth.Contract(
-        tokenAbi_ETH,
+        presaletokenAbi_ETH,
         process.env.REACT_APP_TOKEN_CONTRACT_ETH
       );
       state.contractInstClaim = new web3Instance.eth.Contract(
@@ -288,7 +288,7 @@ export const blockchainSlice = createSlice({
       );
 
       state.contractInstTokenBNB = new web3InstanceBNB.eth.Contract(
-        tokenAbi_BNB,
+        presaletokenAbi_BNB,
         process.env.REACT_APP_TOKEN_CONTRACT_BNB
       );
 
@@ -313,7 +313,7 @@ export const blockchainSlice = createSlice({
         process.env.REACT_APP_CROWDSALE_POLYGON
       );
       state.contractInstTokenPOLYGON = new web3InstancePOLYGON.eth.Contract(
-        tokenAbi_POLYGON,
+        presaletokenAbi_POLYGON,
         process.env.REACT_APP_TOKEN_CONTRACT_POLYGON
       );
 
