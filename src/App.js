@@ -24,7 +24,7 @@ import {
   LoadBlockchainData,
   UpdateUser,
 } from "./Store/blockchainSlice.js";
-import { LoadUser ,LoadPoolData} from "./Store/blockchainSlice.js";
+import { LoadUser, LoadPoolData } from "./Store/blockchainSlice.js";
 import axios from "axios";
 import PrivacyPolicy from "./Pages/PrivacyPolicy.js";
 import PriceRiskDisclosure from "./Pages/PriceRiskDisclosure.js";
@@ -38,6 +38,7 @@ function App() {
     contractInstPresaleToken_ETH,
     contractInstDrift_ETH,
     contractInstClaim_ETH,
+    contractInstDriftStake_ETH,
     contractInstStakePool_ETH,
 
     web3Inst_BNB,
@@ -45,6 +46,7 @@ function App() {
     contractInstPresaleToken_BNB,
     contractInstDrift_BNB,
     contractInstClaim_BNB,
+    contractInstDriftStake_BNB,
     contractInstStakePool_BNB,
 
     web3Inst_POLYGON,
@@ -52,6 +54,7 @@ function App() {
     contractInstICO_POLYGON,
     contractInstDrift_POLYGON,
     contractInstClaim_POLYGON,
+    contractInstDriftStake_POLYGON,
     contractInstStakePool_POLYGON,
   } = useSelector((state) => state.Blockchain);
   const { walletProvider } = useWeb3ModalSigner();
@@ -127,9 +130,7 @@ function App() {
   };
 
   const getUserData = async () => {
-
     if (isConnected && typeof address !== "undefined") {
-      
       selectedNetworkId === 1
         ? dispatch(
             LoadUser({
@@ -138,7 +139,11 @@ function App() {
               contractInstPresaleToken: contractInstPresaleToken_ETH,
               contractInstClaim: contractInstClaim_ETH,
               claimAddress: process.env.REACT_APP_CLAIM_ETH,
-              // contractInstStakePool:contractInstStakePool_ETH
+              contractInstStakePool: contractInstStakePool_ETH,
+              contractInstDriftStake: contractInstDriftStake_ETH,
+              contractInstDrift: contractInstDrift_ETH,
+              pool_address: process.env.REACT_APP_ST_POOL_DRIFT_ETH,
+              
             })
           )
         : selectedNetworkId === 56
@@ -149,7 +154,10 @@ function App() {
               contractInstPresaleToken: contractInstPresaleToken_BNB,
               contractInstClaim: contractInstClaim_BNB,
               claimAddress: process.env.REACT_APP_CLAIM_BNB,
-              // contractInstStakePool:contractInstStakePool_BNB
+              contractInstStakePool: contractInstStakePool_BNB,
+              contractInstDriftStake: contractInstDriftStake_BNB,
+              contractInstDrift: contractInstDrift_BNB,
+              pool_address: process.env.REACT_APP_ST_POOL_DRIFT_BNB,
             })
           )
         : selectedNetworkId === 137
@@ -160,36 +168,38 @@ function App() {
               contractInstPresaleToken: contractInstPresaleToken_POLYGON,
               contractInstClaim: contractInstClaim_POLYGON,
               claimAddress: process.env.REACT_APP_CLAIM_POLYGON,
-              // contractInstStakePool:contractInstStakePool_POLYGON
+              contractInstStakePool: contractInstStakePool_POLYGON,
+              contractInstDriftStake: contractInstDriftStake_POLYGON,
+              contractInstDrift: contractInstDrift_POLYGON,
+              pool_address: process.env.REACT_APP_ST_POOL_DRIFT_POLYGON,
             })
           )
         : dispatch(UpdateUser(null));
     }
   };
   const getPoolData = async () => {
-
     if (isConnected && typeof address !== "undefined") {
-      
-      selectedNetworkId === 1
-        ? dispatch(
-            LoadPoolData({
-              contractInstStakePool:contractInstStakePool_ETH
-            })
-          )
-        : selectedNetworkId === 56
-        ? dispatch(
-            LoadPoolData({
-              contractInstStakePool:contractInstStakePool_BNB
-            })
-          )
-        : selectedNetworkId === 137
-        ? dispatch(
-            LoadPoolData({
-              
-              contractInstStakePool:contractInstStakePool_POLYGON
-            })
-          )
-        : <></>;
+      selectedNetworkId === 1 ? (
+        dispatch(
+          LoadPoolData({
+            contractInstStakePool: contractInstStakePool_ETH,
+          })
+        )
+      ) : selectedNetworkId === 56 ? (
+        dispatch(
+          LoadPoolData({
+            contractInstStakePool: contractInstStakePool_BNB,
+          })
+        )
+      ) : selectedNetworkId === 137 ? (
+        dispatch(
+          LoadPoolData({
+            contractInstStakePool: contractInstStakePool_POLYGON,
+          })
+        )
+      ) : (
+        <></>
+      );
     }
   };
 
@@ -212,8 +222,6 @@ function App() {
     }
     getUserData();
     getPoolData();
-    
-    
   }, [
     isConnected,
     walletProvider,
@@ -222,11 +230,9 @@ function App() {
     selectedNetworkId,
   ]);
 
-  
   useEffect(() => {
     getUserData();
     getPoolData();
-  
   }, [address, isConnected]);
 
   return (

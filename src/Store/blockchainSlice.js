@@ -95,8 +95,6 @@ export const LoadBlockchainData = createAsyncThunk(
     try {
       // const stage = 4;
 
-      
-      
       const [
         tokensTransferredLap2,
         tokensTransferredLap1,
@@ -142,7 +140,6 @@ export const LoadBlockchainData = createAsyncThunk(
         ).call,
       ]);
 
-      
       return {
         tokensTransferredLap2: ConvertNumber(
           Number(tokensTransferredLap2) +
@@ -181,39 +178,29 @@ export const LoadBlockchainData = createAsyncThunk(
 );
 export const LoadPoolData = createAsyncThunk(
   "LoadPoolData",
-  async (
-    {
-      contractInstStakePool
-      
-    },
-    { rejectWithValue }
-  ) => {
+  async ({ contractInstStakePool }, { rejectWithValue }) => {
     try {
-
       const apy = await contractInstStakePool.methods.calculateAPY().call();
-      console.log("APY ==>",apy)
+      console.log("APY ==>", apy);
       const total_pending_reward = await contractInstStakePool.methods
-      .getTotalPendingRewards()
-      .call();
-      console.log("TOTAL PENDING REWARD ==>",total_pending_reward)
+        .getTotalPendingRewards()
+        .call();
+      console.log("TOTAL PENDING REWARD ==>", total_pending_reward);
 
-             const total_staked = await contractInstStakePool.methods
-             .totalStaked()
-             .call();
-             console.log("TOTAL STAKED ==>",total_staked)
-             const stake_end_deadline = await contractInstStakePool.methods
-             .stakeEndDeadline()
-             .call();
-             console.log("END DEADLINE ==>",stake_end_deadline)
+      const total_staked = await contractInstStakePool.methods
+        .totalStaked()
+        .call();
+      console.log("TOTAL STAKED ==>", total_staked);
+      const stake_end_deadline = await contractInstStakePool.methods
+        .stakeEndDeadline()
+        .call();
+      console.log("END DEADLINE ==>", stake_end_deadline);
 
-      
-      
-      
       return {
         apy,
         total_staked,
         total_pending_reward,
-        stake_end_deadline
+        stake_end_deadline,
       };
     } catch (error) {
       console.log(error);
@@ -272,7 +259,6 @@ export const LoadUser = createAsyncThunk(
         .allowance(address, claimAddress)
         .call();
 
-
       const stakeDrift = await contractInstDriftStake.methods
         .balanceOf(address)
         .call();
@@ -288,22 +274,21 @@ export const LoadUser = createAsyncThunk(
         .getPendingRewards(address)
         .call();
 
-
-
       return {
         balance,
         Staked: ConvertNumber(Number(Staked) + Number(tokensToMove), true),
         Dynamic: ConvertNumber(Number(Dynamic) - Number(tokensToMove), true),
-        invest_amount: Number(total_investment),
-        is_ambassador_eligible,
         is_allowed:
           Number(is_allowed) > 0 && Number(is_allowed) === Number(balance),
-        ambassador_code,
         claimed:
           Number(balance) == 0 && (Number(Staked) > 0 || Number(Dynamic) > 0)
             ? true
             : false,
-        tier: parseInt(info._tier),
+        is_pool_allowed: is_pool_allowed > 0,
+
+        remaining_claim: Reward.pendingRewards,
+        dynamicDrift,
+        stakeDrift,
       };
     } catch (error) {
       console.log(error);
