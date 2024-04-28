@@ -14,12 +14,11 @@ import {
   presaletokenAbi_ETH,
   presaletokenAbi_POLYGON,
   driftStakeAbi_ETH,
-driftStakePoolAbi_ETH,
-driftStakeAbi_BNB,
-driftStakePoolAbi_BNB,
-driftStakeAbi_POLYGON,
-driftStakePoolAbi_POLYGON,
-
+  driftStakePoolAbi_ETH,
+  driftStakeAbi_BNB,
+  driftStakePoolAbi_BNB,
+  driftStakeAbi_POLYGON,
+  driftStakePoolAbi_POLYGON,
 } from "../config/abi";
 import ConvertNumber from "../Helpers/ConvertNumber";
 import axios from "axios";
@@ -32,7 +31,7 @@ const initialState = {
   contractInstClaim_ETH: null,
   contractInstStakePool_ETH: null,
   contractInstDriftStake_ETH: null,
-  
+
   web3Inst_BNB: null,
   contractInstPresaleToken_BNB: null,
   contractInstICO_BNB: null,
@@ -40,7 +39,7 @@ const initialState = {
   contractInstClaim_BNB: null,
   contractInstStakePool_BNB: null,
   contractInstDriftStake_BNB: null,
-  
+
   web3Inst_POLYGON: null,
   contractInstPresaleToken_POLYGON: null,
   contractInstICO_POLYGON: null,
@@ -48,7 +47,8 @@ const initialState = {
   contractInstClaim_POLYGON: null,
   contractInstStakePool_POLYGON: null,
   contractInstDriftStake_POLYGON: null,
-  
+
+  pool: null,
   user: null,
   publicBlockchainData: null,
   ethPrice: null,
@@ -95,6 +95,8 @@ export const LoadBlockchainData = createAsyncThunk(
     try {
       // const stage = 4;
 
+      
+      
       const [
         tokensTransferredLap2,
         tokensTransferredLap1,
@@ -140,6 +142,7 @@ export const LoadBlockchainData = createAsyncThunk(
         ).call,
       ]);
 
+      
       return {
         tokensTransferredLap2: ConvertNumber(
           Number(tokensTransferredLap2) +
@@ -176,6 +179,48 @@ export const LoadBlockchainData = createAsyncThunk(
     }
   }
 );
+export const LoadPoolData = createAsyncThunk(
+  "LoadPoolData",
+  async (
+    {
+      contractInstStakePool
+      
+    },
+    { rejectWithValue }
+  ) => {
+    try {
+
+      const apy = await contractInstStakePool.methods.calculateAPY().call();
+      console.log("APY ==>",apy)
+      const total_pending_reward = await contractInstStakePool.methods
+      .getTotalPendingRewards()
+      .call();
+      console.log("TOTAL PENDING REWARD ==>",total_pending_reward)
+
+             const total_staked = await contractInstStakePool.methods
+             .totalStaked()
+             .call();
+             console.log("TOTAL STAKED ==>",total_staked)
+             const stake_end_deadline = await contractInstStakePool.methods
+             .stakeEndDeadline()
+             .call();
+             console.log("END DEADLINE ==>",stake_end_deadline)
+
+      
+      
+      
+      return {
+        apy,
+        total_staked,
+        total_pending_reward,
+        stake_end_deadline
+      };
+    } catch (error) {
+      console.log(error);
+      return rejectWithValue(error);
+    }
+  }
+);
 
 export const LoadUser = createAsyncThunk(
   "LoadUser",
@@ -186,11 +231,12 @@ export const LoadUser = createAsyncThunk(
       contractInstPresaleToken,
       contractInstClaim,
       claimAddress,
-      contractInstStakePool
     } = data;
 
     try {
-      const balance = await contractInstPresaleToken.methods.balanceOf(address).call();
+      const balance = await contractInstPresaleToken.methods
+        .balanceOf(address)
+        .call();
       const Staked = await contractInstICO.methods
         .amountOfAddressPerType(address, 1)
         .call();
@@ -210,7 +256,9 @@ export const LoadUser = createAsyncThunk(
         .isAmbassadorEligible(address)
         .call();
 
-      const info = await contractInstICO.methods.getAmbassadorInfo(address).call();
+      const info = await contractInstICO.methods
+        .getAmbassadorInfo(address)
+        .call();
 
       const tokensToMove = await contractInstClaim.methods
         .getStakeAmountOfDynamicToStake(address)
@@ -219,23 +267,6 @@ export const LoadUser = createAsyncThunk(
       const is_allowed = await contractInstPresaleToken.methods
         .allowance(address, claimAddress)
         .call();
-
-
- const apy = await contractInstStakePool.methods.calculateAPY().call();
- console.log("APY ==>",apy)
- const total_pending_reward = await contractInstStakePool.methods
- .getTotalPendingRewards()
- .call();
- console.log("TOTAL PENDING REWARD ==>",total_pending_reward)
-
-        const total_staked = await contractInstStakePool.methods
-        .totalStaked()
-        .call();
-        console.log("TOTAL STAKED ==>",total_staked)
-        const stake_end_deadline = await contractInstStakePool.methods
-        .stakeEndDeadline()
-        .call();
-        console.log("END DEADLINE ==>",stake_end_deadline)
 
       return {
         balance,
@@ -354,7 +385,6 @@ export const blockchainSlice = createSlice({
         process.env.REACT_APP_ST_POOL_DRIFT_BNB
       );
 
-
       // POLYGON INS
       let web3InstancePOLYGON = new Web3(process.env.REACT_APP_RPC_POLYGON);
       if (action.payload?.walletProvider) {
@@ -366,10 +396,11 @@ export const blockchainSlice = createSlice({
         crowdSaleAbi_POLYGON,
         process.env.REACT_APP_CROWDSALE_POLYGON
       );
-      state.contractInstPresaleToken_POLYGON = new web3InstancePOLYGON.eth.Contract(
-        presaletokenAbi_POLYGON,
-        process.env.REACT_APP_TOKEN_CONTRACT_POLYGON
-      );
+      state.contractInstPresaleToken_POLYGON =
+        new web3InstancePOLYGON.eth.Contract(
+          presaletokenAbi_POLYGON,
+          process.env.REACT_APP_TOKEN_CONTRACT_POLYGON
+        );
 
       state.contractInstClaim_POLYGON = new web3InstancePOLYGON.eth.Contract(
         claimAbi_POLYGON,
@@ -380,15 +411,17 @@ export const blockchainSlice = createSlice({
         driftAbi_POLYGON,
         process.env.REACT_APP_DRIFT_POLYGON
       );
-      
-      state.contractInstDriftStake_POLYGON = new web3InstancePOLYGON.eth.Contract(
-        driftStakeAbi_POLYGON,
-        process.env.REACT_APP_ST_DRIFT_POLYGON
-      );
-      state.contractInstStakePool_POLYGON = new web3InstancePOLYGON.eth.Contract(
-        driftStakePoolAbi_POLYGON,
-        process.env.REACT_APP_ST_POOL_DRIFT_POLYGON
-      );
+
+      state.contractInstDriftStake_POLYGON =
+        new web3InstancePOLYGON.eth.Contract(
+          driftStakeAbi_POLYGON,
+          process.env.REACT_APP_ST_DRIFT_POLYGON
+        );
+      state.contractInstStakePool_POLYGON =
+        new web3InstancePOLYGON.eth.Contract(
+          driftStakePoolAbi_POLYGON,
+          process.env.REACT_APP_ST_POOL_DRIFT_POLYGON
+        );
     },
 
     UpdateUser: (state, action) => {
@@ -420,7 +453,7 @@ export const blockchainSlice = createSlice({
     });
     builder.addCase(LoadBlockchainData.rejected, (state, action) => {
       state.isLoading = false;
-      console.log("Builder Rejected");
+      console.log("Blockchain Builder Rejected");
     });
     builder.addCase(LoadUser.pending, (state, action) => {
       state.isLoading = true;
@@ -431,7 +464,18 @@ export const blockchainSlice = createSlice({
     });
     builder.addCase(LoadUser.rejected, (state, action) => {
       state.isLoading = false;
-      console.log("Builder Rejected");
+      console.log("User Builder Rejected");
+    });
+    builder.addCase(LoadPoolData.pending, (state, action) => {
+      state.isLoading = true;
+    });
+    builder.addCase(LoadPoolData.fulfilled, (state, action) => {
+      state.isLoading = false;
+      state.pool = { ...action.payload };
+    });
+    builder.addCase(LoadPoolData.rejected, (state, action) => {
+      state.isLoading = false;
+      console.log("Pool Builder Rejected");
     });
     builder.addCase(GetUSDPrice.pending, (state, action) => {});
     builder.addCase(GetUSDPrice.fulfilled, (state, action) => {

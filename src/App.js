@@ -24,7 +24,7 @@ import {
   LoadBlockchainData,
   UpdateUser,
 } from "./Store/blockchainSlice.js";
-import { LoadUser } from "./Store/blockchainSlice.js";
+import { LoadUser ,LoadPoolData} from "./Store/blockchainSlice.js";
 import axios from "axios";
 import PrivacyPolicy from "./Pages/PrivacyPolicy.js";
 import PriceRiskDisclosure from "./Pages/PriceRiskDisclosure.js";
@@ -52,7 +52,7 @@ function App() {
     contractInstICO_POLYGON,
     contractInstDrift_POLYGON,
     contractInstClaim_POLYGON,
-    contractInstStakePool_POLYGON
+    contractInstStakePool_POLYGON,
   } = useSelector((state) => state.Blockchain);
   const { walletProvider } = useWeb3ModalSigner();
 
@@ -126,17 +126,19 @@ function App() {
     }
   };
 
-  const loadUserData = async () => {
+  const getUserData = async () => {
+
     if (isConnected && typeof address !== "undefined") {
+      
       selectedNetworkId === 1
         ? dispatch(
             LoadUser({
-              contractInstICO:contractInstICO_ETH,
+              contractInstICO: contractInstICO_ETH,
               address: address.trim(),
-              contractInstPresaleToken:contractInstPresaleToken_ETH,
-              contractInstClaim:contractInstClaim_ETH,
+              contractInstPresaleToken: contractInstPresaleToken_ETH,
+              contractInstClaim: contractInstClaim_ETH,
               claimAddress: process.env.REACT_APP_CLAIM_ETH,
-              contractInstStakePool:contractInstStakePool_ETH
+              // contractInstStakePool:contractInstStakePool_ETH
             })
           )
         : selectedNetworkId === 56
@@ -147,7 +149,7 @@ function App() {
               contractInstPresaleToken: contractInstPresaleToken_BNB,
               contractInstClaim: contractInstClaim_BNB,
               claimAddress: process.env.REACT_APP_CLAIM_BNB,
-              contractInstStakePool:contractInstStakePool_BNB
+              // contractInstStakePool:contractInstStakePool_BNB
             })
           )
         : selectedNetworkId === 137
@@ -158,10 +160,36 @@ function App() {
               contractInstPresaleToken: contractInstPresaleToken_POLYGON,
               contractInstClaim: contractInstClaim_POLYGON,
               claimAddress: process.env.REACT_APP_CLAIM_POLYGON,
-              contractInstStakePool:contractInstStakePool_POLYGON
+              // contractInstStakePool:contractInstStakePool_POLYGON
             })
           )
         : dispatch(UpdateUser(null));
+    }
+  };
+  const getPoolData = async () => {
+
+    if (isConnected && typeof address !== "undefined") {
+      
+      selectedNetworkId === 1
+        ? dispatch(
+            LoadPoolData({
+              contractInstStakePool:contractInstStakePool_ETH
+            })
+          )
+        : selectedNetworkId === 56
+        ? dispatch(
+            LoadPoolData({
+              contractInstStakePool:contractInstStakePool_BNB
+            })
+          )
+        : selectedNetworkId === 137
+        ? dispatch(
+            LoadPoolData({
+              
+              contractInstStakePool:contractInstStakePool_POLYGON
+            })
+          )
+        : <></>;
     }
   };
 
@@ -182,7 +210,10 @@ function App() {
       dispatch(createInstance({ walletProvider }));
       setIsWeb3InstanceConnect(true);
     }
-    loadUserData();
+    getUserData();
+    getPoolData();
+    
+    
   }, [
     isConnected,
     walletProvider,
@@ -191,35 +222,11 @@ function App() {
     selectedNetworkId,
   ]);
 
-  // useEffect(() => {
-  //   const InterID = setInterval(() => {
-  //     if (_timeout.current !== null && _timeout.current > Date.now()) return;
-  //     _timeout.current = null;
-
-  //     axios
-  //       .get(
-  //         process.env.REACT_APP_BASE_URL + "ethereum,binancecoin,matic-network",
-  //         {
-  //           headers: {
-  //             "x-cg-pro-api-key": "CG-1EK5GnU4Ka429EFRG5F3m7dy",
-  //           },
-  //         }
-  //       )
-  //       .then((response) => {
-  //         dispatch(UpdateUSDPrice(response.data));
-  //       })
-  //       .catch((e) => {
-  //         console.log(e.message);
-  //         _timeout.current = new Date().getTime() + 60;
-  //       });
-  //   }, 10000);
-  //   return () => {
-  //     clearInterval(InterID);
-  //   };
-  // }, [selectedNetworkId]);
-
+  
   useEffect(() => {
-    loadUserData();
+    getUserData();
+    getPoolData();
+  
   }, [address, isConnected]);
 
   return (
