@@ -49,20 +49,20 @@ function Home() {
   const {
     publicBlockchainData: data,
     user,
-    contractInst,
-    contractInstBNB,
-    contractInstPOLYGON,
-    contractInstPresale,
+    contractInstICO_ETH,
+    contractInstICO_BNB,
+    contractInstICO_POLYGON,
+    contractInstPresaleToken_ETH,
     contractInstTokenBNB,
     contractInstTokenPOLYGON,
-    contractInstClaim,
+    contractInstClaim_ETH,
     contractInstClaimBNB,
     contractInstClaimPOLYGON,
-    contractInstDrift,
-    contractInstDriftStake,
+    contractInstDrift_ETH,
+    contractInstDriftStake_ETH,
     web3Inst,
     isLoading,
-    contractInstStakePool,
+    contractInstStakePool_ETH,
     web3InstBNB,
     web3InstPOLYGON,
   } = useSelector((state) => state.Blockchain);
@@ -123,24 +123,24 @@ function Home() {
     if (selectedNetworkId === 11155111 && chainId === 11155111) {
       presale_TokenAddress = process.env.REACT_APP_TOKEN_CONTRACT_ETH;
       claim_TokenAddress = process.env.REACT_APP_CLAIM_ETH;
-      token_Inst = contractInstPresale;
-      ico_Inst = contractInst;
-      claim_Inst = contractInstClaim;
-      pool_inst = contractInstStakePool;
-      stake_inst = contractInstDriftStake;
-      drift_inst = contractInstDrift;
+      token_Inst = contractInstPresaleToken_ETH;
+      ico_Inst = contractInstICO_ETH;
+      claim_Inst = contractInstClaim_ETH;
+      pool_inst = contractInstStakePool_ETH;
+      stake_inst = contractInstDriftStake_ETH;
+      drift_inst = contractInstDrift_ETH;
       stakingpool_address = process.env.REACT_APP_ST_POOL_DRIFT_ETH;
     } else if (selectedNetworkId === 97 && chainId === 97) {
       presale_TokenAddress = process.env.REACT_APP_TOKEN_CONTRACT_BNB;
       claim_TokenAddress = process.env.REACT_APP_CLAIM_BNB;
       token_Inst = contractInstTokenBNB;
-      ico_Inst = contractInstBNB;
+      ico_Inst = contractInstICO_BNB;
       claim_Inst = contractInstClaimBNB;
     } else if (selectedNetworkId === 80001 && chainId === 80001) {
       presale_TokenAddress = process.env.REACT_APP_TOKEN_CONTRACT_POLYGON;
       claim_TokenAddress = process.env.REACT_APP_CLAIM_POLYGON;
       token_Inst = contractInstTokenPOLYGON;
-      ico_Inst = contractInstPOLYGON;
+      ico_Inst = contractInstICO_POLYGON;
       claim_Inst = contractInstClaimPOLYGON;
     } else return;
 
@@ -172,14 +172,14 @@ function Home() {
           setErrors((state) => ({ ...state, transaction: "" }));
           dispatch(
             LoadUser({
-              contractInst,
+              contractInstICO_ETH,
               address,
-              contractInstPresale,
+              contractInstPresaleToken_ETH,
               claim_address: claim_TokenAddress,
-              contractInstClaim: claim_Inst,
-              contractInstStakePool: pool_inst,
-              contractInstDriftStake: stake_inst,
-              contractInstDrift: drift_inst,
+              contractInstClaim_ETH: claim_Inst,
+              contractInstStakePool_ETH: pool_inst,
+              contractInstDriftStake_ETH: stake_inst,
+              contractInstDrift_ETH: drift_inst,
               pool_address: stakingpool_address,
             })
           );
@@ -227,12 +227,12 @@ function Home() {
     let stakingpool_address;
 
     if (selectedNetworkId === 11155111 && chainId === 11155111) {
-      claim_Inst = contractInstClaim;
+      claim_Inst = contractInstClaim_ETH;
       claim_Address = process.env.REACT_APP_CLAIM_ETH;
-      token_Inst = contractInstPresale;
-      pool_inst = contractInstStakePool;
-      stake_inst = contractInstDriftStake;
-      drift_inst = contractInstDrift;
+      token_Inst = contractInstPresaleToken_ETH;
+      pool_inst = contractInstStakePool_ETH;
+      stake_inst = contractInstDriftStake_ETH;
+      drift_inst = contractInstDrift_ETH;
       stakingpool_address = process.env.REACT_APP_ST_POOL_DRIFT_ETH;
     } else if (selectedNetworkId === 97 && chainId === 97) {
       claim_Inst = contractInstClaimBNB;
@@ -296,24 +296,24 @@ function Home() {
           setErrors((state) => ({ ...state, transaction: "" }));
           dispatch(
             LoadUser({
-              contractInst,
+              contractInstICO_ETH,
               address,
-              contractInstPresale,
+              contractInstPresaleToken_ETH,
               claim_address: claim_Address,
-              contractInstClaim: claim_Inst,
-              contractInstStakePool: pool_inst,
-              contractInstDriftStake: stake_inst,
-              contractInstDrift: drift_inst,
+              contractInstClaim_ETH: claim_Inst,
+              contractInstStakePool_ETH: pool_inst,
+              contractInstDriftStake_ETH: stake_inst,
+              contractInstDrift_ETH: drift_inst,
               pool_address: stakingpool_address,
             })
           );
           dispatch(
             LoadBlockchainData({
-              contractInst,
+              contractInstICO_ETH,
               web3Inst,
-              contractInstDrift,
-              contractInstStakePool,
-              // contractInstBNB,
+              contractInstDrift_ETH,
+              contractInstStakePool_ETH,
+              // contractInstICO_BNB,
               // web3InstBNB,
             })
           );

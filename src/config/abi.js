@@ -1,6 +1,6 @@
 // TOKEN ABI
 
-export const tokenAbi_ETH = [
+export const presaletokenAbi_ETH = [
   {
     inputs: [],
     stateMutability: "nonpayable",
@@ -463,7 +463,7 @@ export const tokenAbi_ETH = [
     type: "function",
   },
 ];
-export const tokenAbi_BNB = [
+export const presaletokenAbi_BNB = [
   {
     inputs: [],
     stateMutability: "nonpayable",
@@ -3429,7 +3429,7 @@ export const claimAbi_BNB = [
   },
 ];
 
-export const driftAbi = [
+export const driftAbi_ETH = [
   {
     inputs: [],
     name: "ECDSAInvalidSignature",
@@ -5007,7 +5007,7 @@ export const driftAbi = [
     type: "receive",
   },
 ];
-export const driftStakeAbi = [
+export const driftStakeAbi_ETH = [
   {
     inputs: [
       { internalType: "address", name: "_ownerAddress", type: "address" },
@@ -5538,7 +5538,7 @@ export const driftStakeAbi = [
     type: "function",
   },
 ];
-export const driftStakePoolAbi = [
+export const driftStakePoolAbi_ETH = [
   {
     inputs: [
       {

@@ -37,23 +37,19 @@ const Staking = () => {
   const {
     publicBlockchainData: data,
     user,
-    ethPrice,
-    bnbPrice,
-    maticPrice,
-    contractInstStakePool,
-    contractInstPresale,
-
-    contractInst,
-    contractInstBNB,
-    contractInstPOLYGON,
-    contractInstDriftStake,
+    contractInstStakePool_ETH,
+    contractInstPresaleToken_ETH,
+    contractInstICO_ETH,
+    contractInstICO_BNB,
+    contractInstICO_POLYGON,
+    contractInstDriftStake_ETH,
     contractInstTokenBNB,
     contractInstTokenPOLYGON,
-    contractInstClaim,
+    contractInstClaim_ETH,
     contractInstClaimBNB,
     contractInstClaimPOLYGON,
-    contractInstDrift,
-    web3Inst,
+    contractInstDrift_ETH,
+    
     isLoading,
   } = useSelector((state) => state.Blockchain);
   const curret_date_time = Date.now() / 1000;
@@ -106,11 +102,11 @@ const Staking = () => {
     let stakeDrift_address;
 
     if (selectedNetworkId === 11155111 && chainId === 11155111) {
-      claim_Inst = contractInstClaim;
+      claim_Inst = contractInstClaim_ETH;
       claim_Address = process.env.REACT_APP_CLAIM_ETH;
-      pool_inst = contractInstStakePool;
-      stake_inst = contractInstDriftStake;
-      drift_inst = contractInstDrift;
+      pool_inst = contractInstStakePool_ETH;
+      stake_inst = contractInstDriftStake_ETH;
+      drift_inst = contractInstDrift_ETH;
       stakingpool_address = process.env.REACT_APP_ST_POOL_DRIFT_ETH;
       stakeDrift_address = process.env.REACT_APP_ST_DRIFT_ETH;
     } else if (selectedNetworkId === 97 && chainId === 97) {
@@ -146,14 +142,14 @@ const Staking = () => {
           setErrors((state) => ({ ...state, transaction: "" }));
           dispatch(
             LoadUser({
-              contractInst,
+              contractInstICO_ETH,
               address,
-              contractInstPresale,
+              contractInstPresaleToken_ETH,
               claim_address: claim_Address,
-              contractInstClaim: claim_Inst,
-              contractInstStakePool: pool_inst,
-              contractInstDriftStake: stake_inst,
-              contractInstDrift: drift_inst,
+              contractInstClaim_ETH: claim_Inst,
+              contractInstStakePool_ETH: pool_inst,
+              contractInstDriftStake_ETH: stake_inst,
+              contractInstDrift_ETH: drift_inst,
               pool_address: stakingpool_address,
             })
           );
@@ -200,11 +196,11 @@ const Staking = () => {
     let stakeDrift_address;
 
     if (selectedNetworkId === 11155111 && chainId === 11155111) {
-      claim_Inst = contractInstClaim;
+      claim_Inst = contractInstClaim_ETH;
       claim_Address = process.env.REACT_APP_CLAIM_ETH;
-      pool_inst = contractInstStakePool;
-      stake_inst = contractInstDriftStake;
-      drift_inst = contractInstDrift;
+      pool_inst = contractInstStakePool_ETH;
+      stake_inst = contractInstDriftStake_ETH;
+      drift_inst = contractInstDrift_ETH;
       stakingpool_address = process.env.REACT_APP_ST_POOL_DRIFT_ETH;
       stakeDrift_address = process.env.REACT_APP_ST_DRIFT_ETH;
     } else if (selectedNetworkId === 97 && chainId === 97) {
@@ -243,14 +239,14 @@ const Staking = () => {
           setErrors((state) => ({ ...state, transaction: "" }));
           dispatch(
             LoadUser({
-              contractInst,
+              contractInstICO_ETH,
               address,
-              contractInstPresale,
+              contractInstPresaleToken_ETH,
               claim_address: claim_Address,
-              contractInstClaim: claim_Inst,
-              contractInstStakePool: pool_inst,
-              contractInstDriftStake: stake_inst,
-              contractInstDrift: drift_inst,
+              contractInstClaim_ETH: claim_Inst,
+              contractInstStakePool_ETH: pool_inst,
+              contractInstDriftStake_ETH: stake_inst,
+              contractInstDrift_ETH: drift_inst,
               pool_address: stakingpool_address,
             })
           );
@@ -301,12 +297,12 @@ const Staking = () => {
     let stakingpool_address;
 
     if (selectedNetworkId === 11155111 && chainId === 11155111) {
-      claim_Inst = contractInstClaim;
+      claim_Inst = contractInstClaim_ETH;
       claim_Address = process.env.REACT_APP_CLAIM_ETH;
 
-      pool_inst = contractInstStakePool;
-      stake_inst = contractInstDriftStake;
-      drift_inst = contractInstDrift;
+      pool_inst = contractInstStakePool_ETH;
+      stake_inst = contractInstDriftStake_ETH;
+      drift_inst = contractInstDrift_ETH;
       stakingpool_address = process.env.REACT_APP_ST_POOL_DRIFT_ETH;
     } else if (selectedNetworkId === 97 && chainId === 97) {
       claim_Inst = contractInstClaimBNB;
@@ -316,7 +312,7 @@ const Staking = () => {
       claim_Address = process.env.REACT_APP_CLAIM_POLYGON;
     }
     try {
-      const unstake = await contractInstStakePool.methods.unstake(
+      const unstake = await contractInstStakePool_ETH.methods.unstake(
         tokens_in_wei
       );
 
@@ -342,14 +338,14 @@ const Staking = () => {
           setErrors((state) => ({ ...state, transaction: "" }));
           dispatch(
             LoadUser({
-              contractInst,
+              contractInstICO_ETH,
               address,
-              contractInstPresale,
+              contractInstPresaleToken_ETH,
               claim_address: claim_Address,
-              contractInstClaim: claim_Inst,
-              contractInstStakePool: pool_inst,
-              contractInstDriftStake: stake_inst,
-              contractInstDrift: drift_inst,
+              contractInstClaim_ETH: claim_Inst,
+              contractInstStakePool_ETH: pool_inst,
+              contractInstDriftStake_ETH: stake_inst,
+              contractInstDrift_ETH: drift_inst,
               pool_address: stakingpool_address,
             })
           );

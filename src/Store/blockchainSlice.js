@@ -4,31 +4,31 @@ import {
   claimAbi_ETH,
   crowdSaleAbi_BNB,
   crowdSaleAbi_ETH,
-  driftAbi,
-  driftStakeAbi,
-  driftStakePoolAbi,
-  tokenAbi_BNB,
-  tokenAbi_ETH,
+  driftAbi_ETH,
+  driftStakeAbi_ETH,
+  driftStakePoolAbi_ETH,
+  presaletokenAbi_BNB,
+  presaletokenAbi_ETH,
 } from "../config/abi";
 import ConvertNumber from "../Helpers/ConvertNumber";
 import axios from "axios";
 
 const initialState = {
-  contractInst: null,
+  contractInstICO_ETH: null,
   web3Inst: null,
-  contractInstPresale: null,
-  contractInstClaim: null,
-  contractInstBNB: null,
+  contractInstPresaleToken_ETH: null,
+  contractInstClaim_ETH: null,
+  contractInstICO_BNB: null,
   web3InstBNB: null,
   contractInstTokenBNB: null,
   contractInstClaimBNB: null,
-  contractInstPOLYGON: null,
+  contractInstICO_POLYGON: null,
   web3InstPOLYGON: null,
   contractInstTokenPOLYGON: null,
   contractInstClaimPOLYGON: null,
-  contractInstDrift: null,
-  contractInstDriftStake: null,
-  contractInstStakePool: null,
+  contractInstDrift_ETH: null,
+  contractInstDriftStake_ETH: null,
+  contractInstStakePool_ETH: null,
   user: null,
   publicBlockchainData: null,
   ethPrice: null,
@@ -61,12 +61,12 @@ export const LoadBlockchainData = createAsyncThunk(
   "LoadBlockchainData",
   async (
     {
-      contractInst,
+      contractInstICO_ETH,
       web3Inst,
-      contractInstDrift,
-      contractInstStakePool,
+      contractInstDrift_ETH,
+      contractInstStakePool_ETH,
 
-      // , contractInstBNB, web3InstBNB
+      // , contractInstICO_BNB, web3InstBNB
     },
     { rejectWithValue }
   ) => {
@@ -80,23 +80,23 @@ export const LoadBlockchainData = createAsyncThunk(
         tokensTransferredWarmup,
         tokensToClaim,
       ] = await makeBatchRequest(web3Inst, [
-        contractInst.methods.totalReceivedFunds().call,
-        contractInst.methods.tokensTransferred(4).call,
-        contractInst.methods.tokensTransferred(2).call,
-        contractInst.methods.tokensTransferred(1).call,
-        contractInstDrift.methods.allowance(
+        contractInstICO_ETH.methods.totalReceivedFunds().call,
+        contractInstICO_ETH.methods.tokensTransferred(4).call,
+        contractInstICO_ETH.methods.tokensTransferred(2).call,
+        contractInstICO_ETH.methods.tokensTransferred(1).call,
+        contractInstDrift_ETH.methods.allowance(
           process.env.REACT_APP_OWNER_ADDRESS,
           process.env.REACT_APP_CLAIM_ETH
         ).call,
       ]);
-      const apy = await contractInstStakePool.methods.calculateAPY().call();
-      const total_pending_reward = await contractInstStakePool.methods
+      const apy = await contractInstStakePool_ETH.methods.calculateAPY().call();
+      const total_pending_reward = await contractInstStakePool_ETH.methods
         .getTotalPendingRewards()
         .call();
-      const total_staked = await contractInstStakePool.methods
+      const total_staked = await contractInstStakePool_ETH.methods
         .totalStaked()
         .call();
-      const stake_end_deadline = await contractInstStakePool.methods
+      const stake_end_deadline = await contractInstStakePool_ETH.methods
         .stakeEndDeadline()
         .call();
 
@@ -106,10 +106,10 @@ export const LoadBlockchainData = createAsyncThunk(
       //   tokensTransferredLap2BNB,
       //   tokensTransferredLap1BNB,
       // ] = await makeBatchRequest(web3InstBNB, [
-      //   contractInstBNB.methods.totalReceivedFunds().call,
+      //   contractInstICO_BNB.methods.totalReceivedFunds().call,
 
-      //   contractInstBNB.methods.tokensTransferred(4).call,
-      //   contractInstBNB.methods.tokensTransferred(2).call,
+      //   contractInstICO_BNB.methods.tokensTransferred(4).call,
+      //   contractInstICO_BNB.methods.tokensTransferred(2).call,
       // ]);
 
       return {
@@ -151,48 +151,48 @@ export const LoadUser = createAsyncThunk(
   "LoadUser",
   async (data, { rejectWithValue }) => {
     const {
-      contractInst,
+      contractInstICO_ETH,
       address,
-      contractInstPresale,
+      contractInstPresaleToken_ETH,
       claim_address,
-      contractInstClaim,
-      contractInstStakePool,
-      contractInstDriftStake,
-      contractInstDrift,
+      contractInstClaim_ETH,
+      contractInstStakePool_ETH,
+      contractInstDriftStake_ETH,
+      contractInstDrift_ETH,
       pool_address,
     } = data;
 
     try {
-      const balance = await contractInstPresale.methods
+      const balance = await contractInstPresaleToken_ETH.methods
         .balanceOf(address)
         .call();
-      const Staked = await contractInst.methods
+      const Staked = await contractInstICO_ETH.methods
         .amountOfAddressPerType(address, 1)
         .call();
-      const Dynamic = await contractInst.methods
+      const Dynamic = await contractInstICO_ETH.methods
         .amountOfAddressPerType(address, 0)
         .call();
 
-      const is_allowed = await contractInstPresale.methods
+      const is_allowed = await contractInstPresaleToken_ETH.methods
         .allowance(address, claim_address)
         .call();
 
-      const tokensToMove = await contractInstClaim.methods
+      const tokensToMove = await contractInstClaim_ETH.methods
         .getStakeAmountOfDynamicToStake(address)
         .call();
 
-      const stakeDrift = await contractInstDriftStake.methods
+      const stakeDrift = await contractInstDriftStake_ETH.methods
         .balanceOf(address)
         .call();
 
-      const is_pool_allowed = await contractInstDriftStake.methods
+      const is_pool_allowed = await contractInstDriftStake_ETH.methods
         .allowance(address, pool_address)
         .call();
 
-      const dynamicDrift = await contractInstDrift.methods
+      const dynamicDrift = await contractInstDrift_ETH.methods
         .balanceOf(address)
         .call();
-      const Reward = await contractInstStakePool.methods
+      const Reward = await contractInstStakePool_ETH.methods
         .getPendingRewards(address)
         .call();
 
@@ -248,29 +248,29 @@ export const blockchainSlice = createSlice({
         web3Instance = new Web3(walletProvider.provider);
       }
       state.web3Inst = web3Instance;
-      state.contractInst = new web3Instance.eth.Contract(
+      state.contractInstICO_ETH = new web3Instance.eth.Contract(
         crowdSaleAbi_ETH,
         process.env.REACT_APP_CROWDSALE_ETH
       );
-      state.contractInstPresale = new web3Instance.eth.Contract(
-        tokenAbi_ETH,
+      state.contractInstPresaleToken_ETH = new web3Instance.eth.Contract(
+        presaletokenAbi_ETH,
         process.env.REACT_APP_TOKEN_CONTRACT_ETH
       );
 
-      state.contractInstClaim = new web3Instance.eth.Contract(
+      state.contractInstClaim_ETH = new web3Instance.eth.Contract(
         claimAbi_ETH,
         process.env.REACT_APP_CLAIM_ETH
       );
-      state.contractInstDrift = new web3Instance.eth.Contract(
-        driftAbi,
+      state.contractInstDrift_ETH = new web3Instance.eth.Contract(
+        driftAbi_ETH,
         process.env.REACT_APP_DRIFT_ETH
       );
-      state.contractInstDriftStake = new web3Instance.eth.Contract(
-        driftStakeAbi,
+      state.contractInstDriftStake_ETH = new web3Instance.eth.Contract(
+        driftStakeAbi_ETH,
         process.env.REACT_APP_ST_DRIFT_ETH
       );
-      state.contractInstStakePool = new web3Instance.eth.Contract(
-        driftStakePoolAbi,
+      state.contractInstStakePool_ETH = new web3Instance.eth.Contract(
+        driftStakePoolAbi_ETH,
         process.env.REACT_APP_ST_POOL_DRIFT_ETH
       );
 
@@ -281,13 +281,13 @@ export const blockchainSlice = createSlice({
       //   web3InstanceBNB = new Web3(walletProvider.provider);
       // }
       // state.web3InstBNB = web3InstanceBNB;
-      // state.contractInstBNB = new web3InstanceBNB.eth.Contract(
+      // state.contractInstICO_BNB = new web3InstanceBNB.eth.Contract(
       //   crowdSaleAbi_BNB,
       //   process.env.REACT_APP_CROWDSALE_BNB
       // );
 
       // state.contractInstTokenBNB = new web3InstanceBNB.eth.Contract(
-      //   tokenAbi_BNB,
+      //   presaletokenAbi_BNB,
       //   process.env.REACT_APP_TOKEN_CONTRACT_BNB
       // );
     },

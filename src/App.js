@@ -33,17 +33,17 @@ import Staking from "./Pages/Staking.js";
 function App() {
   const dispatch = useDispatch();
   const {
-    contractInst,
-    contractInstPresale,
-    contractInstDrift,
-    contractInstClaim,
+    contractInstICO_ETH,
+    contractInstPresaleToken_ETH,
+    contractInstDrift_ETH,
+    contractInstClaim_ETH,
 
-    contractInstStakePool,
-    contractInstDriftStake,
+    contractInstStakePool_ETH,
+    contractInstDriftStake_ETH,
 
     // contractInstTokenBNB,
     web3Inst,
-    // contractInstBNB,
+    // contractInstICO_BNB,
     // web3InstBNB,
   } = useSelector((state) => state.Blockchain);
   const { walletProvider } = useWeb3ModalSigner();
@@ -117,16 +117,16 @@ function App() {
 
   const getBlockchainData = () => {
     if (
-      contractInst
-      // && contractInstBNB
+      contractInstICO_ETH
+      // && contractInstICO_BNB
     ) {
       dispatch(
         LoadBlockchainData({
-          contractInst,
+          contractInstICO_ETH,
           web3Inst,
-          contractInstDrift,
-          contractInstStakePool,
-          // contractInstBNB,
+          contractInstDrift_ETH,
+          contractInstStakePool_ETH,
+          // contractInstICO_BNB,
           // web3InstBNB,
         })
       );
@@ -138,24 +138,24 @@ function App() {
       selectedNetworkId === 11155111
         ? dispatch(
             LoadUser({
-              contractInst,
+              contractInstICO_ETH,
               address: address.trim(),
-              contractInstPresale,
+              contractInstPresaleToken_ETH,
               claim_address: process.env.REACT_APP_CLAIM_ETH,
-              contractInstClaim,
-              contractInstStakePool,
-              contractInstDriftStake,
-              contractInstDrift,
+              contractInstClaim_ETH,
+              contractInstStakePool_ETH,
+              contractInstDriftStake_ETH,
+              contractInstDrift_ETH,
               pool_address: process.env.REACT_APP_ST_POOL_DRIFT_ETH,
             })
           )
         : // : selectedNetworkId === 97
           // ? dispatch(
           //     LoadUser({
-          //       contractInst: contractInstBNB,
+          //       contractInstICO_ETH: contractInstICO_BNB,
           //       address: address.trim(),
 
-          //       contractInstPresale: contractInstTokenBNB,
+          //       contractInstPresaleToken_ETH: contractInstTokenBNB,
           //     })
           //   )
           dispatch(UpdateUser(null));
@@ -167,14 +167,14 @@ function App() {
   };
 
   useEffect(() => {
-    if (!contractInst) {
+    if (!contractInstICO_ETH) {
       loadcontract();
     }
     dispatch(GetUSDPrice());
     getBlockchainData();
   }, [
-    contractInst,
-    // , contractInstBNB
+    contractInstICO_ETH,
+    // , contractInstICO_BNB
   ]);
 
   useEffect(() => {
