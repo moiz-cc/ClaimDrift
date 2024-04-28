@@ -235,22 +235,6 @@ export const LoadUser = createAsyncThunk(
         .amountOfAddressPerType(address, 0)
         .call();
 
-      const ambassador_code = await contractInstICO.methods
-        .codeOfAddress(address)
-        .call();
-
-      const total_investment = await contractInstICO.methods
-        .investAmount(address)
-        .call();
-
-      const is_ambassador_eligible = await contractInstICO.methods
-        .isAmbassadorEligible(address)
-        .call();
-
-      const info = await contractInstICO.methods
-        .getAmbassadorInfo(address)
-        .call();
-
       const tokensToMove = await contractInstClaim.methods
         .getStakeAmountOfDynamicToStake(address)
         .call();

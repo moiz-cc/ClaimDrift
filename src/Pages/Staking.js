@@ -4,7 +4,11 @@ import { useState } from "react";
 import { useSelector } from "react-redux";
 import ConvertNumber from "../Helpers/ConvertNumber";
 import { useDispatch } from "react-redux";
-import { LoadBlockchainData, LoadUser } from "../Store/blockchainSlice";
+import {
+  LoadBlockchainData,
+  LoadUser,
+  LoadPoolData,
+} from "../Store/blockchainSlice";
 import { getErrorMessage } from "../blockchainErrors.js";
 import Error from "../Assets/Images/Error.svg";
 import staking_pool from "../Assets/Images/Pool.png";
@@ -38,19 +42,30 @@ const Staking = () => {
     publicBlockchainData: data,
     pool,
     user,
-    contractInstStakePool_ETH,
-    contractInstPresaleToken_ETH,
+    web3Inst_ETH,
     contractInstICO_ETH,
-    contractInstICO_BNB,
-    contractInstICO_POLYGON,
-    contractInstDriftStake_ETH,
-    contractInstTokenBNB,
-    contractInstTokenPOLYGON,
-    contractInstClaim_ETH,
-    contractInstClaimBNB,
-    contractInstClaimPOLYGON,
+    contractInstPresaleToken_ETH,
     contractInstDrift_ETH,
-    
+    contractInstClaim_ETH,
+    contractInstStakePool_ETH,
+    contractInstDriftStake_ETH,
+
+    web3Inst_BNB,
+    contractInstICO_BNB,
+    contractInstPresaleToken_BNB,
+    contractInstDrift_BNB,
+    contractInstClaim_BNB,
+    contractInstStakePool_BNB,
+    contractInstDriftStake_BNB,
+
+    web3Inst_POLYGON,
+    contractInstPresaleToken_POLYGON,
+    contractInstICO_POLYGON,
+    contractInstDrift_POLYGON,
+    contractInstClaim_POLYGON,
+    contractInstStakePool_POLYGON,
+    contractInstDriftStake_POLYGON,
+
     isLoading,
   } = useSelector((state) => state.Blockchain);
   const curret_date_time = Date.now() / 1000;
@@ -77,8 +92,8 @@ const Staking = () => {
   const onChange = (e) => {
     const { value, max } = e.target;
 
-    if (value > Number(user?.stakeDrift)) {
-      setTokens(max);
+    if (ConvertNumber(value) > Number(user?.stakeDrift)) {
+      setTokens(ConvertNumber(user?.stakeDrift, true));
     } else {
       setTokens(value);
     }
@@ -94,32 +109,53 @@ const Staking = () => {
 
     setLoading(true);
 
-    let claim_Address;
-    let claim_Inst;
-    let pool_inst;
-    let stake_inst;
-    let drift_inst;
-    let stakingpool_address;
-    let stakeDrift_address;
-
+    let Presale_TokenAddress;
+    let Claim_TokenAddress;
+    let PresaleToken_Inst;
+    let ICO_Inst;
+    let Claim_Inst;
+    let Pool_Inst;
+    let Stake_Drift_Inst;
+    let Stake_Drift_Address;
+    let Drift_Inst;
+    let Pool_Address;
     if (selectedNetworkId === 1 && chainId === 1) {
-      claim_Inst = contractInstClaim_ETH;
-      claim_Address = process.env.REACT_APP_CLAIM_ETH;
-      pool_inst = contractInstStakePool_ETH;
-      stake_inst = contractInstDriftStake_ETH;
-      drift_inst = contractInstDrift_ETH;
-      stakingpool_address = process.env.REACT_APP_ST_POOL_DRIFT_ETH;
-      stakeDrift_address = process.env.REACT_APP_ST_DRIFT_ETH;
+      Presale_TokenAddress = process.env.REACT_APP_TOKEN_CONTRACT_ETH;
+      Claim_TokenAddress = process.env.REACT_APP_CLAIM_ETH;
+      PresaleToken_Inst = contractInstPresaleToken_ETH;
+      ICO_Inst = contractInstICO_ETH;
+      Claim_Inst = contractInstClaim_ETH;
+      Pool_Inst = contractInstStakePool_ETH;
+      Stake_Drift_Inst = contractInstDriftStake_ETH;
+      Drift_Inst = contractInstDrift_ETH;
+      Pool_Address = process.env.REACT_APP_ST_POOL_DRIFT_ETH;
+      Stake_Drift_Address = process.env.REACT_APP_ST_DRIFT_ETH;
     } else if (selectedNetworkId === 56 && chainId === 56) {
-      claim_Inst = contractInstClaimBNB;
-      claim_Address = process.env.REACT_APP_CLAIM_BNB;
+      Presale_TokenAddress = process.env.REACT_APP_TOKEN_CONTRACT_BNB;
+      Claim_TokenAddress = process.env.REACT_APP_CLAIM_BNB;
+      PresaleToken_Inst = contractInstPresaleToken_BNB;
+      ICO_Inst = contractInstICO_BNB;
+      Claim_Inst = contractInstClaim_BNB;
+      Pool_Inst = contractInstStakePool_BNB;
+      Stake_Drift_Inst = contractInstDriftStake_BNB;
+      Drift_Inst = contractInstDrift_BNB;
+      Pool_Address = process.env.REACT_APP_ST_POOL_DRIFT_BNB;
+      Stake_Drift_Address = process.env.REACT_APP_ST_DRIFT_BNB;
     } else if (selectedNetworkId === 137 && chainId === 137) {
-      claim_Inst = contractInstClaimPOLYGON;
-      claim_Address = process.env.REACT_APP_CLAIM_POLYGON;
-    }
+      Presale_TokenAddress = process.env.REACT_APP_TOKEN_CONTRACT_POLYGON;
+      Claim_TokenAddress = process.env.REACT_APP_CLAIM_POLYGON;
+      PresaleToken_Inst = contractInstPresaleToken_POLYGON;
+      ICO_Inst = contractInstICO_POLYGON;
+      Claim_Inst = contractInstClaim_POLYGON;
+      Pool_Inst = contractInstStakePool_POLYGON;
+      Stake_Drift_Inst = contractInstDriftStake_POLYGON;
+      Drift_Inst = contractInstDrift_POLYGON;
+      Pool_Address = process.env.REACT_APP_ST_POOL_DRIFT_POLYGON;
+      Stake_Drift_Address = process.env.REACT_APP_ST_DRIFT_POLYGON;
+    } else return;
 
     try {
-      const claim_reward = await pool_inst.methods.claimRewards();
+      const claim_reward = await Pool_Inst.methods.claimRewards();
 
       const estimateGas = await claim_reward.estimateGas({
         from: address,
@@ -127,7 +163,7 @@ const Staking = () => {
 
       const transaction = claim_reward.send({
         from: address,
-        to: stakeDrift_address,
+        to: Stake_Drift_Address,
         gas: estimateGas,
         maxPriorityFeePerGas: 50000000000,
       });
@@ -143,18 +179,22 @@ const Staking = () => {
           setErrors((state) => ({ ...state, transaction: "" }));
           dispatch(
             LoadUser({
-              contractInstICO_ETH,
+              contractInstICO: ICO_Inst,
               address,
-              contractInstPresaleToken_ETH,
-              claim_address: claim_Address,
-              contractInstClaim_ETH: claim_Inst,
-              contractInstStakePool_ETH: pool_inst,
-              contractInstDriftStake_ETH: stake_inst,
-              contractInstDrift_ETH: drift_inst,
-              pool_address: stakingpool_address,
+              contractInstPresaleToken: PresaleToken_Inst,
+              contractInstClaim: Claim_Inst,
+              claimAddress: Claim_TokenAddress,
+              contractInstStakePool: Pool_Inst,
+              contractInstDriftStake: Stake_Drift_Inst,
+              contractInstDrift: Drift_Inst,
+              pool_address: Pool_Address,
             })
           );
-
+          dispatch(
+            LoadPoolData({
+              contractInstStakePool: Pool_Inst,
+            })
+          );
           setLoading(false);
         })
         .on("error", async (error, receipt) => {
@@ -187,34 +227,36 @@ const Staking = () => {
 
     setLoading(true);
 
-    let claim_Address;
-    let claim_Inst;
-
-    let pool_inst;
-    let stake_inst;
-    let drift_inst;
-    let stakingpool_address;
-    let stakeDrift_address;
+    let Presale_TokenAddress;
+    let Claim_TokenAddress;
+    let PresaleToken_Inst;
+    let ICO_Inst;
+    let Claim_Inst;
+    let Pool_Inst;
+    let Stake_Drift_Inst;
+    let Drift_Inst;
+    let Pool_Address;
+    let Stake_Drift_Address;
 
     if (selectedNetworkId === 1 && chainId === 1) {
-      claim_Inst = contractInstClaim_ETH;
-      claim_Address = process.env.REACT_APP_CLAIM_ETH;
-      pool_inst = contractInstStakePool_ETH;
-      stake_inst = contractInstDriftStake_ETH;
-      drift_inst = contractInstDrift_ETH;
-      stakingpool_address = process.env.REACT_APP_ST_POOL_DRIFT_ETH;
-      stakeDrift_address = process.env.REACT_APP_ST_DRIFT_ETH;
+      Claim_Inst = contractInstClaim_ETH;
+      Claim_TokenAddress = process.env.REACT_APP_CLAIM_ETH;
+      Pool_Inst = contractInstStakePool_ETH;
+      Stake_Drift_Inst = contractInstDriftStake_ETH;
+      Drift_Inst = contractInstDrift_ETH;
+      Pool_Address = process.env.REACT_APP_ST_POOL_DRIFT_ETH;
+      Stake_Drift_Address = process.env.REACT_APP_ST_DRIFT_ETH;
     } else if (selectedNetworkId === 56 && chainId === 56) {
-      claim_Inst = contractInstClaimBNB;
-      claim_Address = process.env.REACT_APP_CLAIM_BNB;
+      Claim_Inst = contractInstClaim_BNB;
+      Claim_TokenAddress = process.env.REACT_APP_CLAIM_BNB;
     } else if (selectedNetworkId === 137 && chainId === 137) {
-      claim_Inst = contractInstClaimPOLYGON;
-      claim_Address = process.env.REACT_APP_CLAIM_POLYGON;
+      Claim_Inst = contractInstClaim_POLYGON;
+      Claim_TokenAddress = process.env.REACT_APP_CLAIM_POLYGON;
     }
 
     try {
-      const approve = await stake_inst.methods.approve(
-        stakingpool_address,
+      const approve = await Stake_Drift_Inst.methods.approve(
+        Pool_Address,
         user?.stakeDrift + 0
       );
 
@@ -224,7 +266,7 @@ const Staking = () => {
 
       const transaction = approve.send({
         from: address,
-        to: stakeDrift_address,
+        to: Stake_Drift_Address,
         gas: estimateGas,
         maxPriorityFeePerGas: 50000000000,
       });
@@ -240,18 +282,22 @@ const Staking = () => {
           setErrors((state) => ({ ...state, transaction: "" }));
           dispatch(
             LoadUser({
-              contractInstICO_ETH,
+              contractInstICO: ICO_Inst,
               address,
-              contractInstPresaleToken_ETH,
-              claim_address: claim_Address,
-              contractInstClaim_ETH: claim_Inst,
-              contractInstStakePool_ETH: pool_inst,
-              contractInstDriftStake_ETH: stake_inst,
-              contractInstDrift_ETH: drift_inst,
-              pool_address: stakingpool_address,
+              contractInstPresaleToken: PresaleToken_Inst,
+              contractInstClaim: Claim_Inst,
+              claimAddress: Claim_TokenAddress,
+              contractInstStakePool: Pool_Inst,
+              contractInstDriftStake: Stake_Drift_Inst,
+              contractInstDrift: Drift_Inst,
+              pool_address: Pool_Address,
             })
           );
-
+          dispatch(
+            LoadPoolData({
+              contractInstStakePool: Pool_Inst,
+            })
+          );
           unstakeDrift(e);
         })
         .on("error", async (error, receipt) => {
@@ -289,28 +335,44 @@ const Staking = () => {
     setTransactionModal(true);
     setLoading(true);
 
-    let claim_Address;
-    let claim_Inst;
+    let Claim_TokenAddress;
+    let Claim_Inst;
 
-    let pool_inst;
-    let stake_inst;
-    let drift_inst;
-    let stakingpool_address;
+    let Pool_Inst;
+    let Stake_Drift_Inst;
+    let Drift_Inst;
+    let Pool_Address;
+    let ICO_Inst;
+    let PresaleToken_Inst;
 
     if (selectedNetworkId === 1 && chainId === 1) {
-      claim_Inst = contractInstClaim_ETH;
-      claim_Address = process.env.REACT_APP_CLAIM_ETH;
+      ICO_Inst = contractInstICO_ETH;
+      PresaleToken_Inst= contractInstPresaleToken_ETH
+      Claim_Inst = contractInstClaim_ETH;
+      Claim_TokenAddress = process.env.REACT_APP_CLAIM_ETH;
+      Pool_Inst = contractInstStakePool_ETH;
+      Stake_Drift_Inst = contractInstDriftStake_ETH;
+      Drift_Inst = contractInstDrift_ETH;
+      Pool_Address = process.env.REACT_APP_ST_POOL_DRIFT_ETH;
 
-      pool_inst = contractInstStakePool_ETH;
-      stake_inst = contractInstDriftStake_ETH;
-      drift_inst = contractInstDrift_ETH;
-      stakingpool_address = process.env.REACT_APP_ST_POOL_DRIFT_ETH;
     } else if (selectedNetworkId === 56 && chainId === 56) {
-      claim_Inst = contractInstClaimBNB;
-      claim_Address = process.env.REACT_APP_CLAIM_BNB;
+      ICO_Inst = contractInstICO_BNB;
+      PresaleToken_Inst= contractInstPresaleToken_BNB
+      Claim_Inst = contractInstClaim_BNB;
+      Claim_TokenAddress = process.env.REACT_APP_CLAIM_BNB;
+      Pool_Inst = contractInstStakePool_BNB;
+      Stake_Drift_Inst = contractInstDriftStake_BNB;
+      Drift_Inst = contractInstDrift_BNB;
+      Pool_Address = process.env.REACT_APP_ST_POOL_DRIFT_BNB;
     } else if (selectedNetworkId === 137 && chainId === 137) {
-      claim_Inst = contractInstClaimPOLYGON;
-      claim_Address = process.env.REACT_APP_CLAIM_POLYGON;
+      ICO_Inst = contractInstICO_POLYGON;
+      PresaleToken_Inst= contractInstPresaleToken_POLYGON
+      Claim_Inst = contractInstClaim_POLYGON;
+      Claim_TokenAddress = process.env.REACT_APP_CLAIM_POLYGON;
+      Pool_Inst = contractInstStakePool_POLYGON;
+      Stake_Drift_Inst = contractInstDriftStake_POLYGON;
+      Drift_Inst = contractInstDrift_POLYGON;
+      Pool_Address = process.env.REACT_APP_ST_POOL_DRIFT_POLYGON;
     }
     try {
       const unstake = await contractInstStakePool_ETH.methods.unstake(
@@ -323,7 +385,7 @@ const Staking = () => {
 
       const transaction = unstake.send({
         from: address,
-        to: stakingpool_address,
+        to: Pool_Address,
         gas: estimateGas,
         maxPriorityFeePerGas: 50000000000,
       });
@@ -339,15 +401,20 @@ const Staking = () => {
           setErrors((state) => ({ ...state, transaction: "" }));
           dispatch(
             LoadUser({
-              contractInstICO_ETH,
+              contractInstICO: ICO_Inst,
               address,
-              contractInstPresaleToken_ETH,
-              claim_address: claim_Address,
-              contractInstClaim_ETH: claim_Inst,
-              contractInstStakePool_ETH: pool_inst,
-              contractInstDriftStake_ETH: stake_inst,
-              contractInstDrift_ETH: drift_inst,
-              pool_address: stakingpool_address,
+              contractInstPresaleToken: PresaleToken_Inst,
+              contractInstClaim: Claim_Inst,
+              claimAddress: Claim_TokenAddress,
+              contractInstStakePool: Pool_Inst,
+              contractInstDriftStake: Stake_Drift_Inst,
+              contractInstDrift: Drift_Inst,
+              pool_address: Pool_Address,
+            })
+          );
+          dispatch(
+            LoadPoolData({
+              contractInstStakePool: Pool_Inst,
             })
           );
           setTokens(0);
@@ -381,16 +448,31 @@ const Staking = () => {
           <div className="row m-0 w-100 Home_Hero_Section">
             <div className="col-12 col-md-6 p-0 ">
               <h1 className="Home_Hero_Section_Heading mt-2 fw-bold text-white text-uppercase">
-                ETH-DRIFT Staking Pool
+                {selectedNetworkId === 1
+                  ? "ETH-"
+                  : selectedNetworkId === 56
+                  ? "BNB-"
+                  : selectedNetworkId === 137
+                  ? "MATIC-"
+                  : " "}
+                DRIFT Staking Pool
               </h1>
 
               <p className="m-0 p-0 my-4 text-white">
-                The ETH rewards pool for staking DRIFT tokens will be active for
-                30 days from Launch date. Unstaking before 30 day period will
-                result in a penalty charge. Once the staking pool has ended,
-                users are requested to unstake their tokens and fully claim
-                their rewards. Secondary staking pools will be launched after
-                30-day staking pool.
+                The{" "}
+                {selectedNetworkId === 1
+                  ? "ETH"
+                  : selectedNetworkId === 56
+                  ? "BNB"
+                  : selectedNetworkId === 137
+                  ? "MATIC"
+                  : " "}{" "}
+                rewards pool for staking DRIFT tokens will be active for 30 days
+                from Launch date. Unstaking before 30 day period will result in
+                a penalty charge. Once the staking pool has ended, users are
+                requested to unstake their tokens and fully claim their rewards.
+                Secondary staking pools will be launched after 30-day staking
+                pool.
               </p>
             </div>
           </div>
@@ -600,7 +682,14 @@ const Staking = () => {
       <div className="py-5">
         <div className="container-lg">
           <h4 className="Home_Hero_Section_Heading ">
-            Stake $DRIFT, Earn $DRIFT
+            Stake $DRIFT, Earn{" "}
+            {selectedNetworkId === 1
+              ? "ETH"
+              : selectedNetworkId === 56
+              ? "BNB"
+              : selectedNetworkId === 137
+              ? "MATIC"
+              : " "}
           </h4>
 
           <section className="mt-5">
@@ -639,7 +728,13 @@ col-12 ps-0 col-sm-6 pe-0 pe-sm-2"
                         {user?.remaining_claim > 0
                           ? ConvertNumber(user?.remaining_claim, true)
                           : 0}{" "}
-                        ETH
+                        {selectedNetworkId === 1
+                          ? "ETH"
+                          : selectedNetworkId === 56
+                          ? "BNB"
+                          : selectedNetworkId === 137
+                          ? "MATIC"
+                          : ""}
                       </p>
                     </div>
                     <div
@@ -675,11 +770,11 @@ col-12 ps-0 "
                       DTSC_SubHeading mb-0 text-uppercase fw-bold "
                         style={{ color: "#ff4bae" }}
                       >
-                        {ConvertNumber(pool?.apy, true).toFixed(
-                          ConvertNumber(pool?.apy, true)
+                        {ConvertNumber(pool?.apy / 100 || 0, true).toFixed(
+                          ConvertNumber(pool?.apy / 100 || 0, true)
                             ?.toString()
                             ?.split(".")[0] != 0
-                            ? ConvertNumber(pool?.apy, true)
+                            ? ConvertNumber(pool?.apy / 100 || 0, true)
                                 ?.toString()
                                 ?.split(".")[1] > 0
                               ? 3
@@ -875,9 +970,17 @@ col-12 col-sm-6 pe-0 ps-0 ps-sm-2 d-flex justify-content-end align-items-end "
                             fontSize: 12,
                           }}
                         >
-                          The ETH rewards pool for staking DRIFT tokens will be
-                          active for 30 days from Launch date. Unstaking before
-                          30 day period will result in a penalty charge.
+                          The{" "}
+                          {selectedNetworkId === 1
+                            ? "ETH"
+                            : selectedNetworkId === 56
+                            ? "BNB"
+                            : selectedNetworkId === 137
+                            ? "MATIC"
+                            : " "}{" "}
+                          rewards pool for staking DRIFT tokens will be active
+                          for 30 days from Launch date. Unstaking before 30 day
+                          period will result in a penalty charge.
                         </p>
                       </div>
                       <div className="mt-3">
@@ -915,7 +1018,7 @@ col-12 col-sm-6 pe-0 ps-0 ps-sm-2 d-flex justify-content-end align-items-end "
                           >
                             Unstake
                           </button>
-                        )}
+                         )} 
                       </div>
                     </div>
                     {/* )} */}
