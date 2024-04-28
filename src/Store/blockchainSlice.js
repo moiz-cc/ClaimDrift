@@ -7,7 +7,7 @@ import {
   crowdSaleAbi_BNB,
   crowdSaleAbi_ETH,
   crowdSaleAbi_POLYGON,
-  driftAbi,
+  driftAbi_ETH,
   driftAbi_BNB,
   driftAbi_POLYGON,
   presaletokenAbi_BNB,
@@ -271,7 +271,7 @@ export const blockchainSlice = createSlice({
         process.env.REACT_APP_CLAIM_ETH
       );
       state.contractInstDrift = new web3Instance.eth.Contract(
-        driftAbi,
+        driftAbi_ETH,
         process.env.REACT_APP_DRIFT_ETH
       );
 

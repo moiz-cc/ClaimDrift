@@ -5142,7 +5142,7 @@ export const claimAbi_POLYGON = [
   },
 ];
 
-export const driftAbi = [
+export const driftAbi_ETH = [
   {
     inputs: [],
     name: "ECDSAInvalidSignature",
@@ -9876,3 +9876,4 @@ export const driftAbi_POLYGON = [
     type: "receive",
   },
 ];
+
