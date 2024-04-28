@@ -272,6 +272,24 @@ export const LoadUser = createAsyncThunk(
         .allowance(address, claimAddress)
         .call();
 
+
+      const stakeDrift = await contractInstDriftStake.methods
+        .balanceOf(address)
+        .call();
+
+      const is_pool_allowed = await contractInstDriftStake.methods
+        .allowance(address, pool_address)
+        .call();
+
+      const dynamicDrift = await contractInstDrift.methods
+        .balanceOf(address)
+        .call();
+      const Reward = await contractInstStakePool.methods
+        .getPendingRewards(address)
+        .call();
+
+
+
       return {
         balance,
         Staked: ConvertNumber(Number(Staked) + Number(tokensToMove), true),
