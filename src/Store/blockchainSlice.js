@@ -231,6 +231,10 @@ export const LoadUser = createAsyncThunk(
       contractInstPresaleToken,
       contractInstClaim,
       claimAddress,
+      contractInstStakePool,
+      contractInstDriftStake,
+      contractInstDrift,
+      pool_address,
     } = data;
 
     try {
