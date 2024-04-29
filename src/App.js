@@ -24,7 +24,7 @@ import {
   LoadBlockchainData,
   UpdateUser,
 } from "./Store/blockchainSlice.js";
-import { LoadUser } from "./Store/blockchainSlice.js";
+import { LoadUser, LoadPoolData } from "./Store/blockchainSlice.js";
 import axios from "axios";
 import PrivacyPolicy from "./Pages/PrivacyPolicy.js";
 import PriceRiskDisclosure from "./Pages/PriceRiskDisclosure.js";
@@ -33,23 +33,29 @@ import Staking from "./Pages/Staking.js";
 function App() {
   const dispatch = useDispatch();
   const {
-    web3Inst,
-    contractInst,
-    contractInstToken,
-    contractInstDrift,
-    contractInstClaim,
+    web3Inst_ETH,
+    contractInstICO_ETH,
+    contractInstPresaleToken_ETH,
+    contractInstDrift_ETH,
+    contractInstClaim_ETH,
+    contractInstDriftStake_ETH,
+    contractInstStakePool_ETH,
 
-    web3InstBNB,
-    contractInstBNB,
-    contractInstTokenBNB,
-    contractInstDriftBNB,
-    contractInstClaimBNB,
+    web3Inst_BNB,
+    contractInstICO_BNB,
+    contractInstPresaleToken_BNB,
+    contractInstDrift_BNB,
+    contractInstClaim_BNB,
+    contractInstDriftStake_BNB,
+    contractInstStakePool_BNB,
 
-    web3InstPOLYGON,
-    contractInstTokenPOLYGON,
-    contractInstPOLYGON,
-    contractInstDriftPOLYGON,
-    contractInstClaimPOLYGON,
+    web3Inst_POLYGON,
+    contractInstPresaleToken_POLYGON,
+    contractInstICO_POLYGON,
+    contractInstDrift_POLYGON,
+    contractInstClaim_POLYGON,
+    contractInstDriftStake_POLYGON,
+    contractInstStakePool_POLYGON,
   } = useSelector((state) => state.Blockchain);
   const { walletProvider } = useWeb3ModalSigner();
 
@@ -106,56 +112,93 @@ function App() {
   const _timeout = useRef(null);
 
   const getBlockchainData = () => {
-    if (contractInst && contractInstBNB && contractInstPOLYGON) {
+    if (contractInstICO_ETH && contractInstICO_BNB && contractInstICO_POLYGON) {
       dispatch(
         LoadBlockchainData({
-          contractInst,
-          web3Inst,
-          contractInstDrift,
-          contractInstBNB,
-          web3InstBNB,
-          contractInstDriftBNB,
-          contractInstPOLYGON,
-          web3InstPOLYGON,
-          contractInstDriftPOLYGON,
+          contractInstICO_ETH,
+          web3Inst_ETH,
+          contractInstDrift_ETH,
+          contractInstICO_BNB,
+          web3Inst_BNB,
+          contractInstDrift_BNB,
+          contractInstICO_POLYGON,
+          web3Inst_POLYGON,
+          contractInstDrift_POLYGON,
         })
       );
     }
   };
 
-  const loadUserData = async () => {
+  const getUserData = async () => {
     if (isConnected && typeof address !== "undefined") {
       selectedNetworkId === 1
         ? dispatch(
             LoadUser({
-              contractInst,
+              contractInstICO: contractInstICO_ETH,
               address: address.trim(),
-              contractInstToken,
-              contractInstClaim,
+              contractInstPresaleToken: contractInstPresaleToken_ETH,
+              contractInstClaim: contractInstClaim_ETH,
               claimAddress: process.env.REACT_APP_CLAIM_ETH,
+              contractInstStakePool: contractInstStakePool_ETH,
+              contractInstDriftStake: contractInstDriftStake_ETH,
+              contractInstDrift: contractInstDrift_ETH,
+              pool_address: process.env.REACT_APP_ST_POOL_DRIFT_ETH,
             })
           )
         : selectedNetworkId === 56
         ? dispatch(
             LoadUser({
-              contractInst: contractInstBNB,
+              contractInstICO: contractInstICO_BNB,
               address: address.trim(),
-              contractInstToken: contractInstTokenBNB,
-              contractInstClaim: contractInstClaimBNB,
+              contractInstPresaleToken: contractInstPresaleToken_BNB,
+              contractInstClaim: contractInstClaim_BNB,
               claimAddress: process.env.REACT_APP_CLAIM_BNB,
+              contractInstStakePool: contractInstStakePool_BNB,
+              contractInstDriftStake: contractInstDriftStake_BNB,
+              contractInstDrift: contractInstDrift_BNB,
+              pool_address: process.env.REACT_APP_ST_POOL_DRIFT_BNB,
             })
           )
         : selectedNetworkId === 137
         ? dispatch(
             LoadUser({
-              contractInst: contractInstPOLYGON,
+              contractInstICO: contractInstICO_POLYGON,
               address: address.trim(),
-              contractInstToken: contractInstTokenPOLYGON,
-              contractInstClaim: contractInstClaimPOLYGON,
+              contractInstPresaleToken: contractInstPresaleToken_POLYGON,
+              contractInstClaim: contractInstClaim_POLYGON,
               claimAddress: process.env.REACT_APP_CLAIM_POLYGON,
+              contractInstStakePool: contractInstStakePool_POLYGON,
+              contractInstDriftStake: contractInstDriftStake_POLYGON,
+              contractInstDrift: contractInstDrift_POLYGON,
+              pool_address: process.env.REACT_APP_ST_POOL_DRIFT_POLYGON,
             })
           )
         : dispatch(UpdateUser(null));
+    }
+  };
+  const getPoolData = async () => {
+    if (isConnected && typeof address !== "undefined") {
+      selectedNetworkId === 1 ? (
+        dispatch(
+          LoadPoolData({
+            contractInstStakePool: contractInstStakePool_ETH,
+          })
+        )
+      ) : selectedNetworkId === 56 ? (
+        dispatch(
+          LoadPoolData({
+            contractInstStakePool: contractInstStakePool_BNB,
+          })
+        )
+      ) : selectedNetworkId === 137 ? (
+        dispatch(
+          LoadPoolData({
+            contractInstStakePool: contractInstStakePool_POLYGON,
+          })
+        )
+      ) : (
+        <></>
+      );
     }
   };
 
@@ -164,19 +207,20 @@ function App() {
   };
 
   useEffect(() => {
-    if (!contractInst) {
+    if (!contractInstICO_ETH) {
       loadcontract();
     }
     dispatch(GetUSDPrice());
     getBlockchainData();
-  }, [contractInst, contractInstBNB, contractInstPOLYGON]);
+  }, [contractInstICO_ETH, contractInstICO_BNB, contractInstICO_POLYGON]);
 
   useEffect(() => {
     if (isConnected && walletProvider?.provider && !isWeb3InstanceConnect) {
       dispatch(createInstance({ walletProvider }));
       setIsWeb3InstanceConnect(true);
     }
-    loadUserData();
+    getUserData();
+    getPoolData();
   }, [
     isConnected,
     walletProvider,
@@ -185,47 +229,20 @@ function App() {
     selectedNetworkId,
   ]);
 
-  // useEffect(() => {
-  //   const InterID = setInterval(() => {
-  //     if (_timeout.current !== null && _timeout.current > Date.now()) return;
-  //     _timeout.current = null;
-
-  //     axios
-  //       .get(
-  //         process.env.REACT_APP_BASE_URL + "ethereum,binancecoin,matic-network",
-  //         {
-  //           headers: {
-  //             "x-cg-pro-api-key": "CG-1EK5GnU4Ka429EFRG5F3m7dy",
-  //           },
-  //         }
-  //       )
-  //       .then((response) => {
-  //         dispatch(UpdateUSDPrice(response.data));
-  //       })
-  //       .catch((e) => {
-  //         console.log(e.message);
-  //         _timeout.current = new Date().getTime() + 60;
-  //       });
-  //   }, 10000);
-  //   return () => {
-  //     clearInterval(InterID);
-  //   };
-  // }, [selectedNetworkId]);
-
   useEffect(() => {
-    loadUserData();
+    getUserData();
+    getPoolData();
   }, [address, isConnected]);
 
   return (
     <div className="App">
       <Header />
-
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/utilities" element={<Utilities />} />
         <Route path="/ambassador" element={<Ambassador />} />
         <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-        {/* <Route path="/stake" element={<Staking />} /> */}
+        <Route path="/pool" element={<Staking />} />
         <Route
           path="/price-risk-disclosure"
           element={<PriceRiskDisclosure />}
