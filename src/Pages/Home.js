@@ -317,14 +317,8 @@ function Home() {
 
           dispatch(
             LoadBlockchainData({
-              contractInstICO_ETH,
-              web3Inst_ETH,
               contractInstDrift_ETH,
-              contractInstICO_BNB,
-              web3Inst_BNB,
               contractInstDrift_BNB,
-              contractInstICO_POLYGON,
-              web3Inst_POLYGON,
               contractInstDrift_POLYGON,
             })
           );

@@ -112,17 +112,15 @@ function App() {
   const _timeout = useRef(null);
 
   const getBlockchainData = () => {
-    if (contractInstICO_ETH && contractInstICO_BNB && contractInstICO_POLYGON) {
+    if (
+      contractInstDrift_ETH &&
+      contractInstDrift_BNB &&
+      contractInstDrift_POLYGON
+    ) {
       dispatch(
         LoadBlockchainData({
-          contractInstICO_ETH,
-          web3Inst_ETH,
           contractInstDrift_ETH,
-          contractInstICO_BNB,
-          web3Inst_BNB,
           contractInstDrift_BNB,
-          contractInstICO_POLYGON,
-          web3Inst_POLYGON,
           contractInstDrift_POLYGON,
         })
       );
@@ -143,7 +141,6 @@ function App() {
               contractInstDriftStake: contractInstDriftStake_ETH,
               contractInstDrift: contractInstDrift_ETH,
               pool_address: process.env.REACT_APP_ST_POOL_DRIFT_ETH,
-              
             })
           )
         : selectedNetworkId === 56
@@ -208,12 +205,12 @@ function App() {
   };
 
   useEffect(() => {
-    if (!contractInstICO_ETH) {
+    if (!contractInstDrift_ETH) {
       loadcontract();
     }
     dispatch(GetUSDPrice());
     getBlockchainData();
-  }, [contractInstICO_ETH, contractInstICO_BNB, contractInstICO_POLYGON]);
+  }, [contractInstDrift_ETH, contractInstDrift_BNB, contractInstDrift_POLYGON]);
 
   useEffect(() => {
     if (isConnected && walletProvider?.provider && !isWeb3InstanceConnect) {
@@ -243,7 +240,7 @@ function App() {
         <Route path="/utilities" element={<Utilities />} />
         <Route path="/ambassador" element={<Ambassador />} />
         <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-        <Route path="/stake" element={<Staking />} />
+        <Route path="/pool" element={<Staking />} />
         <Route
           path="/price-risk-disclosure"
           element={<PriceRiskDisclosure />}

@@ -85,6 +85,16 @@ function Header() {
                   Amba$$ador
                 </Link>
               </li>
+              <li className="list-group-item border-0 bg-transparent p-0 ms-4">
+                <Link
+                  className={`HeaderMenuContainer_Link text-uppercase ${
+                    location.pathname === "/pool" ? "Active" : ""
+                  }`}
+                  to={"/pool"}
+                >
+                  Pool
+                </Link>
+              </li>
             </ul>
           </div>
           <div className="HeaderRight d-flex align-items-center">
@@ -177,6 +187,20 @@ function Header() {
                     to={"/ambassador"}
                   >
                     Amba$$ador
+                  </Link>
+                </li>
+                <li
+                  className={`list-group-item border-0 rounded-0 SideBarMenu_ListItem py-2 px-3 ${
+                    location.pathname === "/pool" ? "Active" : ""
+                  }`}
+                >
+                  <Link
+                    className={`HeaderMenuContainer_Link ${
+                      location.pathname === "/pool" ? "Active" : ""
+                    }`}
+                    to={"/pool"}
+                  >
+                    Pool
                   </Link>
                 </li>
               </ul>

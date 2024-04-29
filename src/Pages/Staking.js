@@ -69,7 +69,7 @@ const Staking = () => {
     isLoading,
   } = useSelector((state) => state.Blockchain);
   const curret_date_time = Date.now() / 1000;
-  console.log("Current Date", curret_date_time);
+
   const remaining_days =
     pool?.stake_end_deadline - curret_date_time > 0
       ? Math.round(
@@ -989,7 +989,7 @@ col-12 col-sm-6 pe-0 ps-0 ps-sm-2 d-flex justify-content-end align-items-end "
                             type="number"
                             style={{ marginRight: 15 }}
                             min={0}
-                            max={Number(user?.stakeDrift)}
+                            max={Number(user?.stakeDrift || 0)}
                             value={tokens}
                             onChange={onChange}
                           />
