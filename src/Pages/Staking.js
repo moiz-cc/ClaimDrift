@@ -34,411 +34,11 @@ const Staking = () => {
   const [loading, setLoading] = useState(false);
   const [txHash, setTxHash] = useState("");
   const [tokens, setTokens] = useState(0);
-  const [errors, setErrors] = useState({
-    transaction: "",
-  });
-
-  const {
-    publicBlockchainData: data,
-    pool,
-    user,
-    web3Inst_ETH,
-    contractInstICO_ETH,
-    contractInstPresaleToken_ETH,
-    contractInstDrift_ETH,
-    contractInstClaim_ETH,
-    contractInstStakePool_ETH,
-    contractInstDriftStake_ETH,
-
-    web3Inst_BNB,
-    contractInstICO_BNB,
-    contractInstPresaleToken_BNB,
-    contractInstDrift_BNB,
-    contractInstClaim_BNB,
-    contractInstStakePool_BNB,
-    contractInstDriftStake_BNB,
-
-    web3Inst_POLYGON,
-    contractInstPresaleToken_POLYGON,
-    contractInstICO_POLYGON,
-    contractInstDrift_POLYGON,
-    contractInstClaim_POLYGON,
-    contractInstStakePool_POLYGON,
-    contractInstDriftStake_POLYGON,
-
-    isLoading,
-  } = useSelector((state) => state.Blockchain);
-  const curret_date_time = Date.now() / 1000;
-
-  const remaining_days =
-    pool?.stake_end_deadline - curret_date_time > 0
-      ? Math.round(
-          Number(pool?.stake_end_deadline - curret_date_time) / 60 / 60 / 24
-        )
-      : 0;
-
+  const [isStake, setIsStake] = useState(true);
+  const { user } = useSelector((state) => state.Blockchain);
   useEffect(() => {
     setTokens(0);
-  }, []);
-  const closeTransactionModal = () => {
-    setTransactionModal(false);
-    setClaimtransactionModal(false);
-
-    setErrors({
-      transaction: "",
-    });
-    setTxHash("");
-  };
-  const onChange = (e) => {
-    const { value, max } = e.target;
-
-    if (ConvertNumber(value) > Number(user?.stakeDrift)) {
-      setTokens(ConvertNumber(user?.stakeDrift, true));
-    } else {
-      setTokens(value);
-    }
-  };
-
-  const claimRewards = async (e) => {
-    if (!address) {
-      open();
-
-      return;
-    }
-    setClaimtransactionModal(true);
-
-    setLoading(true);
-
-    let Presale_TokenAddress;
-    let Claim_TokenAddress;
-    let PresaleToken_Inst;
-    let ICO_Inst;
-    let Claim_Inst;
-    let Pool_Inst;
-    let Stake_Drift_Inst;
-    let Stake_Drift_Address;
-    let Drift_Inst;
-    let Pool_Address;
-    if (selectedNetworkId === 1 && chainId === 1) {
-      Presale_TokenAddress = process.env.REACT_APP_TOKEN_CONTRACT_ETH;
-      Claim_TokenAddress = process.env.REACT_APP_CLAIM_ETH;
-      PresaleToken_Inst = contractInstPresaleToken_ETH;
-      ICO_Inst = contractInstICO_ETH;
-      Claim_Inst = contractInstClaim_ETH;
-      Pool_Inst = contractInstStakePool_ETH;
-      Stake_Drift_Inst = contractInstDriftStake_ETH;
-      Drift_Inst = contractInstDrift_ETH;
-      Pool_Address = process.env.REACT_APP_ST_POOL_DRIFT_ETH;
-      Stake_Drift_Address = process.env.REACT_APP_ST_DRIFT_ETH;
-    } else if (selectedNetworkId === 56 && chainId === 56) {
-      Presale_TokenAddress = process.env.REACT_APP_TOKEN_CONTRACT_BNB;
-      Claim_TokenAddress = process.env.REACT_APP_CLAIM_BNB;
-      PresaleToken_Inst = contractInstPresaleToken_BNB;
-      ICO_Inst = contractInstICO_BNB;
-      Claim_Inst = contractInstClaim_BNB;
-      Pool_Inst = contractInstStakePool_BNB;
-      Stake_Drift_Inst = contractInstDriftStake_BNB;
-      Drift_Inst = contractInstDrift_BNB;
-      Pool_Address = process.env.REACT_APP_ST_POOL_DRIFT_BNB;
-      Stake_Drift_Address = process.env.REACT_APP_ST_DRIFT_BNB;
-    } else if (selectedNetworkId === 137 && chainId === 137) {
-      Presale_TokenAddress = process.env.REACT_APP_TOKEN_CONTRACT_POLYGON;
-      Claim_TokenAddress = process.env.REACT_APP_CLAIM_POLYGON;
-      PresaleToken_Inst = contractInstPresaleToken_POLYGON;
-      ICO_Inst = contractInstICO_POLYGON;
-      Claim_Inst = contractInstClaim_POLYGON;
-      Pool_Inst = contractInstStakePool_POLYGON;
-      Stake_Drift_Inst = contractInstDriftStake_POLYGON;
-      Drift_Inst = contractInstDrift_POLYGON;
-      Pool_Address = process.env.REACT_APP_ST_POOL_DRIFT_POLYGON;
-      Stake_Drift_Address = process.env.REACT_APP_ST_DRIFT_POLYGON;
-    } else return;
-
-    try {
-      const claim_reward = await Pool_Inst.methods.claimRewards();
-
-      const estimateGas = await claim_reward.estimateGas({
-        from: address,
-      });
-
-      const transaction = claim_reward.send({
-        from: address,
-        to: Stake_Drift_Address,
-        gas: estimateGas,
-        maxPriorityFeePerGas: 50000000000,
-      });
-
-      transaction
-        .on("transactionHash", (txHash) => {
-          console.log(txHash);
-          setTxHash(txHash);
-        })
-        .on("receipt", async (receipt) => {
-          console.log("RECEIPT => \n", receipt);
-
-          setErrors((state) => ({ ...state, transaction: "" }));
-          dispatch(
-            LoadUser({
-              contractInstICO: ICO_Inst,
-              address,
-              contractInstPresaleToken: PresaleToken_Inst,
-              contractInstClaim: Claim_Inst,
-              claimAddress: Claim_TokenAddress,
-              contractInstStakePool: Pool_Inst,
-              contractInstDriftStake: Stake_Drift_Inst,
-              contractInstDrift: Drift_Inst,
-              pool_address: Pool_Address,
-            })
-          );
-          dispatch(
-            LoadPoolData({
-              contractInstStakePool: Pool_Inst,
-            })
-          );
-          setLoading(false);
-        })
-        .on("error", async (error, receipt) => {
-          console.log("ERROR => \n", error);
-
-          setLoading(false);
-
-          const errorMsg = await getErrorMessage(error, chainId);
-          setErrors({ ...errors, transaction: errorMsg });
-          console.log("RECEIPT ERROR => \n", receipt);
-
-          if (receipt?.transactionHash) {
-            setTxHash(receipt.transactionHash);
-          }
-        });
-    } catch (error) {
-      const errorMsg = await getErrorMessage(error, chainId);
-      console.log(errorMsg);
-      setErrors((state) => ({ ...state, transaction: errorMsg }));
-      setLoading(false);
-    }
-  };
-  const allow = async (e) => {
-    if (!address) {
-      open();
-
-      return;
-    }
-    setClaimtransactionModal(true);
-
-    setLoading(true);
-
-    let Presale_TokenAddress;
-    let Claim_TokenAddress;
-    let PresaleToken_Inst;
-    let ICO_Inst;
-    let Claim_Inst;
-    let Pool_Inst;
-    let Stake_Drift_Inst;
-    let Drift_Inst;
-    let Pool_Address;
-    let Stake_Drift_Address;
-
-    if (selectedNetworkId === 1 && chainId === 1) {
-      Claim_Inst = contractInstClaim_ETH;
-      Claim_TokenAddress = process.env.REACT_APP_CLAIM_ETH;
-      Pool_Inst = contractInstStakePool_ETH;
-      Stake_Drift_Inst = contractInstDriftStake_ETH;
-      Drift_Inst = contractInstDrift_ETH;
-      Pool_Address = process.env.REACT_APP_ST_POOL_DRIFT_ETH;
-      Stake_Drift_Address = process.env.REACT_APP_ST_DRIFT_ETH;
-    } else if (selectedNetworkId === 56 && chainId === 56) {
-      Claim_Inst = contractInstClaim_BNB;
-      Claim_TokenAddress = process.env.REACT_APP_CLAIM_BNB;
-    } else if (selectedNetworkId === 137 && chainId === 137) {
-      Claim_Inst = contractInstClaim_POLYGON;
-      Claim_TokenAddress = process.env.REACT_APP_CLAIM_POLYGON;
-    }
-
-    try {
-      const approve = await Stake_Drift_Inst.methods.approve(
-        Pool_Address,
-        user?.stakeDrift + 0
-      );
-
-      const estimateGas = await approve.estimateGas({
-        from: address,
-      });
-
-      const transaction = approve.send({
-        from: address,
-        to: Stake_Drift_Address,
-        gas: estimateGas,
-        maxPriorityFeePerGas: 50000000000,
-      });
-
-      transaction
-        .on("transactionHash", (txHash) => {
-          console.log(txHash);
-          // setTxHash(txHash);
-        })
-        .on("receipt", async (receipt) => {
-          console.log("RECEIPT => \n", receipt);
-
-          setErrors((state) => ({ ...state, transaction: "" }));
-          dispatch(
-            LoadUser({
-              contractInstICO: ICO_Inst,
-              address,
-              contractInstPresaleToken: PresaleToken_Inst,
-              contractInstClaim: Claim_Inst,
-              claimAddress: Claim_TokenAddress,
-              contractInstStakePool: Pool_Inst,
-              contractInstDriftStake: Stake_Drift_Inst,
-              contractInstDrift: Drift_Inst,
-              pool_address: Pool_Address,
-            })
-          );
-          dispatch(
-            LoadPoolData({
-              contractInstStakePool: Pool_Inst,
-            })
-          );
-          unstakeDrift(e);
-        })
-        .on("error", async (error, receipt) => {
-          console.log("ERROR => \n", error);
-
-          setLoading(false);
-
-          const errorMsg = await getErrorMessage(error, chainId);
-          setErrors({ ...errors, transaction: errorMsg });
-          console.log("RECEIPT ERROR => \n", receipt);
-
-          if (receipt?.transactionHash) {
-            setTxHash(receipt.transactionHash);
-          }
-        });
-    } catch (error) {
-      const errorMsg = await getErrorMessage(error, chainId);
-      console.log(errorMsg);
-      setErrors((state) => ({ ...state, transaction: errorMsg }));
-      setLoading(false);
-    }
-  };
-
-  const unstakeDrift = async (e) => {
-    // e.preventDefault();
-
-    const tokens_in_wei = ConvertNumber(tokens);
-    console.log(tokens_in_wei);
-
-    if (!address) {
-      open();
-
-      return;
-    }
-    setTransactionModal(true);
-    setLoading(true);
-
-    let Claim_TokenAddress;
-    let Claim_Inst;
-
-    let Pool_Inst;
-    let Stake_Drift_Inst;
-    let Drift_Inst;
-    let Pool_Address;
-    let ICO_Inst;
-    let PresaleToken_Inst;
-
-    if (selectedNetworkId === 1 && chainId === 1) {
-      ICO_Inst = contractInstICO_ETH;
-      PresaleToken_Inst = contractInstPresaleToken_ETH;
-      Claim_Inst = contractInstClaim_ETH;
-      Claim_TokenAddress = process.env.REACT_APP_CLAIM_ETH;
-      Pool_Inst = contractInstStakePool_ETH;
-      Stake_Drift_Inst = contractInstDriftStake_ETH;
-      Drift_Inst = contractInstDrift_ETH;
-      Pool_Address = process.env.REACT_APP_ST_POOL_DRIFT_ETH;
-    } else if (selectedNetworkId === 56 && chainId === 56) {
-      ICO_Inst = contractInstICO_BNB;
-      PresaleToken_Inst = contractInstPresaleToken_BNB;
-      Claim_Inst = contractInstClaim_BNB;
-      Claim_TokenAddress = process.env.REACT_APP_CLAIM_BNB;
-      Pool_Inst = contractInstStakePool_BNB;
-      Stake_Drift_Inst = contractInstDriftStake_BNB;
-      Drift_Inst = contractInstDrift_BNB;
-      Pool_Address = process.env.REACT_APP_ST_POOL_DRIFT_BNB;
-    } else if (selectedNetworkId === 137 && chainId === 137) {
-      ICO_Inst = contractInstICO_POLYGON;
-      PresaleToken_Inst = contractInstPresaleToken_POLYGON;
-      Claim_Inst = contractInstClaim_POLYGON;
-      Claim_TokenAddress = process.env.REACT_APP_CLAIM_POLYGON;
-      Pool_Inst = contractInstStakePool_POLYGON;
-      Stake_Drift_Inst = contractInstDriftStake_POLYGON;
-      Drift_Inst = contractInstDrift_POLYGON;
-      Pool_Address = process.env.REACT_APP_ST_POOL_DRIFT_POLYGON;
-    }
-    try {
-      const unstake = await contractInstStakePool_ETH.methods.unstake(
-        tokens_in_wei
-      );
-
-      const estimateGas = await unstake.estimateGas({
-        from: address,
-      });
-
-      const transaction = unstake.send({
-        from: address,
-        to: Pool_Address,
-        gas: estimateGas,
-        maxPriorityFeePerGas: 50000000000,
-      });
-
-      transaction
-        .on("transactionHash", (txHash) => {
-          console.log(txHash);
-          setTxHash(txHash);
-        })
-        .on("receipt", async (receipt) => {
-          console.log("RECEIPT => \n", receipt);
-
-          setErrors((state) => ({ ...state, transaction: "" }));
-          dispatch(
-            LoadUser({
-              contractInstICO: ICO_Inst,
-              address,
-              contractInstPresaleToken: PresaleToken_Inst,
-              contractInstClaim: Claim_Inst,
-              claimAddress: Claim_TokenAddress,
-              contractInstStakePool: Pool_Inst,
-              contractInstDriftStake: Stake_Drift_Inst,
-              contractInstDrift: Drift_Inst,
-              pool_address: Pool_Address,
-            })
-          );
-          dispatch(
-            LoadPoolData({
-              contractInstStakePool: Pool_Inst,
-            })
-          );
-          setTokens(0);
-          setLoading(false);
-        })
-        .on("error", async (error, receipt) => {
-          console.log("ERROR => \n", error);
-
-          setLoading(false);
-
-          const errorMsg = await getErrorMessage(error, chainId);
-          setErrors({ ...errors, transaction: errorMsg });
-          console.log("RECEIPT ERROR => \n", receipt);
-
-          if (receipt?.transactionHash) {
-            setTxHash(receipt.transactionHash);
-          }
-        });
-    } catch (error) {
-      const errorMsg = await getErrorMessage(error, chainId);
-
-      setErrors((state) => ({ ...state, transaction: errorMsg }));
-      setLoading(false);
-    }
-  };
+  }, [isStake]);
 
   return (
     <div className="Staking ">
@@ -960,64 +560,41 @@ col-12 col-sm-6 pe-0 ps-0 ps-sm-2 d-flex justify-content-end align-items-end "
                           </button>
                         </div>
                       </div>
-                    ) : ( */}
-                    <div className="StakeContent">
-                      <div className="mt-3">
-                        <p
-                          className="m-0"
-                          style={{
-                            fontSize: 12,
-                          }}
-                        >
-                          The{" "}
-                          {selectedNetworkId === 1
-                            ? "ETH"
-                            : selectedNetworkId === 56
-                            ? "BNB"
-                            : selectedNetworkId === 137
-                            ? "MATIC"
-                            : " "}{" "}
-                          rewards pool for staking DRIFT tokens will be active
-                          for 30 days from Launch date. Unstaking before 30 day
-                          period will result in a penalty charge.
-                        </p>
-                      </div>
-                      <div className="mt-3">
-                        <div className="input align-items-center">
-                          <input
-                            className="input-field"
-                            type="number"
-                            style={{ marginRight: 15 }}
-                            min={0}
-                            max={Number(user?.stakeDrift || 0)}
-                            value={tokens}
-                            onChange={onChange}
-                          />
-                          <button
-                            className="max-btn bg-white"
-                            onClick={() =>
-                              setTokens(ConvertNumber(user?.stakeDrift, true))
-                            }
+                    ) : (
+                      <div className="StakeContent">
+                        <div className="mt-3">
+                          <p
+                            className="m-0"
+                            style={{
+                              fontSize: 12,
+                            }}
                           >
-                            max
+                            The ETH rewards pool for staking DRIFT tokens will
+                            be active for 30 days from Launch date. Unstaking
+                            before 30 day period will result in a penalty
+                            charge.
+                          </p>
+                        </div>
+                        <div className="mt-3">
+                          <div className="input align-items-center">
+                            <input
+                              className="input-field"
+                              type="number"
+                              style={{ marginRight: 15 }}
+                              value={tokens}
+                              onChange={(e) => setTokens(e.target.value)}
+                            />
+                            <button
+                              className="max-btn bg-white"
+                              onClick={() => setTokens(user?.Staked)}
+                            >
+                              max
+                            </button>
+                          </div>
+                          <button className="BtnStyle2 bg-pink  fw-bold mt-3 text-uppercase">
+                            Unstake
                           </button>
                         </div>
-
-                        {!user?.is_pool_allowed > 0 ? (
-                          <button
-                            className="BtnStyle2 bg-pink  fw-bold mt-3 text-uppercase"
-                            onClick={(e) => allow()}
-                          >
-                            Unstake
-                          </button>
-                        ) : (
-                          <button
-                            className="BtnStyle2 bg-pink  fw-bold mt-3 text-uppercase"
-                            onClick={(e) => unstakeDrift()}
-                          >
-                            Unstake
-                          </button>
-                        )}
                       </div>
                     </div>
                     {/* )} */}

@@ -95,36 +95,50 @@ export const LoadBlockchainData = createAsyncThunk(
     try {
       // const stage = 4;
 
-      const [token_staked, tokensToClaim_ETH] = await makeBatchRequest(
-        web3Inst_ETH,
-        [
-          contractInstICO_ETH.methods.noOfTokens(1).call,
-          contractInstDrift_ETH.methods.allowance(
-            process.env.REACT_APP_OWNER_ADDRESS,
-            process.env.REACT_APP_CLAIM_ETH
-          ).call,
-        ]
-      );
+      const [
+        tokensTransferredLap2,
+        tokensTransferredLap1,
+        tokensTransferredWarmup,
+        token_staked,
+        tokensToClaim_ETH,
+      ] = await makeBatchRequest(web3Inst, [
+        contractInst.methods.tokensTransferred(4).call,
+        contractInst.methods.tokensTransferred(2).call,
+        contractInst.methods.tokensTransferred(1).call,
+        contractInst.methods.noOfTokens(1).call,
+        contractInstDrift.methods.allowance(
+          process.env.REACT_APP_OWNER_ADDRESS,
+          process.env.REACT_APP_CLAIM_ETH
+        ).call,
+      ]);
 
-      const [token_stakedBNB, tokensToClaim_BNB] = await makeBatchRequest(
-        web3Inst_BNB,
-        [
-          contractInstICO_BNB.methods.noOfTokens(1).call,
-          contractInstDrift_BNB.methods.allowance(
-            process.env.REACT_APP_OWNER_ADDRESS,
-            process.env.REACT_APP_CLAIM_BNB
-          ).call,
-        ]
-      );
+      const [
+        tokensTransferredLap2BNB,
+        tokensTransferredLap1BNB,
+        token_stakedBNB,
+        tokensToClaim_BNB,
+      ] = await makeBatchRequest(web3InstBNB, [
+        contractInstBNB.methods.tokensTransferred(4).call,
+        contractInstBNB.methods.tokensTransferred(2).call,
+        contractInstBNB.methods.noOfTokens(1).call,
+        contractInstDriftBNB.methods.allowance(
+          process.env.REACT_APP_OWNER_ADDRESS,
+          process.env.REACT_APP_CLAIM_BNB
+        ).call,
+      ]);
 
-      const [token_stakedPOLYGON, tokensToClaim_POLYGON] =
-        await makeBatchRequest(web3Inst_POLYGON, [
-          contractInstICO_POLYGON.methods.noOfTokens(1).call,
-          contractInstDrift_POLYGON.methods.allowance(
-            process.env.REACT_APP_OWNER_ADDRESS,
-            process.env.REACT_APP_CLAIM_POLYGON
-          ).call,
-        ]);
+      const [
+        tokensTransferredLap2POLYGON,
+        token_stakedPOLYGON,
+        tokensToClaim_POLYGON,
+      ] = await makeBatchRequest(web3InstPOLYGON, [
+        contractInstPOLYGON.methods.tokensTransferred(4).call,
+        contractInstPOLYGON.methods.noOfTokens(1).call,
+        contractInstDriftPOLYGON.methods.allowance(
+          process.env.REACT_APP_OWNER_ADDRESS,
+          process.env.REACT_APP_CLAIM_POLYGON
+        ).call,
+      ]);
 
       return {
         tokensToClaim: ConvertNumber(
@@ -139,36 +153,6 @@ export const LoadBlockchainData = createAsyncThunk(
             Number(token_stakedPOLYGON),
           true
         ),
-      };
-    } catch (error) {
-      console.log(error);
-      return rejectWithValue(error);
-    }
-  }
-);
-export const LoadPoolData = createAsyncThunk(
-  "LoadPoolData",
-  async ({ contractInstStakePool }, { rejectWithValue }) => {
-    try {
-      const apy = await contractInstStakePool.methods.calculateAPY().call();
-
-      const total_pending_reward = await contractInstStakePool.methods
-        .getTotalPendingRewards()
-        .call();
-
-      const total_staked = await contractInstStakePool.methods
-        .totalStaked()
-        .call();
-
-      const stake_end_deadline = await contractInstStakePool.methods
-        .stakeEndDeadline()
-        .call();
-
-      return {
-        apy,
-        total_staked,
-        total_pending_reward,
-        stake_end_deadline,
       };
     } catch (error) {
       console.log(error);
