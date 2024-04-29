@@ -88,11 +88,11 @@ function Header() {
               <li className="list-group-item border-0 bg-transparent p-0 ms-4">
                 <Link
                   className={`HeaderMenuContainer_Link text-uppercase ${
-                    location.pathname === "/pool" ? "Active" : ""
+                    location.pathname === "/staking-portal" ? "Active" : ""
                   }`}
-                  to={"/pool"}
+                  to={"/staking-portal"}
                 >
-                  Pool
+                  Staking Portal
                 </Link>
               </li>
             </ul>
@@ -191,16 +191,16 @@ function Header() {
                 </li>
                 <li
                   className={`list-group-item border-0 rounded-0 SideBarMenu_ListItem py-2 px-3 ${
-                    location.pathname === "/pool" ? "Active" : ""
+                    location.pathname === "/staking-portal" ? "Active" : ""
                   }`}
                 >
                   <Link
                     className={`HeaderMenuContainer_Link ${
-                      location.pathname === "/pool" ? "Active" : ""
+                      location.pathname === "/staking-portal" ? "Active" : ""
                     }`}
-                    to={"/pool"}
+                    to={"/staking-portal"}
                   >
-                    Pool
+                    Staking Portal
                   </Link>
                 </li>
               </ul>

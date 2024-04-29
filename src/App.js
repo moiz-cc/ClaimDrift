@@ -10,7 +10,7 @@ import Footer from "./Component/Footer";
 import Utilities from "./Pages/Utilities";
 import Ambassador from "./Pages/Ambassador";
 import { Routes, Route } from "react-router-dom";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 import {
@@ -18,14 +18,12 @@ import {
   useWeb3ModalSigner,
 } from "@web3modal/ethers5/react";
 import {
-  GetUSDPrice,
-  UpdateUSDPrice,
   createInstance,
   LoadBlockchainData,
   UpdateUser,
 } from "./Store/blockchainSlice.js";
 import { LoadUser, LoadPoolData } from "./Store/blockchainSlice.js";
-import axios from "axios";
+
 import PrivacyPolicy from "./Pages/PrivacyPolicy.js";
 import PriceRiskDisclosure from "./Pages/PriceRiskDisclosure.js";
 import Staking from "./Pages/Staking.js";
@@ -33,7 +31,6 @@ import Staking from "./Pages/Staking.js";
 function App() {
   const dispatch = useDispatch();
   const {
-    web3Inst_ETH,
     contractInstICO_ETH,
     contractInstPresaleToken_ETH,
     contractInstDrift_ETH,
@@ -41,7 +38,6 @@ function App() {
     contractInstDriftStake_ETH,
     contractInstStakePool_ETH,
 
-    web3Inst_BNB,
     contractInstICO_BNB,
     contractInstPresaleToken_BNB,
     contractInstDrift_BNB,
@@ -49,7 +45,6 @@ function App() {
     contractInstDriftStake_BNB,
     contractInstStakePool_BNB,
 
-    web3Inst_POLYGON,
     contractInstPresaleToken_POLYGON,
     contractInstICO_POLYGON,
     contractInstDrift_POLYGON,
@@ -107,9 +102,8 @@ function App() {
 
   const [isWeb3InstanceConnect, setIsWeb3InstanceConnect] = useState(false);
 
-  const { address, isConnected, chainId } = useWeb3ModalAccount();
+  const { address, isConnected } = useWeb3ModalAccount();
   const { selectedNetworkId } = useWeb3ModalState();
-  const _timeout = useRef(null);
 
   const getBlockchainData = () => {
     if (
@@ -205,10 +199,14 @@ function App() {
   };
 
   useEffect(() => {
-    if (!contractInstDrift_ETH) {
+    if (
+      !contractInstDrift_ETH &&
+      !contractInstDrift_BNB &&
+      !contractInstDrift_POLYGON
+    ) {
       loadcontract();
     }
-    dispatch(GetUSDPrice());
+
     getBlockchainData();
   }, [contractInstDrift_ETH, contractInstDrift_BNB, contractInstDrift_POLYGON]);
 
@@ -240,7 +238,7 @@ function App() {
         <Route path="/utilities" element={<Utilities />} />
         <Route path="/ambassador" element={<Ambassador />} />
         <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-        <Route path="/pool" element={<Staking />} />
+        <Route path="/staking-portal" element={<Staking />} />
         <Route
           path="/price-risk-disclosure"
           element={<PriceRiskDisclosure />}
