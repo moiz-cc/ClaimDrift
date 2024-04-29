@@ -139,6 +139,11 @@ function App() {
               contractInstPresaleToken: contractInstPresaleToken_ETH,
               contractInstClaim: contractInstClaim_ETH,
               claimAddress: process.env.REACT_APP_CLAIM_ETH,
+              contractInstStakePool: contractInstStakePool_ETH,
+              contractInstDriftStake: contractInstDriftStake_ETH,
+              contractInstDrift: contractInstDrift_ETH,
+              pool_address: process.env.REACT_APP_ST_POOL_DRIFT_ETH,
+              
             })
           )
         : selectedNetworkId === 56
@@ -238,7 +243,7 @@ function App() {
         <Route path="/utilities" element={<Utilities />} />
         <Route path="/ambassador" element={<Ambassador />} />
         <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-        {/* <Route path="/stake" element={<Staking />} /> */}
+        <Route path="/stake" element={<Staking />} />
         <Route
           path="/price-risk-disclosure"
           element={<PriceRiskDisclosure />}

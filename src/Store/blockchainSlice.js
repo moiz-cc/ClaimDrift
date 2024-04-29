@@ -101,12 +101,12 @@ export const LoadBlockchainData = createAsyncThunk(
         tokensTransferredWarmup,
         token_staked,
         tokensToClaim_ETH,
-      ] = await makeBatchRequest(web3Inst, [
-        contractInst.methods.tokensTransferred(4).call,
-        contractInst.methods.tokensTransferred(2).call,
-        contractInst.methods.tokensTransferred(1).call,
-        contractInst.methods.noOfTokens(1).call,
-        contractInstDrift.methods.allowance(
+      ] = await makeBatchRequest(web3Inst_ETH, [
+        contractInstICO_ETH.methods.tokensTransferred(4).call,
+        contractInstICO_ETH.methods.tokensTransferred(2).call,
+        contractInstICO_ETH.methods.tokensTransferred(1).call,
+        contractInstICO_ETH.methods.noOfTokens(1).call,
+        contractInstDrift_ETH.methods.allowance(
           process.env.REACT_APP_OWNER_ADDRESS,
           process.env.REACT_APP_CLAIM_ETH
         ).call,
@@ -117,11 +117,11 @@ export const LoadBlockchainData = createAsyncThunk(
         tokensTransferredLap1BNB,
         token_stakedBNB,
         tokensToClaim_BNB,
-      ] = await makeBatchRequest(web3InstBNB, [
-        contractInstBNB.methods.tokensTransferred(4).call,
-        contractInstBNB.methods.tokensTransferred(2).call,
-        contractInstBNB.methods.noOfTokens(1).call,
-        contractInstDriftBNB.methods.allowance(
+      ] = await makeBatchRequest(web3Inst_BNB, [
+        contractInstICO_BNB.methods.tokensTransferred(4).call,
+        contractInstICO_BNB.methods.tokensTransferred(2).call,
+        contractInstICO_BNB.methods.noOfTokens(1).call,
+        contractInstDrift_BNB.methods.allowance(
           process.env.REACT_APP_OWNER_ADDRESS,
           process.env.REACT_APP_CLAIM_BNB
         ).call,
@@ -131,16 +131,32 @@ export const LoadBlockchainData = createAsyncThunk(
         tokensTransferredLap2POLYGON,
         token_stakedPOLYGON,
         tokensToClaim_POLYGON,
-      ] = await makeBatchRequest(web3InstPOLYGON, [
-        contractInstPOLYGON.methods.tokensTransferred(4).call,
-        contractInstPOLYGON.methods.noOfTokens(1).call,
-        contractInstDriftPOLYGON.methods.allowance(
+      ] = await makeBatchRequest(web3Inst_POLYGON, [
+        contractInstICO_POLYGON.methods.tokensTransferred(4).call,
+        contractInstICO_POLYGON.methods.noOfTokens(1).call,
+        contractInstDrift_POLYGON.methods.allowance(
           process.env.REACT_APP_OWNER_ADDRESS,
           process.env.REACT_APP_CLAIM_POLYGON
         ).call,
       ]);
 
       return {
+        tokensTransferredLap2: ConvertNumber(
+          Number(tokensTransferredLap2) +
+            Number(tokensTransferredLap2BNB) +
+            Number(tokensTransferredLap2POLYGON),
+          true
+        ),
+        tokensTransferredLap1: ConvertNumber(
+          Number(tokensTransferredLap1) + Number(tokensTransferredLap1BNB),
+          true
+        ),
+        tokensTransferredWarmup: ConvertNumber(
+          Number(tokensTransferredWarmup),
+          true
+        ),
+        staking_limit: 2000000000,
+
         tokensToClaim: ConvertNumber(
           Number(tokensToClaim_ETH) +
             Number(tokensToClaim_BNB) +
@@ -153,6 +169,38 @@ export const LoadBlockchainData = createAsyncThunk(
             Number(token_stakedPOLYGON),
           true
         ),
+      };
+    } catch (error) {
+      console.log(error);
+      return rejectWithValue(error);
+    }
+  }
+);
+export const LoadPoolData = createAsyncThunk(
+  "LoadPoolData",
+  async ({ contractInstStakePool }, { rejectWithValue }) => {
+    try {
+      const apy = await contractInstStakePool.methods.calculateAPY().call();
+      console.log("APY ==>", apy);
+      const total_pending_reward = await contractInstStakePool.methods
+        .getTotalPendingRewards()
+        .call();
+      console.log("TOTAL PENDING REWARD ==>", total_pending_reward);
+
+      const total_staked = await contractInstStakePool.methods
+        .totalStaked()
+        .call();
+      console.log("TOTAL STAKED ==>", total_staked);
+      const stake_end_deadline = await contractInstStakePool.methods
+        .stakeEndDeadline()
+        .call();
+      console.log("END DEADLINE ==>", stake_end_deadline);
+
+      return {
+        apy,
+        total_staked,
+        total_pending_reward,
+        stake_end_deadline,
       };
     } catch (error) {
       console.log(error);
