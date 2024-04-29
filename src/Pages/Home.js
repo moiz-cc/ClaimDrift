@@ -54,32 +54,31 @@ function Home() {
     publicBlockchainData: data,
     user,
     isLoading,
+
     web3Inst_ETH,
     contractInstICO_ETH,
     contractInstPresaleToken_ETH,
     contractInstDrift_ETH,
     contractInstClaim_ETH,
-    contractInstStakePool_ETH,
     contractInstDriftStake_ETH,
-
+    contractInstStakePool_ETH,
     web3Inst_BNB,
     contractInstICO_BNB,
     contractInstPresaleToken_BNB,
     contractInstDrift_BNB,
     contractInstClaim_BNB,
-    contractInstStakePool_BNB,
     contractInstDriftStake_BNB,
-
+    contractInstStakePool_BNB,
     web3Inst_POLYGON,
     contractInstPresaleToken_POLYGON,
     contractInstICO_POLYGON,
     contractInstDrift_POLYGON,
     contractInstClaim_POLYGON,
-    contractInstStakePool_POLYGON,
     contractInstDriftStake_POLYGON,
+    contractInstStakePool_POLYGON,
   } = useSelector((state) => state.Blockchain);
 
-  const { address, isConnected, chainId } = useWeb3ModalAccount();
+  const { address, chainId } = useWeb3ModalAccount();
   const { selectedNetworkId } = useWeb3ModalState();
   const { open } = useWeb3Modal();
 
@@ -125,8 +124,10 @@ function Home() {
     let Stake_Drift_Inst;
     let Drift_Inst;
     let Pool_Address;
+    let Web3_Inst;
 
     if (selectedNetworkId === 1 && chainId === 1) {
+      Web3_Inst = web3Inst_ETH;
       Presale_TokenAddress = process.env.REACT_APP_TOKEN_CONTRACT_ETH;
       Claim_TokenAddress = process.env.REACT_APP_CLAIM_ETH;
       PresaleToken_Inst = contractInstPresaleToken_ETH;
@@ -137,6 +138,7 @@ function Home() {
       Drift_Inst = contractInstDrift_ETH;
       Pool_Address = process.env.REACT_APP_ST_POOL_DRIFT_ETH;
     } else if (selectedNetworkId === 56 && chainId === 56) {
+      Web3_Inst = web3Inst_BNB;
       Presale_TokenAddress = process.env.REACT_APP_TOKEN_CONTRACT_BNB;
       Claim_TokenAddress = process.env.REACT_APP_CLAIM_BNB;
       PresaleToken_Inst = contractInstPresaleToken_BNB;
@@ -147,6 +149,7 @@ function Home() {
       Drift_Inst = contractInstDrift_BNB;
       Pool_Address = process.env.REACT_APP_ST_POOL_DRIFT_BNB;
     } else if (selectedNetworkId === 137 && chainId === 137) {
+      Web3_Inst = web3Inst_POLYGON;
       Presale_TokenAddress = process.env.REACT_APP_TOKEN_CONTRACT_POLYGON;
       Claim_TokenAddress = process.env.REACT_APP_CLAIM_POLYGON;
       PresaleToken_Inst = contractInstPresaleToken_POLYGON;
@@ -186,6 +189,7 @@ function Home() {
           setErrors((state) => ({ ...state, transaction: "" }));
           dispatch(
             LoadUser({
+              web3Inst: Web3_Inst,
               contractInstICO: ICO_Inst,
               address,
               contractInstPresaleToken: PresaleToken_Inst,
@@ -199,6 +203,7 @@ function Home() {
           );
           dispatch(
             LoadPoolData({
+              web3Inst: Web3_Inst,
               contractInstStakePool: Pool_Inst,
             })
           );
@@ -244,8 +249,10 @@ function Home() {
     let Stake_Drift_Inst;
     let Drift_Inst;
     let Pool_Address;
+    let Web3_Inst;
 
     if (selectedNetworkId === 1 && chainId === 1) {
+      Web3_Inst = web3Inst_ETH;
       Claim_Inst = contractInstClaim_ETH;
       Claim_Address = process.env.REACT_APP_CLAIM_ETH;
       PresaleToken_Inst = contractInstPresaleToken_ETH;
@@ -255,6 +262,7 @@ function Home() {
       Drift_Inst = contractInstDrift_ETH;
       Pool_Address = process.env.REACT_APP_ST_POOL_DRIFT_ETH;
     } else if (selectedNetworkId === 56 && chainId === 56) {
+      Web3_Inst = web3Inst_BNB;
       Claim_Inst = contractInstClaim_BNB;
       Claim_Address = process.env.REACT_APP_CLAIM_BNB;
       PresaleToken_Inst = contractInstPresaleToken_BNB;
@@ -264,6 +272,7 @@ function Home() {
       Drift_Inst = contractInstDrift_BNB;
       Pool_Address = process.env.REACT_APP_ST_POOL_DRIFT_BNB;
     } else if (selectedNetworkId === 137 && chainId === 137) {
+      Web3_Inst = web3Inst_POLYGON;
       Claim_Inst = contractInstClaim_POLYGON;
       Claim_Address = process.env.REACT_APP_CLAIM_POLYGON;
       PresaleToken_Inst = contractInstPresaleToken_POLYGON;
@@ -298,6 +307,7 @@ function Home() {
           setErrors((state) => ({ ...state, transaction: "" }));
           dispatch(
             LoadUser({
+              web3Inst: Web3_Inst,
               contractInstICO: ICO_Inst,
               address,
               contractInstPresaleToken: PresaleToken_Inst,
@@ -311,14 +321,18 @@ function Home() {
           );
           dispatch(
             LoadPoolData({
+              web3Inst: Web3_Inst,
               contractInstStakePool: Pool_Inst,
             })
           );
 
           dispatch(
             LoadBlockchainData({
+              web3Inst_ETH,
               contractInstDrift_ETH,
+              web3Inst_BNB,
               contractInstDrift_BNB,
+              web3Inst_POLYGON,
               contractInstDrift_POLYGON,
             })
           );

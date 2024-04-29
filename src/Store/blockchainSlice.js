@@ -79,51 +79,58 @@ export const makeBatchRequest = async (web3, calls) => {
 export const LoadBlockchainData = createAsyncThunk(
   "LoadBlockchainData",
   async (
-    { contractInstDrift_ETH, contractInstDrift_BNB, contractInstDrift_POLYGON },
+    {
+      web3Inst_ETH,
+      contractInstDrift_ETH,
+      web3Inst_BNB,
+      contractInstDrift_BNB,
+      web3Inst_POLYGON,
+      contractInstDrift_POLYGON,
+    },
     { rejectWithValue }
   ) => {
     try {
       // const stage = 4;
 
-      const tokensToClaim_ETH = await contractInstDrift_ETH.methods
-        .allowance(
-          process.env.REACT_APP_OWNER_ADDRESS,
-          process.env.REACT_APP_CLAIM_ETH
-        )
-        .call();
-      const tokensToClaim_BNB = await contractInstDrift_BNB.methods
-        .allowance(
-          process.env.REACT_APP_OWNER_ADDRESS,
-          process.env.REACT_APP_CLAIM_BNB
-        )
-        .call();
-      const tokensToClaim_POLYGON = await contractInstDrift_POLYGON.methods
-        .allowance(
-          process.env.REACT_APP_OWNER_ADDRESS,
-          process.env.REACT_APP_CLAIM_POLYGON
-        )
-        .call();
-
-      // const [tokensToClaim_ETH] = await makeBatchRequest(web3Inst_ETH, [
-      //   contractInstDrift_ETH.methods.allowance(
+      // const tokensToClaim_ETH = await contractInstDrift_ETH.methods
+      //   .allowance(
       //     process.env.REACT_APP_OWNER_ADDRESS,
       //     process.env.REACT_APP_CLAIM_ETH
-      //   ).call,
-      // ]);
-
-      // const [tokensToClaim_BNB] = await makeBatchRequest(web3Inst_BNB, [
-      //   contractInstDrift_BNB.methods.allowance(
+      //   )
+      //   .call();
+      // const tokensToClaim_BNB = await contractInstDrift_BNB.methods
+      //   .allowance(
       //     process.env.REACT_APP_OWNER_ADDRESS,
       //     process.env.REACT_APP_CLAIM_BNB
-      //   ).call,
-      // ]);
-
-      // const [tokensToClaim_POLYGON] = await makeBatchRequest(web3Inst_POLYGON, [
-      //   contractInstDrift_POLYGON.methods.allowance(
+      //   )
+      //   .call();
+      // const tokensToClaim_POLYGON = await contractInstDrift_POLYGON.methods
+      //   .allowance(
       //     process.env.REACT_APP_OWNER_ADDRESS,
       //     process.env.REACT_APP_CLAIM_POLYGON
-      //   ).call,
-      // ]);
+      //   )
+      //   .call();
+
+      const [tokensToClaim_ETH] = await makeBatchRequest(web3Inst_ETH, [
+        contractInstDrift_ETH.methods.allowance(
+          process.env.REACT_APP_OWNER_ADDRESS,
+          process.env.REACT_APP_CLAIM_ETH
+        ).call,
+      ]);
+
+      const [tokensToClaim_BNB] = await makeBatchRequest(web3Inst_BNB, [
+        contractInstDrift_BNB.methods.allowance(
+          process.env.REACT_APP_OWNER_ADDRESS,
+          process.env.REACT_APP_CLAIM_BNB
+        ).call,
+      ]);
+
+      const [tokensToClaim_POLYGON] = await makeBatchRequest(web3Inst_POLYGON, [
+        contractInstDrift_POLYGON.methods.allowance(
+          process.env.REACT_APP_OWNER_ADDRESS,
+          process.env.REACT_APP_CLAIM_POLYGON
+        ).call,
+      ]);
 
       return {
         // tokensTransferredLap2: ConvertNumber(
@@ -163,21 +170,15 @@ export const LoadBlockchainData = createAsyncThunk(
 );
 export const LoadPoolData = createAsyncThunk(
   "LoadPoolData",
-  async ({ contractInstStakePool }, { rejectWithValue }) => {
+  async ({ web3Inst, contractInstStakePool }, { rejectWithValue }) => {
     try {
-      const apy = await contractInstStakePool.methods.calculateAPY().call();
-
-      const total_pending_reward = await contractInstStakePool.methods
-        .getTotalPendingRewards()
-        .call();
-
-      const total_staked = await contractInstStakePool.methods
-        .totalStaked()
-        .call();
-
-      const stake_end_deadline = await contractInstStakePool.methods
-        .stakeEndDeadline()
-        .call();
+      const [apy, total_pending_reward, total_staked, stake_end_deadline] =
+        await makeBatchRequest(web3Inst, [
+          contractInstStakePool.methods.calculateAPY().call,
+          contractInstStakePool.methods.getTotalPendingRewards().call,
+          contractInstStakePool.methods.totalStaked().call,
+          contractInstStakePool.methods.stakeEndDeadline().call,
+        ]);
 
       return {
         apy,
@@ -196,6 +197,7 @@ export const LoadUser = createAsyncThunk(
   "LoadUser",
   async (data, { rejectWithValue }) => {
     const {
+      web3Inst,
       contractInstICO,
       address,
       contractInstPresaleToken,
@@ -208,38 +210,27 @@ export const LoadUser = createAsyncThunk(
     } = data;
 
     try {
-      const balance = await contractInstPresaleToken.methods
-        .balanceOf(address)
-        .call();
-      const Staked = await contractInstICO.methods
-        .amountOfAddressPerType(address, 1)
-        .call();
-      const Dynamic = await contractInstICO.methods
-        .amountOfAddressPerType(address, 0)
-        .call();
-
-      const tokensToMove = await contractInstClaim.methods
-        .getStakeAmountOfDynamicToStake(address)
-        .call();
-
-      const is_allowed = await contractInstPresaleToken.methods
-        .allowance(address, claimAddress)
-        .call();
-
-      const stakeDrift = await contractInstDriftStake.methods
-        .balanceOf(address)
-        .call();
-
-      const is_pool_allowed = await contractInstDriftStake.methods
-        .allowance(address, pool_address)
-        .call();
-
-      const dynamicDrift = await contractInstDrift.methods
-        .balanceOf(address)
-        .call();
-      const Reward = await contractInstStakePool.methods
-        .getPendingRewards(address)
-        .call();
+      const [
+        balance,
+        Staked,
+        Dynamic,
+        tokensToMove,
+        is_allowed,
+        stakeDrift,
+        is_pool_allowed,
+        dynamicDrift,
+        Reward,
+      ] = await makeBatchRequest(web3Inst, [
+        contractInstPresaleToken.methods.balanceOf(address).call,
+        contractInstICO.methods.amountOfAddressPerType(address, 1).call,
+        contractInstICO.methods.amountOfAddressPerType(address, 0).call,
+        contractInstClaim.methods.getStakeAmountOfDynamicToStake(address).call,
+        contractInstPresaleToken.methods.allowance(address, claimAddress).call,
+        contractInstDriftStake.methods.balanceOf(address).call,
+        contractInstDriftStake.methods.allowance(address, pool_address).call,
+        contractInstDrift.methods.balanceOf(address).call,
+        contractInstStakePool.methods.getPendingRewards(address).call,
+      ]);
 
       return {
         balance,

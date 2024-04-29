@@ -31,20 +31,21 @@ import Staking from "./Pages/Staking.js";
 function App() {
   const dispatch = useDispatch();
   const {
+    web3Inst_ETH,
     contractInstICO_ETH,
     contractInstPresaleToken_ETH,
     contractInstDrift_ETH,
     contractInstClaim_ETH,
     contractInstDriftStake_ETH,
     contractInstStakePool_ETH,
-
+    web3Inst_BNB,
     contractInstICO_BNB,
     contractInstPresaleToken_BNB,
     contractInstDrift_BNB,
     contractInstClaim_BNB,
     contractInstDriftStake_BNB,
     contractInstStakePool_BNB,
-
+    web3Inst_POLYGON,
     contractInstPresaleToken_POLYGON,
     contractInstICO_POLYGON,
     contractInstDrift_POLYGON,
@@ -113,8 +114,11 @@ function App() {
     ) {
       dispatch(
         LoadBlockchainData({
+          web3Inst_ETH,
           contractInstDrift_ETH,
+          web3Inst_BNB,
           contractInstDrift_BNB,
+          web3Inst_POLYGON,
           contractInstDrift_POLYGON,
         })
       );
@@ -126,6 +130,7 @@ function App() {
       selectedNetworkId === 1
         ? dispatch(
             LoadUser({
+              web3Inst: web3Inst_ETH,
               contractInstICO: contractInstICO_ETH,
               address: address.trim(),
               contractInstPresaleToken: contractInstPresaleToken_ETH,
@@ -140,6 +145,7 @@ function App() {
         : selectedNetworkId === 56
         ? dispatch(
             LoadUser({
+              web3Inst: web3Inst_BNB,
               contractInstICO: contractInstICO_BNB,
               address: address.trim(),
               contractInstPresaleToken: contractInstPresaleToken_BNB,
@@ -154,6 +160,7 @@ function App() {
         : selectedNetworkId === 137
         ? dispatch(
             LoadUser({
+              web3Inst: web3Inst_POLYGON,
               contractInstICO: contractInstICO_POLYGON,
               address: address.trim(),
               contractInstPresaleToken: contractInstPresaleToken_POLYGON,
@@ -173,18 +180,21 @@ function App() {
       selectedNetworkId === 1 ? (
         dispatch(
           LoadPoolData({
+            web3Inst: web3Inst_ETH,
             contractInstStakePool: contractInstStakePool_ETH,
           })
         )
       ) : selectedNetworkId === 56 ? (
         dispatch(
           LoadPoolData({
+            web3Inst: web3Inst_BNB,
             contractInstStakePool: contractInstStakePool_BNB,
           })
         )
       ) : selectedNetworkId === 137 ? (
         dispatch(
           LoadPoolData({
+            web3Inst: web3Inst_POLYGON,
             contractInstStakePool: contractInstStakePool_POLYGON,
           })
         )

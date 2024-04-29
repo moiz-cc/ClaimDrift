@@ -4,11 +4,7 @@ import { useState } from "react";
 import { useSelector } from "react-redux";
 import ConvertNumber from "../Helpers/ConvertNumber";
 import { useDispatch } from "react-redux";
-import {
-  LoadBlockchainData,
-  LoadUser,
-  LoadPoolData,
-} from "../Store/blockchainSlice";
+import { LoadUser, LoadPoolData } from "../Store/blockchainSlice";
 import { getErrorMessage } from "../blockchainErrors.js";
 import Error from "../Assets/Images/Error.svg";
 import staking_pool from "../Assets/Images/Pool.png";
@@ -21,10 +17,11 @@ import {
   useWeb3ModalState,
 } from "@web3modal/ethers5/react";
 import { Link } from "react-router-dom";
+import Loader from "../Component/Loading.js";
 
 const Staking = () => {
   const dispatch = useDispatch();
-  const { address, isConnected, chainId } = useWeb3ModalAccount();
+  const { address, chainId } = useWeb3ModalAccount();
   const { selectedNetworkId } = useWeb3ModalState();
   const { open } = useWeb3Modal();
 
@@ -39,7 +36,6 @@ const Staking = () => {
   });
 
   const {
-    publicBlockchainData: data,
     pool,
     user,
     web3Inst_ETH,
@@ -49,7 +45,6 @@ const Staking = () => {
     contractInstClaim_ETH,
     contractInstStakePool_ETH,
     contractInstDriftStake_ETH,
-
     web3Inst_BNB,
     contractInstICO_BNB,
     contractInstPresaleToken_BNB,
@@ -57,8 +52,8 @@ const Staking = () => {
     contractInstClaim_BNB,
     contractInstStakePool_BNB,
     contractInstDriftStake_BNB,
-
     web3Inst_POLYGON,
+
     contractInstPresaleToken_POLYGON,
     contractInstICO_POLYGON,
     contractInstDrift_POLYGON,
@@ -109,7 +104,6 @@ const Staking = () => {
 
     setLoading(true);
 
-    let Presale_TokenAddress;
     let Claim_TokenAddress;
     let PresaleToken_Inst;
     let ICO_Inst;
@@ -119,8 +113,9 @@ const Staking = () => {
     let Stake_Drift_Address;
     let Drift_Inst;
     let Pool_Address;
+    let Web3_Inst;
     if (selectedNetworkId === 1 && chainId === 1) {
-      Presale_TokenAddress = process.env.REACT_APP_TOKEN_CONTRACT_ETH;
+      Web3_Inst = web3Inst_ETH;
       Claim_TokenAddress = process.env.REACT_APP_CLAIM_ETH;
       PresaleToken_Inst = contractInstPresaleToken_ETH;
       ICO_Inst = contractInstICO_ETH;
@@ -131,7 +126,7 @@ const Staking = () => {
       Pool_Address = process.env.REACT_APP_ST_POOL_DRIFT_ETH;
       Stake_Drift_Address = process.env.REACT_APP_ST_DRIFT_ETH;
     } else if (selectedNetworkId === 56 && chainId === 56) {
-      Presale_TokenAddress = process.env.REACT_APP_TOKEN_CONTRACT_BNB;
+      Web3_Inst = web3Inst_BNB;
       Claim_TokenAddress = process.env.REACT_APP_CLAIM_BNB;
       PresaleToken_Inst = contractInstPresaleToken_BNB;
       ICO_Inst = contractInstICO_BNB;
@@ -142,7 +137,7 @@ const Staking = () => {
       Pool_Address = process.env.REACT_APP_ST_POOL_DRIFT_BNB;
       Stake_Drift_Address = process.env.REACT_APP_ST_DRIFT_BNB;
     } else if (selectedNetworkId === 137 && chainId === 137) {
-      Presale_TokenAddress = process.env.REACT_APP_TOKEN_CONTRACT_POLYGON;
+      Web3_Inst = web3Inst_POLYGON;
       Claim_TokenAddress = process.env.REACT_APP_CLAIM_POLYGON;
       PresaleToken_Inst = contractInstPresaleToken_POLYGON;
       ICO_Inst = contractInstICO_POLYGON;
@@ -179,6 +174,7 @@ const Staking = () => {
           setErrors((state) => ({ ...state, transaction: "" }));
           dispatch(
             LoadUser({
+              web3Inst: Web3_Inst,
               contractInstICO: ICO_Inst,
               address,
               contractInstPresaleToken: PresaleToken_Inst,
@@ -192,6 +188,7 @@ const Staking = () => {
           );
           dispatch(
             LoadPoolData({
+              web3Inst: Web3_Inst,
               contractInstStakePool: Pool_Inst,
             })
           );
@@ -227,7 +224,6 @@ const Staking = () => {
 
     setLoading(true);
 
-    let Presale_TokenAddress;
     let Claim_TokenAddress;
     let PresaleToken_Inst;
     let ICO_Inst;
@@ -237,8 +233,10 @@ const Staking = () => {
     let Drift_Inst;
     let Pool_Address;
     let Stake_Drift_Address;
+    let Web3_Inst;
 
     if (selectedNetworkId === 1 && chainId === 1) {
+      Web3_Inst = web3Inst_ETH;
       Claim_Inst = contractInstClaim_ETH;
       Claim_TokenAddress = process.env.REACT_APP_CLAIM_ETH;
       Pool_Inst = contractInstStakePool_ETH;
@@ -247,11 +245,23 @@ const Staking = () => {
       Pool_Address = process.env.REACT_APP_ST_POOL_DRIFT_ETH;
       Stake_Drift_Address = process.env.REACT_APP_ST_DRIFT_ETH;
     } else if (selectedNetworkId === 56 && chainId === 56) {
+      Web3_Inst = web3Inst_BNB;
       Claim_Inst = contractInstClaim_BNB;
       Claim_TokenAddress = process.env.REACT_APP_CLAIM_BNB;
+      Pool_Inst = contractInstStakePool_BNB;
+      Stake_Drift_Inst = contractInstDriftStake_BNB;
+      Drift_Inst = contractInstDrift_BNB;
+      Pool_Address = process.env.REACT_APP_ST_POOL_DRIFT_BNB;
+      Stake_Drift_Address = process.env.REACT_APP_ST_DRIFT_BNB;
     } else if (selectedNetworkId === 137 && chainId === 137) {
+      Web3_Inst = web3Inst_POLYGON;
       Claim_Inst = contractInstClaim_POLYGON;
       Claim_TokenAddress = process.env.REACT_APP_CLAIM_POLYGON;
+      Pool_Inst = contractInstStakePool_POLYGON;
+      Stake_Drift_Inst = contractInstDriftStake_POLYGON;
+      Drift_Inst = contractInstDrift_POLYGON;
+      Pool_Address = process.env.REACT_APP_ST_POOL_DRIFT_POLYGON;
+      Stake_Drift_Address = process.env.REACT_APP_ST_DRIFT_POLYGON;
     }
 
     try {
@@ -282,6 +292,7 @@ const Staking = () => {
           setErrors((state) => ({ ...state, transaction: "" }));
           dispatch(
             LoadUser({
+              web3Inst: Web3_Inst,
               contractInstICO: ICO_Inst,
               address,
               contractInstPresaleToken: PresaleToken_Inst,
@@ -295,6 +306,7 @@ const Staking = () => {
           );
           dispatch(
             LoadPoolData({
+              web3Inst: Web3_Inst,
               contractInstStakePool: Pool_Inst,
             })
           );
@@ -344,8 +356,10 @@ const Staking = () => {
     let Pool_Address;
     let ICO_Inst;
     let PresaleToken_Inst;
+    let Web3_Inst;
 
     if (selectedNetworkId === 1 && chainId === 1) {
+      Web3_Inst = web3Inst_ETH;
       ICO_Inst = contractInstICO_ETH;
       PresaleToken_Inst = contractInstPresaleToken_ETH;
       Claim_Inst = contractInstClaim_ETH;
@@ -355,6 +369,7 @@ const Staking = () => {
       Drift_Inst = contractInstDrift_ETH;
       Pool_Address = process.env.REACT_APP_ST_POOL_DRIFT_ETH;
     } else if (selectedNetworkId === 56 && chainId === 56) {
+      Web3_Inst = web3Inst_BNB;
       ICO_Inst = contractInstICO_BNB;
       PresaleToken_Inst = contractInstPresaleToken_BNB;
       Claim_Inst = contractInstClaim_BNB;
@@ -364,6 +379,7 @@ const Staking = () => {
       Drift_Inst = contractInstDrift_BNB;
       Pool_Address = process.env.REACT_APP_ST_POOL_DRIFT_BNB;
     } else if (selectedNetworkId === 137 && chainId === 137) {
+      Web3_Inst = web3Inst_POLYGON;
       ICO_Inst = contractInstICO_POLYGON;
       PresaleToken_Inst = contractInstPresaleToken_POLYGON;
       Claim_Inst = contractInstClaim_POLYGON;
@@ -400,6 +416,7 @@ const Staking = () => {
           setErrors((state) => ({ ...state, transaction: "" }));
           dispatch(
             LoadUser({
+              web3Inst: Web3_Inst,
               contractInstICO: ICO_Inst,
               address,
               contractInstPresaleToken: PresaleToken_Inst,
@@ -413,6 +430,7 @@ const Staking = () => {
           );
           dispatch(
             LoadPoolData({
+              web3Inst: Web3_Inst,
               contractInstStakePool: Pool_Inst,
             })
           );
@@ -693,97 +711,99 @@ const Staking = () => {
 
           <section className="mt-5">
             <div className="row m-0 p-0 ">
-              <div className="col-12 p-0 col-md-5 pe-md-2 position-relative">
-                {isLoading && (
+              <div className="col-12 p-0 col-md-5 pe-md-2 ">
+                {isLoading ? (
                   <div
-                    className="w-100 h-100 bg-white position-absolute rounded-4 d-flex justify-content-center align-items-center"
+                    className="w-100 h-100 bg-white  rounded-4 d-flex justify-content-center align-items-center py-5"
                     style={{ zIndex: 9 }}
                   >
-                    <img src={Loading} style={{ width: 50 }} alt="loading" />
+                    <Loader />
                   </div>
-                )}
-                <div
-                  className="
-              DTSC_Col rounded-4 bg-white  align-items-center p-4 "
-                >
-                  <div className="row  m-0 p-0 pb-3 border-bottom">
-                    <div
-                      className="
+                ) : (
+                  <div
+                    className="
+              DTSC_Col rounded-4 bg-white  align-items-center p-4 h-100"
+                  >
+                    <div className="row  m-0 p-0 pb-3 border-bottom">
+                      <div
+                        className="
 col-12 ps-0 col-sm-6 pe-0 pe-sm-2"
-                    >
-                      <p
-                        className="m-0 text-uppercase"
-                        style={{
-                          fontSize: 12,
-                        }}
                       >
-                        available claim
-                      </p>
-                      <p
-                        className="
-                      DTSC_SubHeading mb-0 text-uppercase fw-bold "
-                        style={{ color: "#ff4bae" }}
-                      >
-                        {user?.remaining_claim > 0
-                          ? ConvertNumber(user?.remaining_claim, true)
-                          : 0}{" "}
-                        {selectedNetworkId === 1
-                          ? "ETH"
-                          : selectedNetworkId === 56
-                          ? "BNB"
-                          : selectedNetworkId === 137
-                          ? "MATIC"
-                          : ""}
-                      </p>
-                    </div>
-                    <div
-                      className="
-col-12 pe-0 col-sm-6 mt-3 mt-sm-0 ps-0 ps-sm-2"
-                    >
-                      {user?.remaining_claim > 0 && (
-                        <button
-                          className=" BtnStyle2 bg-pink fw-bold text-uppercase shadow-none text-white "
-                          onClick={claimRewards}
+                        <p
+                          className="m-0 text-uppercase"
+                          style={{
+                            fontSize: 12,
+                          }}
                         >
-                          Claim reward
-                        </button>
-                      )}
-                    </div>
-                  </div>
-                  <div className="row  m-0 p-0 pt-3 ">
-                    <div
-                      className="
-col-12 ps-0 "
-                    >
-                      <p
-                        className="
-                        m-0 text-uppercase "
-                        style={{
-                          fontSize: 12,
-                        }}
-                      >
-                        APY
-                      </p>
-                      <p
-                        className="
+                          available claim
+                        </p>
+                        <p
+                          className="
                       DTSC_SubHeading mb-0 text-uppercase fw-bold "
-                        style={{ color: "#ff4bae" }}
+                          style={{ color: "#ff4bae" }}
+                        >
+                          {user?.remaining_claim > 0
+                            ? ConvertNumber(user?.remaining_claim, true)
+                            : 0}{" "}
+                          {selectedNetworkId === 1
+                            ? "ETH"
+                            : selectedNetworkId === 56
+                            ? "BNB"
+                            : selectedNetworkId === 137
+                            ? "MATIC"
+                            : ""}
+                        </p>
+                      </div>
+                      <div
+                        className="
+col-12 pe-0 col-sm-6 mt-3 mt-sm-0 ps-0 ps-sm-2"
                       >
-                        {ConvertNumber(pool?.apy / 100 || 0, true).toFixed(
-                          ConvertNumber(pool?.apy / 100 || 0, true)
-                            ?.toString()
-                            ?.split(".")[0] != 0
-                            ? ConvertNumber(pool?.apy / 100 || 0, true)
-                                ?.toString()
-                                ?.split(".")[1] > 0
-                              ? 3
-                              : 0
-                            : 6
+                        {user?.remaining_claim > 0 ? (
+                          <button
+                            className=" BtnStyle2 bg-pink fw-bold text-uppercase shadow-none text-white "
+                            onClick={claimRewards}
+                          >
+                            Claim reward
+                          </button>
+                        ) : (
+                          <button
+                            className="btn BtnStyle2 bg-pink fw-bold text-uppercase shadow-none text-white"
+                            disabled
+                          >
+                            Claim reward
+                          </button>
                         )}
-                        %
-                      </p>
+                      </div>
                     </div>
-                    {/* <div
+                    <div className="row  m-0 p-0 pt-3 ">
+                      <div
+                        className="
+col-12 ps-0 "
+                      >
+                        <p
+                          className="
+                        m-0 text-uppercase "
+                          style={{
+                            fontSize: 12,
+                          }}
+                        >
+                          APY
+                        </p>
+                        <p
+                          className="
+                      DTSC_SubHeading mb-0 text-uppercase fw-bold "
+                          style={{ color: "#ff4bae" }}
+                        >
+                          120%
+                          <br />
+                          <span
+                            style={{ fontSize: 11, textTransform: "lowercase" }}
+                          >
+                            (10% per month)
+                          </span>
+                        </p>
+                      </div>
+                      {/* <div
                       className="
 col-12 col-sm-6 pe-0 ps-0 ps-sm-2 d-flex justify-content-end align-items-end "
                     >
@@ -795,109 +815,147 @@ col-12 col-sm-6 pe-0 ps-0 ps-sm-2 d-flex justify-content-end align-items-end "
                       </h4>
                       <p className="m-0 p-0">APY</p>
                     </div> */}
-                  </div>
-                </div>
-              </div>
-              <div className="col-12 p-0 col-md-7 ps-md-2 mt-3 mt-md-0 position-relative">
-                {isLoading && (
-                  <div
-                    className="w-100 h-100 bg-white position-absolute rounded-4 d-flex justify-content-center align-items-center"
-                    style={{ zIndex: 9 }}
-                  >
-                    <img src={Loading} style={{ width: 50 }} alt="loading" />
+                    </div>
                   </div>
                 )}
-                <div
-                  className="
+              </div>
+              <div className="col-12 p-0 col-md-7 ps-md-2 mt-3 mt-md-0 position-relative">
+                {isLoading ? (
+                  <div
+                    className="w-100 h-100 bg-white  rounded-4 d-flex justify-content-center align-items-center py-5"
+                    style={{ zIndex: 9 }}
+                  >
+                    <Loader />
+                  </div>
+                ) : (
+                  <div
+                    className="
               DTSC_Col rounded-4 bg-white p-4"
-                >
-                  <div className="row m-0 p-0 border-bottom pb-3">
-                    <div
-                      className="
+                  >
+                    <div className="row m-0 p-0 border-bottom pb-3">
+                      <div
+                        className="
 
                       col-12 ps-0 col-sm-6 pe-0 pe-sm-2"
-                    >
-                      <p
-                        className="
+                      >
+                        <p
+                          className="
                       m-0 text-uppercase"
-                        style={{
-                          fontSize: 12,
-                        }}
-                      >
-                        Your Staked Tokens
-                      </p>
-                      <p
-                        className="
+                          style={{
+                            fontSize: 12,
+                          }}
+                        >
+                          Your Staked Tokens
+                        </p>
+                        <p
+                          className="
                       DTSC_SubHeading mb-0 text-uppercase fw-bold "
-                        style={{ color: "#ff4bae" }}
-                      >
-                        {ConvertNumber(user?.stakeDrift || 0, true)} $Drift
-                      </p>
-                    </div>
-                    <div
-                      className="
+                          style={{ color: "#ff4bae" }}
+                        >
+                          {ConvertNumber(user?.stakeDrift || 0, true)} $Drift
+                        </p>
+                      </div>
+                      <div
+                        className="
 
                       col-12 pe-0 col-sm-6 mt-3 mt-sm-0 ps-0 ps-sm-2"
-                    >
-                      <p
-                        className="
-                      m-0 text-uppercase"
-                        style={{
-                          fontSize: 12,
-                        }}
                       >
-                        Total Staked Tokens
-                      </p>
+                        <p
+                          className="
+                      m-0 text-uppercase"
+                          style={{
+                            fontSize: 12,
+                          }}
+                        >
+                          Total Staked Tokens
+                        </p>
 
-                      <p
-                        className="
+                        <p
+                          className="
                       DTSC_SubHeading mb-0 text-uppercase fw-bold "
-                        style={{ color: "#ff4bae" }}
-                      >
-                        {ConvertNumber(pool?.total_staked || 0, true)} $Drift
-                      </p>
+                          style={{ color: "#ff4bae" }}
+                        >
+                          {ConvertNumber(pool?.total_staked || 0, true)} $Drift
+                        </p>
+                      </div>
                     </div>
-                  </div>
-                  <div className="row m-0 p-0 pt-3">
-                    <div
-                      className="
+                    <div className="row m-0 p-0 pt-3">
+                      <div
+                        className="
                       col-12 ps-0 col-sm-6 pe-0 pe-sm-2"
-                    >
-                      <p
-                        className="
+                      >
+                        <p
+                          className="
                       m-0 text-uppercase"
-                        style={{
-                          fontSize: 12,
-                        }}
-                      >
-                        Days Remaining
-                      </p>
-                      <p
-                        className="
+                          style={{
+                            fontSize: 12,
+                          }}
+                        >
+                          Days Remaining
+                        </p>
+                        <p
+                          className="
                         DTSC_SubHeading mb-0 text-uppercase fw-bold"
-                        style={{ color: "#ff4bae" }}
+                          style={{ color: "#ff4bae" }}
+                        >
+                          {remaining_days > 0 ? remaining_days : 0}
+                        </p>
+                      </div>
+                      <div
+                        className="
+
+                      col-12 pe-0 col-sm-6 mt-3 mt-sm-0 ps-0 ps-sm-2"
                       >
-                        {remaining_days}
-                      </p>
+                        <p
+                          className="
+                      m-0 text-uppercase"
+                          style={{
+                            fontSize: 12,
+                          }}
+                        >
+                          Lock Period
+                        </p>
+
+                        <p
+                          className="
+                      DTSC_SubHeading mb-0 text-uppercase fw-bold "
+                          style={{ color: "#ff4bae" }}
+                        >
+                          10 Days
+                          <br />
+                          <span
+                            style={{
+                              fontSize: 11,
+                              textTransform: "none",
+                              display: "block",
+                              lineHeight: "1.5",
+                            }}
+                          >
+                            Fully locked for 10 days, 35% penalty to unlock from
+                            day 11-29, from day 30 onwards full Drift token
+                            redemption no penalty.
+                          </span>
+                        </p>
+                      </div>
                     </div>
                   </div>
-                </div>
+                )}
               </div>
             </div>
           </section>
           <section className="mt-3">
             <div className="row m-0 p-0 ">
               <div className="col-12 p-0 col-md-5 pe-md-2 position-relative">
-                {isLoading && (
+                {isLoading ? (
                   <div
-                    className="w-100 h-100 bg-white position-absolute rounded-4 d-flex justify-content-center align-items-center"
+                    className="w-100 h-100 bg-white  rounded-4 d-flex justify-content-center align-items-center"
                     style={{ zIndex: 9 }}
                   >
-                    <img src={Loading} style={{ width: 50 }} alt="loading" />
+                    <Loader />
                   </div>
-                )}
-                <div className="DTSC_Col StakeToggleContainer rounded-4 bg-white  align-items-center p-4">
-                  {/* <div className="d-flex gap-3 p-2 rounded-3 bg-sliver">
+                ) : (
+                  <div className="DTSC_Col StakeToggleContainer rounded-4 bg-white  align-items-center p-4">
+                    {/* <div className="d-flex gap-3 p-2 rounded-3 bg-sliver">
                     <button
                       className={`BtnStyle2 shadow-none
                         border-0 fw-bold ${
@@ -917,14 +975,14 @@ col-12 col-sm-6 pe-0 ps-0 ps-sm-2 d-flex justify-content-end align-items-end "
                       Unstake
                     </button>
                   </div> */}
-                  <div>
-                    <p className="Home_Hero_Section_SubHeading text-black fw-bold text-uppercase mb-0">
-                      Unstake Drift
-                    </p>
-                  </div>
+                    <div>
+                      <p className="Home_Hero_Section_SubHeading text-black fw-bold text-uppercase mb-0">
+                        Unstake Drift
+                      </p>
+                    </div>
 
-                  <div className="StakeToggleContentContainer">
-                    {/* {isStake ? (
+                    <div className="StakeToggleContentContainer">
+                      {/* {isStake ? (
                       <div className=" StakeContent">
                         <div className="mt-3">
                           <p
@@ -961,68 +1019,75 @@ col-12 col-sm-6 pe-0 ps-0 ps-sm-2 d-flex justify-content-end align-items-end "
                         </div>
                       </div>
                     ) : ( */}
-                    <div className="StakeContent">
-                      <div className="mt-3">
-                        <p
-                          className="m-0"
-                          style={{
-                            fontSize: 12,
-                          }}
-                        >
-                          The{" "}
-                          {selectedNetworkId === 1
-                            ? "ETH"
-                            : selectedNetworkId === 56
-                            ? "BNB"
-                            : selectedNetworkId === 137
-                            ? "MATIC"
-                            : " "}{" "}
-                          rewards pool for staking DRIFT tokens will be active
-                          for 30 days from Launch date. Unstaking before 30 day
-                          period will result in a penalty charge.
-                        </p>
-                      </div>
-                      <div className="mt-3">
-                        <div className="input align-items-center">
-                          <input
-                            className="input-field"
-                            type="number"
-                            style={{ marginRight: 15 }}
-                            min={0}
-                            max={Number(user?.stakeDrift || 0)}
-                            value={tokens}
-                            onChange={onChange}
-                          />
-                          <button
-                            className="max-btn bg-white"
-                            onClick={() =>
-                              setTokens(ConvertNumber(user?.stakeDrift, true))
-                            }
+                      <div className="StakeContent">
+                        <div className="mt-3">
+                          <p
+                            className="m-0"
+                            style={{
+                              fontSize: 12,
+                            }}
                           >
-                            max
-                          </button>
+                            The{" "}
+                            {selectedNetworkId === 1
+                              ? "ETH"
+                              : selectedNetworkId === 56
+                              ? "BNB"
+                              : selectedNetworkId === 137
+                              ? "MATIC"
+                              : " "}{" "}
+                            rewards pool for staking DRIFT tokens will be active
+                            for 30 days from Launch date. Unstaking before 30
+                            day period will result in a penalty charge.
+                          </p>
                         </div>
+                        <div className="mt-3">
+                          <div className="input align-items-center">
+                            <input
+                              className="input-field"
+                              type="number"
+                              style={{ marginRight: 15 }}
+                              min={0}
+                              max={Number(user?.stakeDrift || 0)}
+                              value={tokens}
+                              onChange={onChange}
+                            />
+                            <button
+                              className="max-btn bg-white"
+                              onClick={() =>
+                                setTokens(ConvertNumber(user?.stakeDrift, true))
+                              }
+                            >
+                              max
+                            </button>
+                          </div>
 
-                        {!user?.is_pool_allowed > 0 ? (
-                          <button
-                            className="BtnStyle2 bg-pink  fw-bold mt-3 text-uppercase"
-                            onClick={(e) => allow()}
-                          >
-                            Unstake
-                          </button>
-                        ) : (
-                          <button
-                            className="BtnStyle2 bg-pink  fw-bold mt-3 text-uppercase"
-                            onClick={(e) => unstakeDrift()}
-                          >
-                            Unstake
-                          </button>
-                        )}
+                          {!user?.is_pool_allowed > 0 ? (
+                            <button
+                              className="btn BtnStyle2 bg-pink  fw-bold mt-3 text-uppercase text-white shadow-none"
+                              onClick={(e) => allow()}
+                              disabled={
+                                Number(user?.stakeDrift) === 0 || user === null
+                              }
+                            >
+                              Unstake
+                            </button>
+                          ) : (
+                            <button
+                              className="btn BtnStyle2 bg-pink  fw-bold mt-3 text-uppercase shadow-none"
+                              onClick={(e) => unstakeDrift()}
+                              disabled={
+                                Number(user?.stakeDrift) === 0 || user === null
+                              }
+                            >
+                              Unstake
+                            </button>
+                          )}
+                        </div>
                       </div>
+                      {/* )} */}
                     </div>
-                    {/* )} */}
                   </div>
-                </div>
+                )}
               </div>
               <div className="col-12 p-0 col-md-7 ps-md-2 mt-3 mt-md-0 d-flex justify-content-center align-items-center">
                 <img src={staking_pool} className="img-fluid" />
