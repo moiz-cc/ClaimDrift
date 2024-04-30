@@ -294,8 +294,10 @@ export const blockchainSlice = createSlice({
   reducers: {
     createInstance: (state, action) => {
       let web3Instance = new Web3(process.env.REACT_APP_RPC_ETH);
+
       if (action.payload?.walletProvider) {
         let { walletProvider } = action.payload;
+
         web3Instance = new Web3(walletProvider.provider);
       }
       state.web3Inst_ETH = web3Instance;
@@ -327,6 +329,7 @@ export const blockchainSlice = createSlice({
 
       // BNB INS
       let web3InstanceBNB = new Web3(process.env.REACT_APP_RPC_BNB);
+
       if (action.payload?.walletProvider) {
         let { walletProvider } = action.payload;
         web3InstanceBNB = new Web3(walletProvider.provider);
@@ -363,6 +366,7 @@ export const blockchainSlice = createSlice({
 
       // POLYGON INS
       let web3InstancePOLYGON = new Web3(process.env.REACT_APP_RPC_POLYGON);
+
       if (action.payload?.walletProvider) {
         let { walletProvider } = action.payload;
         web3InstancePOLYGON = new Web3(walletProvider.provider);
@@ -423,8 +427,6 @@ export const blockchainSlice = createSlice({
     builder.addCase(LoadBlockchainData.fulfilled, (state, action) => {
       state.isLoading = false;
 
-      // state.ambassadorList = [...action.payload.ambassadors_list];
-      state.ambassadorList = action.payload.ambassadors_list;
       state.publicBlockchainData = { ...action.payload };
     });
     builder.addCase(LoadBlockchainData.rejected, (state, action) => {
