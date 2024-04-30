@@ -103,7 +103,7 @@ function App() {
 
   const [isWeb3InstanceConnect, setIsWeb3InstanceConnect] = useState(false);
 
-  const { address, isConnected } = useWeb3ModalAccount();
+  const { address, isConnected, chainId } = useWeb3ModalAccount();
   const { selectedNetworkId } = useWeb3ModalState();
 
   const getBlockchainData = () => {
@@ -127,12 +127,12 @@ function App() {
 
   const getUserData = async () => {
     if (isConnected && typeof address !== "undefined") {
-      selectedNetworkId === 1
+      selectedNetworkId === 1 || chainId === 1
         ? dispatch(
             LoadUser({
               web3Inst: web3Inst_ETH,
               contractInstICO: contractInstICO_ETH,
-              address: address.trim(),
+              address: address,
               contractInstPresaleToken: contractInstPresaleToken_ETH,
               contractInstClaim: contractInstClaim_ETH,
               claimAddress: process.env.REACT_APP_CLAIM_ETH,
@@ -142,12 +142,12 @@ function App() {
               pool_address: process.env.REACT_APP_ST_POOL_DRIFT_ETH,
             })
           )
-        : selectedNetworkId === 56
+        : selectedNetworkId === 56 || chainId === 56
         ? dispatch(
             LoadUser({
               web3Inst: web3Inst_BNB,
               contractInstICO: contractInstICO_BNB,
-              address: address.trim(),
+              address: address,
               contractInstPresaleToken: contractInstPresaleToken_BNB,
               contractInstClaim: contractInstClaim_BNB,
               claimAddress: process.env.REACT_APP_CLAIM_BNB,
@@ -157,12 +157,12 @@ function App() {
               pool_address: process.env.REACT_APP_ST_POOL_DRIFT_BNB,
             })
           )
-        : selectedNetworkId === 137
+        : selectedNetworkId === 137 || chainId === 137
         ? dispatch(
             LoadUser({
               web3Inst: web3Inst_POLYGON,
               contractInstICO: contractInstICO_POLYGON,
-              address: address.trim(),
+              address: address,
               contractInstPresaleToken: contractInstPresaleToken_POLYGON,
               contractInstClaim: contractInstClaim_POLYGON,
               claimAddress: process.env.REACT_APP_CLAIM_POLYGON,
@@ -177,21 +177,21 @@ function App() {
   };
   const getPoolData = async () => {
     if (isConnected && typeof address !== "undefined") {
-      selectedNetworkId === 1 ? (
+      selectedNetworkId === 1 || chainId === 1 ? (
         dispatch(
           LoadPoolData({
             web3Inst: web3Inst_ETH,
             contractInstStakePool: contractInstStakePool_ETH,
           })
         )
-      ) : selectedNetworkId === 56 ? (
+      ) : selectedNetworkId === 56 || chainId === 56 ? (
         dispatch(
           LoadPoolData({
             web3Inst: web3Inst_BNB,
             contractInstStakePool: contractInstStakePool_BNB,
           })
         )
-      ) : selectedNetworkId === 137 ? (
+      ) : selectedNetworkId === 137 || chainId === 137 ? (
         dispatch(
           LoadPoolData({
             web3Inst: web3Inst_POLYGON,
@@ -210,8 +210,8 @@ function App() {
 
   useEffect(() => {
     if (
-      !contractInstDrift_ETH &&
-      !contractInstDrift_BNB &&
+      !contractInstDrift_ETH ||
+      !contractInstDrift_BNB ||
       !contractInstDrift_POLYGON
     ) {
       loadcontract();
@@ -233,6 +233,7 @@ function App() {
     isWeb3InstanceConnect,
     address,
     selectedNetworkId,
+    chainId,
   ]);
 
   useEffect(() => {

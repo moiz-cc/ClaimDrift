@@ -72,6 +72,10 @@ const Staking = () => {
         )
       : 0;
 
+  const isLocked =
+    Number(pool?.locked_time) >
+    (Number(curret_date_time) - Number(user?.stakedTime)) / 60 / 60 / 24;
+
   useEffect(() => {
     setTokens(0);
   }, []);
@@ -224,6 +228,9 @@ const Staking = () => {
 
     setLoading(true);
 
+    console.log(tokens);
+    console.log(user?.stakeDrift);
+
     let Claim_TokenAddress;
     let PresaleToken_Inst;
     let ICO_Inst;
@@ -267,7 +274,7 @@ const Staking = () => {
     try {
       const approve = await Stake_Drift_Inst.methods.approve(
         Pool_Address,
-        user?.stakeDrift + 0
+        user?.stakeDrift + 0 || 0
       );
 
       const estimateGas = await approve.estimateGas({
@@ -921,7 +928,7 @@ col-12 col-sm-6 pe-0 ps-0 ps-sm-2 d-flex justify-content-end align-items-end "
                       DTSC_SubHeading mb-0 text-uppercase fw-bold "
                           style={{ color: "#ff4bae" }}
                         >
-                          10 Days
+                          {pool?.locked_time} Days
                           <br />
                           <span
                             style={{
@@ -1066,7 +1073,10 @@ col-12 col-sm-6 pe-0 ps-0 ps-sm-2 d-flex justify-content-end align-items-end "
                               className="btn BtnStyle2 bg-pink  fw-bold mt-3 text-uppercase text-white shadow-none"
                               onClick={(e) => allow()}
                               disabled={
-                                Number(user?.stakeDrift) === 0 || user === null
+                                Number(user?.stakeDrift) === 0 ||
+                                user === null ||
+                                user?.stakeDrift === undefined ||
+                                isLocked
                               }
                             >
                               Unstake
@@ -1076,7 +1086,10 @@ col-12 col-sm-6 pe-0 ps-0 ps-sm-2 d-flex justify-content-end align-items-end "
                               className="btn BtnStyle2 bg-pink  fw-bold mt-3 text-uppercase shadow-none"
                               onClick={(e) => unstakeDrift()}
                               disabled={
-                                Number(user?.stakeDrift) === 0 || user === null
+                                user?.stakeDrift === undefined ||
+                                Number(user?.stakeDrift) === 0 ||
+                                user === null ||
+                                isLocked
                               }
                             >
                               Unstake

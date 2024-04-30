@@ -47,6 +47,7 @@ import {
   LoadPoolData,
   LoadUser,
 } from "../Store/blockchainSlice";
+import Loader from "../Component/Loading";
 
 function Home() {
   const dispatch = useDispatch();
@@ -164,7 +165,7 @@ function Home() {
     try {
       const approve = await PresaleToken_Inst.methods.approve(
         Claim_TokenAddress,
-        user?.balance + 0
+        user?.balance + 0 || 0
       );
 
       const estimateGas = await approve.estimateGas({
@@ -586,202 +587,205 @@ function Home() {
               className=" col-12 col-md-6 p-0 pe-md-3 rounded-4 position-relative"
               id="Presale_Form"
             >
-              {isLoading && (
+              {isLoading ? (
                 <div
-                  className="w-100 h-100 bg-white position-absolute rounded-4 d-flex justify-content-center align-items-center"
-                  style={{ zIndex: 99 }}
+                  className="w-100 h-100 bg-white  rounded-4 d-flex justify-content-center align-items-center py-5"
+                  style={{ zIndex: 9 }}
                 >
-                  <img src={Loading} style={{ width: 50 }} alt="loading" />
+                  <Loader />
+                </div>
+              ) : (
+                <div
+                  className="DTSC_Col rounded-4 bg-white mt-4 mt-md-0 position-relative  "
+                  id="claim"
+                >
+                  <h2 className="DTSC_Heading text-black mb-0 text-uppercase ">
+                    Claim $DRIFT Token
+                  </h2>
+                  <div className="row m-0 mt-3 w-100">
+                    <div className="d-flex align-items-start p-0">
+                      <img alt="" src={dot} style={{ marginRight: 10 }} />
+                      <p className="m-0">
+                        Total Remaining Claims{" "}
+                        <span style={{ fontWeight: "bold" }}>
+                          {numberWithCommas(Number(data?.tokensToClaim || 0))}
+                        </span>
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="mt-5">
+                    <div className="NetworkButtons_Row row m-0 w-100">
+                      <p className="p-0">Select Network</p>
+                      <div className="col-12 col-xl-4 col-lg-6 col-sm-6  p-0 pe-lg-2 pe-sm-2 mb-2 mb-xl-0">
+                        <button
+                          onClick={() => open({ view: "Networks" })}
+                          className={`BtnStyle2 ${
+                            selectedNetworkId === 1 && chainId === 1
+                              ? "active"
+                              : ""
+                          }`}
+                        >
+                          <img alt="" src={eth} className="me-1" />
+                          ETH
+                        </button>
+                      </div>
+                      <div className="col-12 col-xl-4 col-lg-6 col-sm-6 p-0 pe-xl-2 mb-2 mb-xl-0">
+                        <button
+                          onClick={() => open({ view: "Networks" })}
+                          className={`BtnStyle2 ${
+                            selectedNetworkId === 56 && chainId === 56
+                              ? "active"
+                              : ""
+                          }`}
+                        >
+                          <img alt="" src={bnb} className="me-1" />
+                          BNB
+                        </button>
+                      </div>
+                      <div className="col-12 col-xl-4 col-lg-6 col-sm-6 p-0">
+                        <button
+                          onClick={() => open({ view: "Networks" })}
+                          className={`BtnStyle2 ${
+                            selectedNetworkId === 137 && chainId === 137
+                              ? "active"
+                              : ""
+                          }`}
+                        >
+                          <img alt="" src={polygon} className="me-1" />
+                          Polygon
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="mt-5 position-relative">
+                    {user?.balance != 0 ? (
+                      <form className="position-relative">
+                        <div className="row p-0 m-0 ">
+                          <div className="col-12 p-0">
+                            <label>
+                              <p>PreDrift Tokens</p>
+                            </label>
+                            <div className="input align-items-center">
+                              <input
+                                readOnly
+                                className="input-field"
+                                type="number"
+                                name="no_of_tokens"
+                                id="no_of_tokens"
+                                value={
+                                  ConvertNumber(Number(user?.balance), true) ||
+                                  0
+                                }
+                                style={{ marginRight: 15 }}
+                              />
+                              <img src={token} alt="" width={32} height={32} />
+                            </div>
+                          </div>
+                        </div>
+                        <div className="row p-0 m-0 mt-3">
+                          <div className="col-12 col-xl-6 ps-0 pe-0 pe-xl-2">
+                            <label>
+                              <p>Staked Tokens</p>
+                            </label>
+                            <div className="input align-items-center">
+                              <input
+                                readOnly
+                                className="input-field"
+                                type="number"
+                                name="no_of_tokens"
+                                id="no_of_tokens"
+                                value={user?.Staked || 0}
+                                style={{ marginRight: 15 }}
+                              />
+                              <img src={token} alt="" width={32} height={32} />
+                            </div>
+                          </div>
+                          <div
+                            className="
+                      col-12 col-xl-6 mt-4 mt-xl-0 pe-0 ps-0 ps-xl-2"
+                          >
+                            <label>
+                              <p>Dynamic Tokens</p>
+                            </label>
+                            <div className="input align-items-center">
+                              <input
+                                readOnly
+                                className="input-field"
+                                type="number"
+                                name="no_of_tokens"
+                                id="no_of_tokens"
+                                value={user?.Dynamic || 0}
+                                style={{ marginRight: 15 }}
+                              />
+
+                              <img src={token} alt="" width={32} height={32} />
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="d-flex mt-5 flex-column align-items-baseline justify-content-between flex-xxl-row align-items-xxl-center">
+                          <div className="mb-3 mb-xxl-0">
+                            {user?.is_allowed ? (
+                              <button
+                                className="btn pinkBtn  BtnStyle1 text-white"
+                                onClick={handleSubmit}
+                                disabled={user?.balance === undefined}
+                              >
+                                Claim $Drift
+                              </button>
+                            ) : (
+                              <button
+                                className="btn pinkBtn  BtnStyle1 text-white"
+                                disabled={user?.balance === undefined}
+                                onClick={allow}
+                              >
+                                Claim $Drift
+                              </button>
+                            )}
+                          </div>
+                          <Link
+                            to="/utilities"
+                            style={{ fontWeight: 800 }}
+                            className="text-uppercase"
+                          >
+                            Learn About Coin Utility
+                          </Link>
+                        </div>
+                      </form>
+                    ) : (
+                      <div
+                        style={{ height: 264 }}
+                        className="white rounded-4  p-3 d-flex align-items-center justify-content-center"
+                      >
+                        {user?.claimed && user?.balance == 0 ? (
+                          <div className="d-flex flex-column justify-content-center align-items-center">
+                            <img src={driftLogo} height={100} />
+                            <p className="m-0 p-0 mt-3 text-center  align-self-center">
+                              🎉{" "}
+                              <span className="Home_Hero_Section_SubHeading fw-bold text-uppercase text-black">
+                                Congratulations!
+                              </span>
+                              <br />
+                              You've successfully claimed your Drift Token!{" "}
+                            </p>
+                          </div>
+                        ) : (
+                          <div>
+                            <p className="m-0 p-0 mt-3 text-center  fw-bold">
+                              No Presale DRIFT tokens found in connected wallet.
+                            </p>
+                            <p className="m-0 p-0 mt-3 text-center  ">
+                              Unable to claim tokens at the moment.
+                            </p>
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </div>
                 </div>
               )}
-
-              <div
-                className="DTSC_Col rounded-4 bg-white mt-4 mt-md-0 position-relative  "
-                id="claim"
-              >
-                <h2 className="DTSC_Heading text-black mb-0 text-uppercase ">
-                  Claim $DRIFT Token
-                </h2>
-                <div className="row m-0 mt-3 w-100">
-                  <div className="d-flex align-items-start p-0">
-                    <img alt="" src={dot} style={{ marginRight: 10 }} />
-                    <p className="m-0">
-                      Total Remaining Claims{" "}
-                      <span style={{ fontWeight: "bold" }}>
-                        {numberWithCommas(Number(data?.tokensToClaim || 0))}
-                      </span>
-                    </p>
-                  </div>
-                </div>
-
-                <div className="mt-5">
-                  <div className="NetworkButtons_Row row m-0 w-100">
-                    <p className="p-0">Select Network</p>
-                    <div className="col-12 col-xl-4 col-lg-6 col-sm-6  p-0 pe-lg-2 pe-sm-2 mb-2 mb-xl-0">
-                      <button
-                        onClick={() => open({ view: "Networks" })}
-                        className={`BtnStyle2 ${
-                          selectedNetworkId === 1 && chainId === 1
-                            ? "active"
-                            : ""
-                        }`}
-                      >
-                        <img alt="" src={eth} className="me-1" />
-                        ETH
-                      </button>
-                    </div>
-                    <div className="col-12 col-xl-4 col-lg-6 col-sm-6 p-0 pe-xl-2 mb-2 mb-xl-0">
-                      <button
-                        onClick={() => open({ view: "Networks" })}
-                        className={`BtnStyle2 ${
-                          selectedNetworkId === 56 && chainId === 56
-                            ? "active"
-                            : ""
-                        }`}
-                      >
-                        <img alt="" src={bnb} className="me-1" />
-                        BNB
-                      </button>
-                    </div>
-                    <div className="col-12 col-xl-4 col-lg-6 col-sm-6 p-0">
-                      <button
-                        onClick={() => open({ view: "Networks" })}
-                        className={`BtnStyle2 ${
-                          selectedNetworkId === 137 && chainId === 137
-                            ? "active"
-                            : ""
-                        }`}
-                      >
-                        <img alt="" src={polygon} className="me-1" />
-                        Polygon
-                      </button>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="mt-5 position-relative">
-                  {user?.balance != 0 ? (
-                    <form className="position-relative">
-                      <div className="row p-0 m-0 ">
-                        <div className="col-12 p-0">
-                          <label>
-                            <p>PreDrift Tokens</p>
-                          </label>
-                          <div className="input align-items-center">
-                            <input
-                              readOnly
-                              className="input-field"
-                              type="number"
-                              name="no_of_tokens"
-                              id="no_of_tokens"
-                              value={
-                                ConvertNumber(Number(user?.balance), true) || 0
-                              }
-                              style={{ marginRight: 15 }}
-                            />
-                            <img src={token} alt="" width={32} height={32} />
-                          </div>
-                        </div>
-                      </div>
-                      <div className="row p-0 m-0 mt-3">
-                        <div className="col-12 col-xl-6 ps-0 pe-0 pe-xl-2">
-                          <label>
-                            <p>Staked Tokens</p>
-                          </label>
-                          <div className="input align-items-center">
-                            <input
-                              readOnly
-                              className="input-field"
-                              type="number"
-                              name="no_of_tokens"
-                              id="no_of_tokens"
-                              value={user?.Staked || 0}
-                              style={{ marginRight: 15 }}
-                            />
-                            <img src={token} alt="" width={32} height={32} />
-                          </div>
-                        </div>
-                        <div
-                          className="
-                      col-12 col-xl-6 mt-4 mt-xl-0 pe-0 ps-0 ps-xl-2"
-                        >
-                          <label>
-                            <p>Dynamic Tokens</p>
-                          </label>
-                          <div className="input align-items-center">
-                            <input
-                              readOnly
-                              className="input-field"
-                              type="number"
-                              name="no_of_tokens"
-                              id="no_of_tokens"
-                              value={user?.Dynamic || 0}
-                              style={{ marginRight: 15 }}
-                            />
-
-                            <img src={token} alt="" width={32} height={32} />
-                          </div>
-                        </div>
-                      </div>
-
-                      <div className="d-flex mt-5 flex-column align-items-baseline justify-content-between flex-xxl-row align-items-xxl-center">
-                        <div className="mb-3 mb-xxl-0">
-                          {user?.is_allowed ? (
-                            <button
-                              className="pinkBtn BtnStyle1"
-                              onClick={handleSubmit}
-                            >
-                              Claim $Drift
-                            </button>
-                          ) : (
-                            <button
-                              className="pinkBtn BtnStyle1"
-                              onClick={allow}
-                            >
-                              Claim $Drift
-                            </button>
-                          )}
-                        </div>
-                        <Link
-                          to="/utilities"
-                          style={{ fontWeight: 800 }}
-                          className="text-uppercase"
-                        >
-                          Learn About Coin Utility
-                        </Link>
-                      </div>
-                    </form>
-                  ) : (
-                    <div
-                      style={{ height: 264 }}
-                      className="white rounded-4  p-3 d-flex align-items-center justify-content-center"
-                    >
-                      {user?.claimed && user?.balance == 0 ? (
-                        <div className="d-flex flex-column justify-content-center align-items-center">
-                          <img src={driftLogo} height={100} />
-                          <p className="m-0 p-0 mt-3 text-center  align-self-center">
-                            🎉{" "}
-                            <span className="Home_Hero_Section_SubHeading fw-bold text-uppercase text-black">
-                              Congratulations!
-                            </span>
-                            <br />
-                            You've successfully claimed your Drift Token!{" "}
-                          </p>
-                        </div>
-                      ) : (
-                        <div>
-                          <p className="m-0 p-0 mt-3 text-center  fw-bold">
-                            No Presale DRIFT tokens found in connected wallet.
-                          </p>
-                          <p className="m-0 p-0 mt-3 text-center  ">
-                            Unable to claim tokens at the moment.
-                          </p>
-                        </div>
-                      )}
-                    </div>
-                  )}
-                </div>
-              </div>
             </div>
             <div className="col-12 col-md-6 p-0 ps-md-3 pt-3 pt-md-0 ">
               <div className="p-0 h-100">

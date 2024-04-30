@@ -172,19 +172,26 @@ export const LoadPoolData = createAsyncThunk(
   "LoadPoolData",
   async ({ web3Inst, contractInstStakePool }, { rejectWithValue }) => {
     try {
-      const [apy, total_pending_reward, total_staked, stake_end_deadline] =
-        await makeBatchRequest(web3Inst, [
-          contractInstStakePool.methods.calculateAPY().call,
-          contractInstStakePool.methods.getTotalPendingRewards().call,
-          contractInstStakePool.methods.totalStaked().call,
-          contractInstStakePool.methods.stakeEndDeadline().call,
-        ]);
+      const [
+        apy,
+        total_pending_reward,
+        total_staked,
+        stake_end_deadline,
+        stake_info,
+      ] = await makeBatchRequest(web3Inst, [
+        contractInstStakePool.methods.calculateAPY().call,
+        contractInstStakePool.methods.getTotalPendingRewards().call,
+        contractInstStakePool.methods.totalStaked().call,
+        contractInstStakePool.methods.stakeEndDeadline().call,
+        contractInstStakePool.methods.stakeInfo().call,
+      ]);
 
       return {
         apy,
         total_staked,
         total_pending_reward,
         stake_end_deadline,
+        locked_time: stake_info?.lockedStake,
       };
     } catch (error) {
       console.log(error);
@@ -232,6 +239,10 @@ export const LoadUser = createAsyncThunk(
         contractInstStakePool.methods.getPendingRewards(address).call,
       ]);
 
+      const stakedTime = await contractInstStakePool.methods
+        .getUserInfo(address)
+        .call();
+
       return {
         balance,
         Staked: ConvertNumber(Number(Staked) + Number(tokensToMove), true),
@@ -243,10 +254,10 @@ export const LoadUser = createAsyncThunk(
             ? true
             : false,
         is_pool_allowed: is_pool_allowed > 0,
-
         remaining_claim: Reward.pendingRewards,
         dynamicDrift,
         stakeDrift,
+        stakedTime: stakedTime.lastStakedTime,
       };
     } catch (error) {
       console.log(error);
