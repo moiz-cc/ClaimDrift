@@ -79,6 +79,7 @@ const Staking = () => {
   useEffect(() => {
     setTokens(0);
   }, []);
+
   const closeTransactionModal = () => {
     setTransactionModal(false);
     setClaimtransactionModal(false);
@@ -704,7 +705,26 @@ const Staking = () => {
         </div>
       )}
       <div className="py-5">
-        <div className="container-lg">
+        <div className="container-lg rounded-4 p-0 position-relative">
+          {!address && (
+            <div
+              className="h-100 w-100  position-absolute rounded-4 d-flex flex-column justify-content-center align-items-center p-5"
+              style={{ zIndex: 99, background: "rgba(0, 0, 0, 0.75)" }}
+            >
+              <p className="text-white text-center">
+                To explore our staking pool and all the rewards waiting for you,
+                connect your wallet now.
+                <br /> It's your gateway to earning and growing your assets
+                effortlessly.
+              </p>
+              <button
+                className="BtnStyle1 bg-pink fw-bold text-uppercase shadow-none text-white rounded-2"
+                onClick={() => open()}
+              >
+                Connect Wallet
+              </button>
+            </div>
+          )}
           <h4 className="Home_Hero_Section_Heading ">
             Stake $DRIFT, Earn{" "}
             {selectedNetworkId === 1
