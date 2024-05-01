@@ -248,7 +248,7 @@ export const LoadUser = createAsyncThunk(
         Staked: ConvertNumber(Number(Staked) + Number(tokensToMove), true),
         Dynamic: ConvertNumber(Number(Dynamic) - Number(tokensToMove), true),
         is_allowed:
-          Number(is_allowed) > 0 && Number(is_allowed) === Number(balance),
+          Number(is_allowed) > 0 && Number(is_allowed) >= Number(balance),
         claimed:
           Number(balance) == 0 && (Number(Staked) > 0 || Number(Dynamic) > 0)
             ? true
