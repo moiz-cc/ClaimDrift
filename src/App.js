@@ -251,7 +251,7 @@ function App() {
         <Route path="/ambassador" element={<Ambassador />} />
         <Route path="/privacy-policy" element={<PrivacyPolicy />} />
         <Route path="/staking-portal" element={<Staking />} />
-        <Route path="/tokenomics" element={<Tokenomics />} />
+        <Route path="/03052024tok" element={<Tokenomics />} />
         <Route
           path="/price-risk-disclosure"
           element={<PriceRiskDisclosure />}

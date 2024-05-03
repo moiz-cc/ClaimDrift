@@ -58,8 +58,8 @@ const Tokenomics = () => {
       <div className="container-lg">
         <div className="py-5 ">
           <h1 className="Policy_Heading text-uppercase">Fund Raising</h1>
-          <div className="Leaderboard_BoardCol_Container p-0 m-0 mt-3">
-            <div className="DTSC_Col rounded-4 bg-white mt-4 mt-md-0   ">
+          <div className="Leaderboard_BoardCol_Container p-0 m-0">
+            <div className="DTSC_Col rounded-4 bg-white mt-4 mt-md-0  w-100 overflowAuto">
               <table className="table Leaderboard_BoardCol_Table bg-transparent mb-0">
                 <thead className="position-relative border-bottom border-top">
                   <tr className="position-sticky top-0 start-0 Leaderboard_BoardCol_Table_HeaderRow">
@@ -284,9 +284,224 @@ const Tokenomics = () => {
           </div>
         </div>
         <div className="pb-5 ">
+          <h1 className="Policy_Heading text-uppercase">Unlocks</h1>
+          <div className="Leaderboard_BoardCol_Container p-0 m-0  ">
+            <div className="DTSC_Col rounded-4 bg-white mt-4 mt-md-0 w-100 overflowAuto">
+              <table className="table  Leaderboard_BoardCol_Table bg-transparent mb-0">
+                <thead className="position-relative border-bottom border-top">
+                  <tr className="position-sticky top-0 start-0 Leaderboard_BoardCol_Table_HeaderRow">
+                    <th scope="col" className="">
+                      <div className="d-flex align-items-center ">
+                        <span className="Text_Secondary fw-bold"></span>
+                      </div>
+                    </th>
+                    <th scope="col" className="">
+                      <div className="d-flex align-items-center ">
+                        <span className="Text_Secondary fw-bold">Day 0</span>
+                      </div>
+                    </th>
+                    <th scope="col" className="">
+                      <div className="d-flex align-items-center ">
+                        <span className="Text_Secondary fw-bold">Day 10</span>
+                      </div>
+                    </th>
+                    <th scope="col" className="">
+                      <div className="d-flex align-items-center ">
+                        <span className="Text_Secondary fw-bold">Day 30</span>
+                      </div>
+                    </th>
+                    <th scope="col" className="">
+                      <div className="d-flex align-items-center ">
+                        <span className="Text_Secondary fw-bold">Day 60</span>
+                      </div>
+                    </th>
+                    <th scope="col" className="">
+                      <div className="d-flex align-items-center ">
+                        <span className="Text_Secondary fw-bold">Day 90</span>
+                      </div>
+                    </th>
+                    <th scope="col" className="">
+                      <div className="d-flex align-items-center ">
+                        <span className="Text_Secondary fw-bold">Day 120</span>
+                      </div>
+                    </th>
+                    <th scope="col" className="">
+                      <div className="d-flex align-items-center ">
+                        <span className="Text_Secondary fw-bold">Day 150</span>
+                      </div>
+                    </th>
+                    <th scope="col" className="">
+                      <div className="d-flex align-items-center ">
+                        <span className="Text_Secondary fw-bold">Day 180</span>
+                      </div>
+                    </th>
+                    <th scope="col" className="">
+                      <div className="d-flex align-items-center ">
+                        <span className="Text_Secondary fw-bold">Day 210</span>
+                      </div>
+                    </th>
+                    <th scope="col" className="">
+                      <div className="d-flex align-items-center ">
+                        <span className="Text_Secondary fw-bold">Day 240</span>
+                      </div>
+                    </th>
+                    <th scope="col" className="">
+                      <div className="d-flex align-items-center ">
+                        <span className="Text_Secondary fw-bold">Day 270</span>
+                      </div>
+                    </th>
+                    <th scope="col" className="">
+                      <div className="d-flex align-items-center ">
+                        <span className="Text_Secondary fw-bold">Day 300</span>
+                      </div>
+                    </th>
+                    <th scope="col" className="">
+                      <div className="d-flex align-items-center ">
+                        <span className="Text_Secondary fw-bold">Day 330</span>
+                      </div>
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr className="">
+                    <td scope="row" className="Leaderboard_RankHash fw-normal">
+                      <div className="d-flex gap-3 align-items-center py-2">
+                        <span className="text-dark FS_16 fw-normal text-capitalize lh-1 fw-bolder">
+                          Presale
+                        </span>
+                      </div>
+                    </td>
+                    <td className="">
+                      <div className="d-flex gap-3 align-items-center py-2">
+                        <span className="text-dark FS_16 fw-normal text-capitalize lh-1">
+                          473,000,000
+                        </span>
+                      </div>
+                    </td>
+                    <td className="">
+                      <div className="d-flex gap-3 align-items-center py-2">
+                        <span className="text-dark FS_16 fw-normal text-capitalize lh-1">
+                          750,000,000
+                        </span>
+                      </div>
+                    </td>
+                    <td className="">
+                      <div className="d-flex gap-3 align-items-center py-2">
+                        <span className="text-dark FS_16 fw-normal text-capitalize lh-1">
+                          42,000,000
+                        </span>
+                      </div>
+                    </td>
+                    <td className="">
+                      <div className="d-flex gap-3 align-items-center py-2">
+                        <span className="text-dark FS_16 fw-normal text-capitalize lh-1">
+                          42,000,000
+                        </span>
+                      </div>
+                    </td>
+                    <td className="">
+                      <div className="d-flex gap-3 align-items-center py-2">
+                        <span className="text-dark FS_16 fw-normal text-capitalize lh-1">
+                          42,000,000
+                        </span>
+                      </div>
+                    </td>
+                    <td className="">
+                      <div className="d-flex gap-3 align-items-center py-2">
+                        <span className="text-dark FS_16 fw-normal text-capitalize lh-1">
+                          42,000,000
+                        </span>
+                      </div>
+                    </td>
+                    <td className="">
+                      <div className="d-flex gap-3 align-items-center py-2">
+                        <span className="text-dark FS_16 fw-normal text-capitalize lh-1">
+                          42,000,000
+                        </span>
+                      </div>
+                    </td>
+                    <td className="">
+                      <div className="d-flex gap-3 align-items-center py-2">
+                        <span className="text-dark FS_16 fw-normal text-capitalize lh-1">
+                          42,000,000
+                        </span>
+                      </div>
+                    </td>
+                    <td className="">
+                      <div className="d-flex gap-3 align-items-center py-2">
+                        <span className="text-dark FS_16 fw-normal text-capitalize lh-1">
+                          42,000,000
+                        </span>
+                      </div>
+                    </td>
+                    <td className="">
+                      <div className="d-flex gap-3 align-items-center py-2">
+                        <span className="text-dark FS_16 fw-normal text-capitalize lh-1">
+                          42,000,000
+                        </span>
+                      </div>
+                    </td>
+                    <td className="">
+                      <div className="d-flex gap-3 align-items-center py-2">
+                        <span className="text-dark FS_16 fw-normal text-capitalize lh-1">
+                          42,000,000
+                        </span>
+                      </div>
+                    </td>
+                    <td className="">
+                      <div className="d-flex gap-3 align-items-center py-2">
+                        <span className="text-dark FS_16 fw-normal text-capitalize lh-1">
+                          42,000,000
+                        </span>
+                      </div>
+                    </td>
+                    <td className="">
+                      <div className="d-flex gap-3 align-items-center py-2">
+                        <span className="text-dark FS_16 fw-normal text-capitalize lh-1">
+                          42,000,000
+                        </span>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr className="">
+                    <td scope="row" className="Leaderboard_RankHash fw-normal">
+                      <div className="d-flex gap-3 align-items-center py-2">
+                        <span className="text-dark FS_16 fw-normal text-capitalize lh-1 fw-bolder">
+                          Strategic KOL round
+                        </span>
+                      </div>
+                    </td>
+                    <td className="">
+                      <div className="d-flex gap-3 align-items-center py-2">
+                        <span className="text-dark FS_16 fw-normal text-capitalize lh-1">
+                          0
+                        </span>
+                      </div>
+                    </td>
+                    <td className="">
+                      <div className="d-flex gap-3 align-items-center py-2">
+                        <span className="text-dark FS_16 fw-normal text-capitalize lh-1">
+                          0
+                        </span>
+                      </div>
+                    </td>
+                    <td className="">
+                      <div className="d-flex gap-3 align-items-center py-2">
+                        <span className="text-dark FS_16 fw-normal text-capitalize lh-1">
+                          250,000,000
+                        </span>
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        <div className="pb-3 ">
           <h1 className="Policy_Heading text-uppercase">Token Supply</h1>
-          <div className="Leaderboard_BoardCol_Container p-0 m-0 mt-3">
-            <div className="DTSC_Col rounded-4 bg-white mt-4 mt-md-0   ">
+          <div className="Leaderboard_BoardCol_Container p-0 m-0 ">
+            <div className="DTSC_Col rounded-4 bg-white mt-4 mt-md-0 w-100 overflowAuto">
               <table className="table  Leaderboard_BoardCol_Table bg-transparent mb-0">
                 <thead className="position-relative border-bottom border-top">
                   <tr className="position-sticky top-0 start-0 Leaderboard_BoardCol_Table_HeaderRow">
@@ -568,8 +783,8 @@ const Tokenomics = () => {
         </div>
         <div className="pb-5 ">
           {/* <h1 className="Policy_Heading text-uppercase">Fund Raising</h1> */}
-          <div className="Leaderboard_BoardCol_Container p-0 m-0 mt-3">
-            <div className="DTSC_Col rounded-4 bg-white mt-4 mt-md-0   ">
+          <div className="Leaderboard_BoardCol_Container p-0 m-0 ">
+            <div className="DTSC_Col rounded-4 bg-white mt-4 mt-md-0  w-100 overflowAuto ">
               <table className="table Leaderboard_BoardCol_Table bg-transparent mb-0">
                 <thead className="position-relative border-bottom border-top">
                   <tr className="position-sticky top-0 start-0 Leaderboard_BoardCol_Table_HeaderRow">
@@ -815,8 +1030,8 @@ const Tokenomics = () => {
         </div>
         <div className="pb-3 ">
           <h1 className="Policy_Heading text-uppercase">Token Allocation</h1>
-          <div className="Leaderboard_BoardCol_Container p-0 m-0 mt-3">
-            <div className="DTSC_Col rounded-4 bg-white mt-4 mt-md-0   ">
+          <div className="Leaderboard_BoardCol_Container p-0 m-0">
+            <div className="DTSC_Col rounded-4 bg-white mt-4 mt-md-0 w-100 overflowAuto  ">
               <table className="table Leaderboard_BoardCol_Table bg-transparent mb-0">
                 <thead className="position-relative border-bottom border-top">
                   <tr className="position-sticky top-0 start-0 Leaderboard_BoardCol_Table_HeaderRow">
@@ -970,8 +1185,8 @@ const Tokenomics = () => {
         </div>
         <div className="pb-5 ">
           {/* <h1 className="Policy_Heading text-uppercase">Token Allocation</h1> */}
-          <div className="Leaderboard_BoardCol_Container p-0 m-0 mt-3">
-            <div className="DTSC_Col rounded-4 bg-white mt-4 mt-md-0   ">
+          <div className="Leaderboard_BoardCol_Container p-0 m-0 ">
+            <div className="DTSC_Col rounded-4 bg-white mt-4 mt-md-0 w-100 overflowAuto  ">
               <table className="table Leaderboard_BoardCol_Table bg-transparent mb-0">
                 <thead className="position-relative border-bottom border-top">
                   <tr className="position-sticky top-0 start-0 Leaderboard_BoardCol_Table_HeaderRow">
@@ -1197,8 +1412,8 @@ const Tokenomics = () => {
           <h1 className="Policy_Heading text-uppercase">
             Permanent Buy Pressure
           </h1>
-          <div className="Leaderboard_BoardCol_Container p-0 m-0 mt-3">
-            <div className="DTSC_Col rounded-4 bg-white mt-4 mt-md-0   ">
+          <div className="Leaderboard_BoardCol_Container p-0 m-0">
+            <div className="DTSC_Col rounded-4 bg-white mt-4 mt-md-0  w-100 overflowAuto ">
               <table className="table Leaderboard_BoardCol_Table bg-transparent mb-0">
                 {/* <thead className="position-relative border-bottom border-top">
                   <tr className="position-sticky top-0 start-0 Leaderboard_BoardCol_Table_HeaderRow">
@@ -1244,14 +1459,14 @@ const Tokenomics = () => {
                         </span>
                       </div>
                     </td>
-                    <td className="">
+                    <td className="col">
                       <div className="d-flex gap-3 align-items-center py-2">
                         <span className="text-dark FS_16 fw-normal text-capitalize lh-1">
                           3,821,844,133
                         </span>
                       </div>
                     </td>
-                    <td className="">
+                    <td className="col">
                       <div className="d-flex gap-3 align-items-center py-2">
                         <span className="text-dark FS_16 fw-normal text-capitalize lh-1">
                           Tokens
