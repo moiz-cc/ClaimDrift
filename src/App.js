@@ -27,6 +27,7 @@ import { LoadUser, LoadPoolData } from "./Store/blockchainSlice.js";
 import PrivacyPolicy from "./Pages/PrivacyPolicy.js";
 import PriceRiskDisclosure from "./Pages/PriceRiskDisclosure.js";
 import Staking from "./Pages/Staking.js";
+import Tokenomics from "./Pages/Tokenomics.js";
 
 function App() {
   const dispatch = useDispatch();
@@ -250,6 +251,7 @@ function App() {
         <Route path="/ambassador" element={<Ambassador />} />
         <Route path="/privacy-policy" element={<PrivacyPolicy />} />
         <Route path="/staking-portal" element={<Staking />} />
+        <Route path="/tokenomics" element={<Tokenomics />} />
         <Route
           path="/price-risk-disclosure"
           element={<PriceRiskDisclosure />}
