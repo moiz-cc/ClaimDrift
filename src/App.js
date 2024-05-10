@@ -1,9 +1,5 @@
 import "./Css/App.css";
-import {
-  createWeb3Modal,
-  defaultConfig,
-  useWeb3ModalState,
-} from "@web3modal/ethers5/react";
+
 import Header from "./Component/Header";
 import Home from "./Pages/Home";
 import Footer from "./Component/Footer";
@@ -14,6 +10,9 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 import {
+  createWeb3Modal,
+  defaultConfig,
+  useWeb3ModalState,
   useWeb3ModalAccount,
   useWeb3ModalSigner,
 } from "@web3modal/ethers5/react";
@@ -98,12 +97,10 @@ function App() {
     themeMode: "light",
     ethersConfig: defaultConfig({ metadata }),
     chains: [ethereum, bnb, polygon],
-
     projectId,
   });
 
   const [isWeb3InstanceConnect, setIsWeb3InstanceConnect] = useState(false);
-
   const { address, isConnected, chainId } = useWeb3ModalAccount();
   const { selectedNetworkId } = useWeb3ModalState();
 

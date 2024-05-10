@@ -538,7 +538,7 @@ function Home() {
           <div className="DriftTokenSectionContainer row m-0 w-100 align-items-stretch">
             <div className="col-12 col-md-6 p-0 pe-md-3">
               <div className="m-0 p-0">
-                <video className="w-100" autoPlay muted loop>
+                <video className="w-100 rounded-4" autoPlay muted loop>
                   <source src="/PayoutPersuit.mp4" type="video/mp4"></source>
                 </video>
               </div>
@@ -551,29 +551,29 @@ function Home() {
                 <div className="my-3">
                   <p>
                     Payout Pursuit is a groundbreaking Web3 skills-based racing
-                    game that is played on browser. The V1 (Beta Version) is
-                    ready-to-play, requiring no downloads and no wallet
-                    connection.
+                    game that is played on browser.
                   </p>
-
                   <p>
-                    V2 will see Web3 integration, allowing racers to race
-                    against each other for crypto prizes. We will also introduce
-                    cross chain connectivity to expand the player universe.
+                    The V1 (Beta Version) was ready-to-play, requiring no
+                    downloads and no wallet connection.
+                  </p>
+                  <p>
+                    V2 brings Web3 integration, allowing racers to race against
+                    each other for crypto prizes with cross chain connectivity
+                    to expand the player universe.
                   </p>
 
                   <p className="m-0">
-                    Start honing your skills now to be ready to earn once
-                    version 2 is unveiled!
+                    Start honing your skills now! version 2 is unveiled!
                   </p>
                 </div>
                 <Link
-                  className={`FooterMenuContainer_Link `}
+                  className={`FooterMenuContainer_Link`}
                   to={"https://play.payoutpursuit.com/"}
                   target="_blank"
                 >
                   <button className="white BtnStyle1 shadow-none">
-                    Play Beta
+                    Play V2
                   </button>
                 </Link>
               </div>

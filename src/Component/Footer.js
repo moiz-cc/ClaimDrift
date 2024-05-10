@@ -12,7 +12,6 @@ function Footer() {
   useEffect(() => {}, [location]);
 
   const HandleCopyCode = (e, data) => {
-    
     const CopyIcon = e.target;
     CopyIcon.src = Check_Icon;
     const TimeID = setTimeout(() => {
@@ -155,7 +154,7 @@ function Footer() {
                 {" "}
                 <Link
                   className={`FooterMenuContainer_Link `}
-                  to={"https://www.youtube.com/@DRIFTtoken"}
+                  to={"https://www.youtube.com/@DRIFT_Labs"}
                   target="_blank"
                 >
                   Youtube
