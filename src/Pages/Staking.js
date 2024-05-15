@@ -575,20 +575,28 @@ const Staking = () => {
                       target="_blank"
                       to={`${
                         selectedNetworkId === 1
-                          ? "https://sepolia.etherscan.io"
+                          ? "https://etherscan.io"
                           : `${
                               selectedNetworkId === 56
-                                ? "https://testnet.bscscan.com"
-                                : ""
+                                ? "https://bscscan.com"
+                                : `${
+                                    selectedNetworkId === 137
+                                      ? "https://polygonscan.com"
+                                      : ""
+                                  }`
                             }`
                       }/tx/${txHash}`}
                     >
                       {selectedNetworkId === 1
-                        ? "https://sepolia.etherscan.io"
+                        ? "https://etherscan.io"
                         : `${
                             selectedNetworkId === 56
-                              ? "https://testnet.bscscan.com"
-                              : ""
+                              ? "https://bscscan.com"
+                              : `${
+                                  selectedNetworkId === 137
+                                    ? "https://polygonscan.com"
+                                    : ""
+                                }`
                           }`}
                       /tx/{txHash}
                     </Link>
@@ -670,20 +678,28 @@ const Staking = () => {
                       target="_blank"
                       to={`${
                         selectedNetworkId === 1
-                          ? "https://sepolia.etherscan.io"
+                          ? "https://etherscan.io"
                           : `${
                               selectedNetworkId === 56
-                                ? "https://testnet.bscscan.com"
-                                : ""
+                                ? "https://bscscan.com"
+                                : `${
+                                    selectedNetworkId === 137
+                                      ? "https://polygonscan.com"
+                                      : ""
+                                  }`
                             }`
                       }/tx/${txHash}`}
                     >
                       {selectedNetworkId === 1
-                        ? "https://sepolia.etherscan.io"
+                        ? "https://etherscan.io"
                         : `${
                             selectedNetworkId === 56
-                              ? "https://testnet.bscscan.com"
-                              : ""
+                              ? "https://bscscan.com"
+                              : `${
+                                  selectedNetworkId === 137
+                                    ? "https://polygonscan.com"
+                                    : ""
+                                }`
                           }`}
                       /tx/{txHash}
                     </Link>
