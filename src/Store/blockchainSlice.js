@@ -298,7 +298,7 @@ export const blockchainSlice = createSlice({
       if (action.payload?.walletProvider) {
         let { walletProvider } = action.payload;
 
-        web3Instance = new Web3(walletProvider.provider);
+        web3Instance = new Web3(walletProvider);
       }
       state.web3Inst_ETH = web3Instance;
       state.contractInstICO_ETH = new web3Instance.eth.Contract(
@@ -332,7 +332,7 @@ export const blockchainSlice = createSlice({
 
       if (action.payload?.walletProvider) {
         let { walletProvider } = action.payload;
-        web3InstanceBNB = new Web3(walletProvider.provider);
+        web3InstanceBNB = new Web3(walletProvider);
       }
       state.web3Inst_BNB = web3InstanceBNB;
       state.contractInstICO_BNB = new web3InstanceBNB.eth.Contract(
@@ -369,7 +369,7 @@ export const blockchainSlice = createSlice({
 
       if (action.payload?.walletProvider) {
         let { walletProvider } = action.payload;
-        web3InstancePOLYGON = new Web3(walletProvider.provider);
+        web3InstancePOLYGON = new Web3(walletProvider);
       }
       state.web3Inst_POLYGON = web3InstancePOLYGON;
       state.contractInstICO_POLYGON = new web3InstancePOLYGON.eth.Contract(

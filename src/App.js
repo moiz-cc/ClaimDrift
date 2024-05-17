@@ -14,7 +14,7 @@ import {
   defaultConfig,
   useWeb3ModalState,
   useWeb3ModalAccount,
-  useWeb3ModalSigner,
+  useWeb3ModalProvider,
 } from "@web3modal/ethers5/react";
 import {
   createInstance,
@@ -53,7 +53,7 @@ function App() {
     contractInstDriftStake_POLYGON,
     contractInstStakePool_POLYGON,
   } = useSelector((state) => state.Blockchain);
-  const { walletProvider } = useWeb3ModalSigner();
+  const { walletProvider } = useWeb3ModalProvider();
 
   // 1. Get projectId
   const projectId = process.env.REACT_APP_PROJECT_ID;
@@ -219,7 +219,7 @@ function App() {
   }, [contractInstDrift_ETH, contractInstDrift_BNB, contractInstDrift_POLYGON]);
 
   useEffect(() => {
-    if (isConnected && walletProvider?.provider && !isWeb3InstanceConnect) {
+    if (isConnected && walletProvider && !isWeb3InstanceConnect) {
       dispatch(createInstance({ walletProvider }));
       setIsWeb3InstanceConnect(true);
     }

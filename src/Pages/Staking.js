@@ -1109,13 +1109,13 @@ col-12 col-sm-6 pe-0 ps-0 ps-sm-2 d-flex justify-content-end align-items-end "
                               className="btn BtnStyle2 bg-pink  fw-bold mt-3 text-uppercase text-white shadow-none"
                               onClick={(e) => allow()}
                               disabled={
+                                user?.stakeDrift === undefined ||
                                 Number(user?.stakeDrift) === 0 ||
                                 user === null ||
-                                user?.stakeDrift === undefined ||
                                 isLocked
                               }
                             >
-                              Unstake
+                              Allow
                             </button>
                           ) : (
                             <button
