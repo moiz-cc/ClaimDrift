@@ -15,7 +15,7 @@ import { useDispatch, useSelector } from "react-redux";
 
 import {
   useWeb3ModalAccount,
-  useWeb3ModalSigner,
+  useWeb3ModalProvider,
 } from "@web3modal/ethers5/react";
 import {
   GetUSDPrice,
@@ -37,16 +37,11 @@ function App() {
     contractInstPresaleToken_ETH,
     contractInstDrift_ETH,
     contractInstClaim_ETH,
-
     contractInstStakePool_ETH,
     contractInstDriftStake_ETH,
-
-    // contractInstTokenBNB,
     web3Inst_ETH,
-    // contractInstICO_BNB,
-    // web3Inst_BNB,
   } = useSelector((state) => state.Blockchain);
-  const { walletProvider } = useWeb3ModalSigner();
+  const { walletProvider } = useWeb3ModalProvider();
 
   // 1. Get projectId
   const projectId = process.env.REACT_APP_PROJECT_ID;
@@ -178,39 +173,39 @@ function App() {
   ]);
 
   useEffect(() => {
-    if (isConnected && walletProvider?.provider && !isWeb3InstanceConnect) {
+    if (isConnected && walletProvider && !isWeb3InstanceConnect) {
       dispatch(createInstance({ walletProvider }));
       setIsWeb3InstanceConnect(true);
     }
     loadUserData();
   }, [isConnected, walletProvider, isWeb3InstanceConnect, address]);
 
-  useEffect(() => {
-    const InterID = setInterval(() => {
-      if (_timeout.current !== null && _timeout.current > Date.now()) return;
-      _timeout.current = null;
+  // useEffect(() => {
+  //   const InterID = setInterval(() => {
+  //     if (_timeout.current !== null && _timeout.current > Date.now()) return;
+  //     _timeout.current = null;
 
-      axios
-        .get(
-          process.env.REACT_APP_BASE_URL + "ethereum,binancecoin,matic-network",
-          {
-            headers: {
-              "x-cg-pro-api-key": "CG-1EK5GnU4Ka429EFRG5F3m7dy",
-            },
-          }
-        )
-        .then((response) => {
-          dispatch(UpdateUSDPrice(response.data));
-        })
-        .catch((e) => {
-          console.log(e.message);
-          _timeout.current = new Date().getTime() + 60;
-        });
-    }, 10000);
-    return () => {
-      clearInterval(InterID);
-    };
-  }, [selectedNetworkId]);
+  //     axios
+  //       .get(
+  //         process.env.REACT_APP_BASE_URL + "ethereum,binancecoin,matic-network",
+  //         {
+  //           headers: {
+  //             "x-cg-pro-api-key": "CG-1EK5GnU4Ka429EFRG5F3m7dy",
+  //           },
+  //         }
+  //       )
+  //       .then((response) => {
+  //         dispatch(UpdateUSDPrice(response.data));
+  //       })
+  //       .catch((e) => {
+  //         console.log(e.message);
+  //         _timeout.current = new Date().getTime() + 60;
+  //       });
+  //   }, 10000);
+  //   return () => {
+  //     clearInterval(InterID);
+  //   };
+  // }, [selectedNetworkId]);
 
   useEffect(() => {}, [address, isConnected, selectedNetworkId]);
 

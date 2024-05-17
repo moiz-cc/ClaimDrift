@@ -22,7 +22,6 @@ const initialState = {
   contractInstStakePool_ETH: null,
   contractInstDriftStake_ETH: null,
 
-
   contractInstICO_BNB: null,
   web3Inst_BNB: null,
   contractInstTokenBNB: null,
@@ -208,7 +207,7 @@ export const LoadUser = createAsyncThunk(
         dynamicDrift,
         stakeDrift,
         claimed: (balance == 0 && Staked > 0) || Dynamic > 0 ? true : false,
-        is_allowed: is_allowed === balance && balance !== 0,
+        is_allowed: is_allowed >= balance && balance !== 0,
       };
     } catch (error) {
       console.log(error);
@@ -247,7 +246,7 @@ export const blockchainSlice = createSlice({
       let web3Instance = new Web3(process.env.REACT_APP_RPC_ETH);
       if (action.payload?.walletProvider) {
         let { walletProvider } = action.payload;
-        web3Instance = new Web3(walletProvider.provider);
+        web3Instance = new Web3(walletProvider);
       }
       state.web3Inst_ETH = web3Instance;
       state.contractInstICO_ETH = new web3Instance.eth.Contract(
@@ -280,7 +279,7 @@ export const blockchainSlice = createSlice({
       // let web3InstanceBNB = new Web3(process.env.REACT_APP_RPC_BNB);
       // if (action.payload?.walletProvider) {
       //   let { walletProvider } = action.payload;
-      //   web3InstanceBNB = new Web3(walletProvider.provider);
+      //   web3InstanceBNB = new Web3(walletProvider);
       // }
       // state.web3Inst_BNB = web3InstanceBNB;
       // state.contractInstICO_BNB = new web3InstanceBNB.eth.Contract(
