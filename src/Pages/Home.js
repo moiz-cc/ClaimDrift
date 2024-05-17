@@ -16,6 +16,7 @@ import twitter from "../Assets/Images/Twitter_Icon.png";
 import breakdown from "../Assets/Images/AllocationBreakdown.png";
 import presaleFunds from "../Assets/Images/PresaleUseofFunds.png";
 import token from "../Assets/Images/Drift_Icon.svg";
+
 import Presale from "../Assets/Images/Presale.svg";
 import Lp from "../Assets/Images/Lp.svg";
 import ReserveTank from "../Assets/Images/ReserveTank.svg";
@@ -27,7 +28,6 @@ import Loading from "../Assets/Images/loading.gif";
 import paul from "../Assets/Images/paul.svg";
 import michael from "../Assets/Images/michael.svg";
 import sophie from "../Assets/Images/sophie.svg";
-
 import checked from "../Assets/Images/marked.png";
 import unchecked from "../Assets/Images/unmarked.png";
 
@@ -42,34 +42,44 @@ import {
 } from "@web3modal/ethers5/react";
 import ConvertNumber from "../Helpers/ConvertNumber";
 
-import { LoadBlockchainData, LoadUser } from "../Store/blockchainSlice";
+import {
+  LoadBlockchainData,
+  LoadPoolData,
+  LoadUser,
+} from "../Store/blockchainSlice";
+import Loader from "../Component/Loading";
 
 function Home() {
   const dispatch = useDispatch();
   const {
     publicBlockchainData: data,
     user,
-    contractInstICO_ETH,
-    contractInstICO_BNB,
-    contractInstICO_POLYGON,
-    contractInstPresaleToken_ETH,
-    contractInstTokenBNB,
-    contractInstTokenPOLYGON,
-    contractInstClaim_ETH,
-    contractInstClaimBNB,
-    contractInstClaimPOLYGON,
-    contractInstDrift_ETH,
-    contractInstDriftStake_ETH,
-    web3Inst_ETH,
     isLoading,
+
+    web3Inst_ETH,
+    contractInstICO_ETH,
+    contractInstPresaleToken_ETH,
+    contractInstDrift_ETH,
+    contractInstClaim_ETH,
+    contractInstDriftStake_ETH,
     contractInstStakePool_ETH,
     web3Inst_BNB,
+    contractInstICO_BNB,
+    contractInstPresaleToken_BNB,
+    contractInstDrift_BNB,
+    contractInstClaim_BNB,
+    contractInstDriftStake_BNB,
+    contractInstStakePool_BNB,
     web3Inst_POLYGON,
+    contractInstPresaleToken_POLYGON,
+    contractInstICO_POLYGON,
+    contractInstDrift_POLYGON,
+    contractInstClaim_POLYGON,
+    contractInstDriftStake_POLYGON,
+    contractInstStakePool_POLYGON,
   } = useSelector((state) => state.Blockchain);
 
-  const date = Date.now() / 1000;
-
-  const { address, isConnected, chainId } = useWeb3ModalAccount();
+  const { address, chainId } = useWeb3ModalAccount();
   const { selectedNetworkId } = useWeb3ModalState();
   const { open } = useWeb3Modal();
 
@@ -78,13 +88,9 @@ function Home() {
   const [loading, setLoading] = useState(false);
   const [txHash, setTxHash] = useState("");
 
-  const [isAmbassador, setIsAmbassador] = useState(null);
-
   const [errors, setErrors] = useState({
     transaction: "",
   });
-
-  const [needAllowance, setNeedAllowance] = useState(false);
 
   function scroll() {
     document
@@ -110,44 +116,56 @@ function Home() {
 
     setLoading(true);
 
-    let presale_TokenAddress;
-    let claim_TokenAddress;
-    let token_Inst;
-    let ico_Inst;
-    let claim_Inst;
-    let pool_inst;
-    let stake_inst;
-    let drift_inst;
-    let stakingpool_address;
+    let Presale_TokenAddress;
+    let Claim_TokenAddress;
+    let PresaleToken_Inst;
+    let ICO_Inst;
+    let Claim_Inst;
+    let Pool_Inst;
+    let Stake_Drift_Inst;
+    let Drift_Inst;
+    let Pool_Address;
+    let Web3_Inst;
 
     if (selectedNetworkId === 11155111 && chainId === 11155111) {
-      presale_TokenAddress = process.env.REACT_APP_TOKEN_CONTRACT_ETH;
-      claim_TokenAddress = process.env.REACT_APP_CLAIM_ETH;
-      token_Inst = contractInstPresaleToken_ETH;
-      ico_Inst = contractInstICO_ETH;
-      claim_Inst = contractInstClaim_ETH;
-      pool_inst = contractInstStakePool_ETH;
-      stake_inst = contractInstDriftStake_ETH;
-      drift_inst = contractInstDrift_ETH;
-      stakingpool_address = process.env.REACT_APP_ST_POOL_DRIFT_ETH;
-    } else if (selectedNetworkId === 97 && chainId === 97) {
-      presale_TokenAddress = process.env.REACT_APP_TOKEN_CONTRACT_BNB;
-      claim_TokenAddress = process.env.REACT_APP_CLAIM_BNB;
-      token_Inst = contractInstTokenBNB;
-      ico_Inst = contractInstICO_BNB;
-      claim_Inst = contractInstClaimBNB;
-    } else if (selectedNetworkId === 80001 && chainId === 80001) {
-      presale_TokenAddress = process.env.REACT_APP_TOKEN_CONTRACT_POLYGON;
-      claim_TokenAddress = process.env.REACT_APP_CLAIM_POLYGON;
-      token_Inst = contractInstTokenPOLYGON;
-      ico_Inst = contractInstICO_POLYGON;
-      claim_Inst = contractInstClaimPOLYGON;
+      Web3_Inst = web3Inst_ETH;
+      Presale_TokenAddress = process.env.REACT_APP_TOKEN_CONTRACT_ETH;
+      Claim_TokenAddress = process.env.REACT_APP_CLAIM_ETH;
+      PresaleToken_Inst = contractInstPresaleToken_ETH;
+      ICO_Inst = contractInstICO_ETH;
+      Claim_Inst = contractInstClaim_ETH;
+      Pool_Inst = contractInstStakePool_ETH;
+      Stake_Drift_Inst = contractInstDriftStake_ETH;
+      Drift_Inst = contractInstDrift_ETH;
+      Pool_Address = process.env.REACT_APP_ST_POOL_DRIFT_ETH;
+    } else if (selectedNetworkId === 56 && chainId === 56) {
+      Web3_Inst = web3Inst_BNB;
+      Presale_TokenAddress = process.env.REACT_APP_TOKEN_CONTRACT_BNB;
+      Claim_TokenAddress = process.env.REACT_APP_CLAIM_BNB;
+      PresaleToken_Inst = contractInstPresaleToken_BNB;
+      ICO_Inst = contractInstICO_BNB;
+      Claim_Inst = contractInstClaim_BNB;
+      Pool_Inst = contractInstStakePool_BNB;
+      Stake_Drift_Inst = contractInstDriftStake_BNB;
+      Drift_Inst = contractInstDrift_BNB;
+      Pool_Address = process.env.REACT_APP_ST_POOL_DRIFT_BNB;
+    } else if (selectedNetworkId === 137 && chainId === 137) {
+      Web3_Inst = web3Inst_POLYGON;
+      Presale_TokenAddress = process.env.REACT_APP_TOKEN_CONTRACT_POLYGON;
+      Claim_TokenAddress = process.env.REACT_APP_CLAIM_POLYGON;
+      PresaleToken_Inst = contractInstPresaleToken_POLYGON;
+      ICO_Inst = contractInstICO_POLYGON;
+      Claim_Inst = contractInstClaim_POLYGON;
+      Pool_Inst = contractInstStakePool_POLYGON;
+      Stake_Drift_Inst = contractInstDriftStake_POLYGON;
+      Drift_Inst = contractInstDrift_POLYGON;
+      Pool_Address = process.env.REACT_APP_ST_POOL_DRIFT_POLYGON;
     } else return;
 
     try {
-      const approve = await token_Inst.methods.approve(
-        claim_TokenAddress,
-        user?.balance + 0
+      const approve = await PresaleToken_Inst.methods.approve(
+        Claim_TokenAddress,
+        user?.balance + 0 || 0
       );
 
       const estimateGas = await approve.estimateGas({
@@ -156,7 +174,7 @@ function Home() {
 
       const transaction = approve.send({
         from: address,
-        to: presale_TokenAddress,
+        to: Presale_TokenAddress,
         gas: estimateGas,
         maxPriorityFeePerGas: 50000000000,
       });
@@ -172,15 +190,22 @@ function Home() {
           setErrors((state) => ({ ...state, transaction: "" }));
           dispatch(
             LoadUser({
-              contractInstICO_ETH,
+              web3Inst: Web3_Inst,
+              contractInstICO: ICO_Inst,
               address,
-              contractInstPresaleToken_ETH,
-              claim_address: claim_TokenAddress,
-              contractInstClaim_ETH: claim_Inst,
-              contractInstStakePool_ETH: pool_inst,
-              contractInstDriftStake_ETH: stake_inst,
-              contractInstDrift_ETH: drift_inst,
-              pool_address: stakingpool_address,
+              contractInstPresaleToken: PresaleToken_Inst,
+              contractInstClaim: Claim_Inst,
+              claimAddress: Claim_TokenAddress,
+              contractInstStakePool: Pool_Inst,
+              contractInstDriftStake: Stake_Drift_Inst,
+              contractInstDrift: Drift_Inst,
+              pool_address: Pool_Address,
+            })
+          );
+          dispatch(
+            LoadPoolData({
+              web3Inst: Web3_Inst,
+              contractInstStakePool: Pool_Inst,
             })
           );
 
@@ -217,70 +242,57 @@ function Home() {
     setTransactionModal(true);
     setLoading(true);
 
-    let claim_Address;
-    let claim_Inst;
-    let token_Inst;
-
-    let pool_inst;
-    let stake_inst;
-    let drift_inst;
-    let stakingpool_address;
+    let Claim_Address;
+    let Claim_Inst;
+    let PresaleToken_Inst;
+    let ICO_Inst;
+    let Pool_Inst;
+    let Stake_Drift_Inst;
+    let Drift_Inst;
+    let Pool_Address;
+    let Web3_Inst;
 
     if (selectedNetworkId === 11155111 && chainId === 11155111) {
-      claim_Inst = contractInstClaim_ETH;
-      claim_Address = process.env.REACT_APP_CLAIM_ETH;
-      token_Inst = contractInstPresaleToken_ETH;
-      pool_inst = contractInstStakePool_ETH;
-      stake_inst = contractInstDriftStake_ETH;
-      drift_inst = contractInstDrift_ETH;
-      stakingpool_address = process.env.REACT_APP_ST_POOL_DRIFT_ETH;
-    } else if (selectedNetworkId === 97 && chainId === 97) {
-      claim_Inst = contractInstClaimBNB;
-      claim_Address = process.env.REACT_APP_CLAIM_BNB;
-      token_Inst = contractInstTokenBNB;
-    } else if (selectedNetworkId === 80001 && chainId === 80001) {
-      claim_Inst = contractInstClaimPOLYGON;
-      claim_Address = process.env.REACT_APP_CLAIM_POLYGON;
-      token_Inst = contractInstTokenPOLYGON;
+      Web3_Inst = web3Inst_ETH;
+      Claim_Inst = contractInstClaim_ETH;
+      Claim_Address = process.env.REACT_APP_CLAIM_ETH;
+      PresaleToken_Inst = contractInstPresaleToken_ETH;
+      ICO_Inst = contractInstICO_ETH;
+      Pool_Inst = contractInstStakePool_ETH;
+      Stake_Drift_Inst = contractInstDriftStake_ETH;
+      Drift_Inst = contractInstDrift_ETH;
+      Pool_Address = process.env.REACT_APP_ST_POOL_DRIFT_ETH;
+    } else if (selectedNetworkId === 56 && chainId === 56) {
+      Web3_Inst = web3Inst_BNB;
+      Claim_Inst = contractInstClaim_BNB;
+      Claim_Address = process.env.REACT_APP_CLAIM_BNB;
+      PresaleToken_Inst = contractInstPresaleToken_BNB;
+      ICO_Inst = contractInstICO_BNB;
+      Pool_Inst = contractInstStakePool_BNB;
+      Stake_Drift_Inst = contractInstDriftStake_BNB;
+      Drift_Inst = contractInstDrift_BNB;
+      Pool_Address = process.env.REACT_APP_ST_POOL_DRIFT_BNB;
+    } else if (selectedNetworkId === 137 && chainId === 137) {
+      Web3_Inst = web3Inst_POLYGON;
+      Claim_Inst = contractInstClaim_POLYGON;
+      Claim_Address = process.env.REACT_APP_CLAIM_POLYGON;
+      PresaleToken_Inst = contractInstPresaleToken_POLYGON;
+      ICO_Inst = contractInstICO_POLYGON;
+      Pool_Inst = contractInstStakePool_POLYGON;
+      Stake_Drift_Inst = contractInstDriftStake_POLYGON;
+      Drift_Inst = contractInstDrift_POLYGON;
+      Pool_Address = process.env.REACT_APP_ST_POOL_DRIFT_POLYGON;
     }
 
-    // const is_allowed = await token_Inst.methods
-    //   .allowance(address, claim_Address)
-    //   .call();
-
-    // console.log(user?.balance, is_allowed);
-
-    // if (Number(is_allowed) < Number(user?.balance)) {
-    //   console.log("Allowance Required");
-    //   console.log(is_allowed);
-    //   setErrors((state) => ({
-    //     ...state,
-    //     transaction: "Allow Presale Token",
-    //   }));
-    //   setTimeout(() => {
-    //     setLoading(false);
-    //   }, 2000);
-    //   setTimeout(() => {
-    //     setTransactionModal(false);
-    //     setErrors((state) => ({
-    //       ...state,
-    //       transaction: "",
-    //     }));
-    //     setNeedAllowance(true);
-    //   }, 5000);
-    //   return;
-    // }
-
     try {
-      const claimTokens = await claim_Inst.methods.claimTokens();
-
+      const claimTokens = await Claim_Inst.methods.claimTokens();
       const estimateGas = await claimTokens.estimateGas({
         from: address,
       });
 
       const transaction = claimTokens.send({
         from: address,
-        to: claim_Address,
+        to: Claim_Address,
         gas: estimateGas,
         maxPriorityFeePerGas: 50000000000,
       });
@@ -296,25 +308,33 @@ function Home() {
           setErrors((state) => ({ ...state, transaction: "" }));
           dispatch(
             LoadUser({
-              contractInstICO_ETH,
+              web3Inst: Web3_Inst,
+              contractInstICO: ICO_Inst,
               address,
-              contractInstPresaleToken_ETH,
-              claim_address: claim_Address,
-              contractInstClaim_ETH: claim_Inst,
-              contractInstStakePool_ETH: pool_inst,
-              contractInstDriftStake_ETH: stake_inst,
-              contractInstDrift_ETH: drift_inst,
-              pool_address: stakingpool_address,
+              contractInstPresaleToken: PresaleToken_Inst,
+              contractInstClaim: Claim_Inst,
+              claimAddress: Claim_Address,
+              contractInstStakePool: Pool_Inst,
+              contractInstDriftStake: Stake_Drift_Inst,
+              contractInstDrift: Drift_Inst,
+              pool_address: Pool_Address,
             })
           );
           dispatch(
+            LoadPoolData({
+              web3Inst: Web3_Inst,
+              contractInstStakePool: Pool_Inst,
+            })
+          );
+
+          dispatch(
             LoadBlockchainData({
-              contractInstICO_ETH,
               web3Inst_ETH,
               contractInstDrift_ETH,
-              contractInstStakePool_ETH,
-              // contractInstICO_BNB,
-              // web3Inst_BNB,
+              web3Inst_BNB,
+              contractInstDrift_BNB,
+              web3Inst_POLYGON,
+              contractInstDrift_POLYGON,
             })
           );
           setLoading(false);
@@ -342,8 +362,6 @@ function Home() {
 
   const closeTransactionModal = () => {
     setTransactionModal(false);
-
-    setIsAmbassador(null);
 
     setErrors({
       transaction: "",
@@ -457,12 +475,23 @@ function Home() {
                       <span className="fw-bold">Import contract :</span>{" "}
                       {selectedNetworkId === 11155111
                         ? process.env.REACT_APP_DRIFT_ETH
-                        : selectedNetworkId === 97
+                        : selectedNetworkId === 56
                         ? process.env.REACT_APP_DRIFT_BNB
-                        : selectedNetworkId === 80001
+                        : selectedNetworkId === 137
                         ? process.env.REACT_APP_DRIFT_POLYGON
                         : null}{" "}
                       to view your tokens.{" "}
+                    </p>
+                    <p className="text-start text-black ">
+                      <span className="fw-bold">Import Stake contract :</span>{" "}
+                      {selectedNetworkId === 11155111
+                        ? process.env.REACT_APP_ST_DRIFT_ETH
+                        : selectedNetworkId === 56
+                        ? process.env.REACT_APP_ST_DRIFT_BNB
+                        : selectedNetworkId === 137
+                        ? process.env.REACT_APP_ST_DRIFT_POLYGON
+                        : null}{" "}
+                      to view your stake tokens.{" "}
                     </p>
                     <p className="text-start text-black mb-0 fw-bold">
                       Transaction link:
@@ -471,32 +500,31 @@ function Home() {
                       target="_blank"
                       to={`${
                         selectedNetworkId === 11155111
-                          ? "https://sepolia.etherscan.io"
+                          ? "https://etherscan.io"
                           : `${
-                              selectedNetworkId === 97
-                                ? "https://testnet.bscscan.com"
-                                : ""
+                              selectedNetworkId === 56
+                                ? "https://bscscan.com"
+                                : `${
+                                    selectedNetworkId === 137
+                                      ? "https://polygonscan.com"
+                                      : ""
+                                  }`
                             }`
                       }/tx/${txHash}`}
                     >
                       {selectedNetworkId === 11155111
-                        ? "https://sepolia.etherscan.io"
+                        ? "https://etherscan.io"
                         : `${
-                            selectedNetworkId === 97
-                              ? "https://testnet.bscscan.com"
-                              : ""
+                            selectedNetworkId === 56
+                              ? "https://bscscan.com"
+                              : `${
+                                  selectedNetworkId === 137
+                                    ? "https://polygonscan.com"
+                                    : ""
+                                }`
                           }`}
                       /tx/{txHash}
                     </Link>
-                    {/* <p
-                      className="text-start text-black mt-3"
-                      style={{ fontSize: 12 }}
-                    >
-                      Note this is just representative of your true claim, which
-                      will not be available until the time of token launch.
-                      Presale tokens are non transferable and considered the
-                      responsibility of the holder to maintain access to.
-                    </p> */}
                   </>
                 )}
               </>
@@ -510,7 +538,7 @@ function Home() {
           <div className="DriftTokenSectionContainer row m-0 w-100 align-items-stretch">
             <div className="col-12 col-md-6 p-0 pe-md-3">
               <div className="m-0 p-0">
-                <video className="w-100" autoPlay muted loop>
+                <video className="w-100 rounded-4" autoPlay muted loop>
                   <source src="/PayoutPersuit.mp4" type="video/mp4"></source>
                 </video>
               </div>
@@ -523,29 +551,29 @@ function Home() {
                 <div className="my-3">
                   <p>
                     Payout Pursuit is a groundbreaking Web3 skills-based racing
-                    game that is played on browser. The V1 (Beta Version) is
-                    ready-to-play, requiring no downloads and no wallet
-                    connection.
+                    game that is played on browser.
                   </p>
-
                   <p>
-                    V2 will see Web3 integration, allowing racers to race
-                    against each other for crypto prizes. We will also introduce
-                    cross chain connectivity to expand the player universe.
+                    The V1 (Beta Version) was ready-to-play, requiring no
+                    downloads and no wallet connection.
+                  </p>
+                  <p>
+                    V2 brings Web3 integration, allowing racers to race against
+                    each other for crypto prizes with cross chain connectivity
+                    to expand the player universe.
                   </p>
 
                   <p className="m-0">
-                    Start honing your skills now to be ready to earn once
-                    version 2 is unveiled!
+                    Start honing your skills now! version 2 is unveiled!
                   </p>
                 </div>
                 <Link
-                  className={`FooterMenuContainer_Link `}
+                  className={`FooterMenuContainer_Link`}
                   to={"https://play.payoutpursuit.com/"}
                   target="_blank"
                 >
                   <button className="white BtnStyle1 shadow-none">
-                    Play Beta
+                    Play V2
                   </button>
                 </Link>
               </div>
@@ -559,200 +587,206 @@ function Home() {
               className=" col-12 col-md-6 p-0 pe-md-3 rounded-4 position-relative"
               id="Presale_Form"
             >
-              {isLoading && (
+              {isLoading ? (
                 <div
-                  className="w-100 h-100 bg-white position-absolute rounded-4 d-flex justify-content-center align-items-center"
+                  className="w-100 h-100 bg-white  rounded-4 d-flex justify-content-center align-items-center py-5"
                   style={{ zIndex: 9 }}
                 >
-                  <img src={Loading} style={{ width: 50 }} alt="loading" />
+                  <Loader />
+                </div>
+              ) : (
+                <div
+                  className="DTSC_Col rounded-4 bg-white mt-4 mt-md-0 position-relative  "
+                  id="claim"
+                >
+                  <h2 className="DTSC_Heading text-black mb-0 text-uppercase ">
+                    Claim $DRIFT Token
+                  </h2>
+                  <div className="row m-0 mt-3 w-100">
+                    <div className="d-flex align-items-start p-0">
+                      <img alt="" src={dot} style={{ marginRight: 10 }} />
+                      <p className="m-0">
+                        Total Remaining Claims{" "}
+                        <span style={{ fontWeight: "bold" }}>
+                          {numberWithCommas(Number(data?.tokensToClaim || 0))}
+                        </span>
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="mt-5">
+                    <div className="NetworkButtons_Row row m-0 w-100">
+                      <p className="p-0">Select Network</p>
+                      <div className="col-12 col-xl-4 col-lg-6 col-sm-6  p-0 pe-lg-2 pe-sm-2 mb-2 mb-xl-0">
+                        <button
+                          onClick={() => open({ view: "Networks" })}
+                          className={`BtnStyle2 ${
+                            selectedNetworkId === 11155111 &&
+                            chainId === 11155111
+                              ? "active"
+                              : ""
+                          }`}
+                        >
+                          <img alt="" src={eth} className="me-1" />
+                          ETH
+                        </button>
+                      </div>
+                      <div className="col-12 col-xl-4 col-lg-6 col-sm-6 p-0 pe-xl-2 mb-2 mb-xl-0">
+                        <button
+                          onClick={() => open({ view: "Networks" })}
+                          className={`BtnStyle2 ${
+                            selectedNetworkId === 56 && chainId === 56
+                              ? "active"
+                              : ""
+                          }`}
+                        >
+                          <img alt="" src={bnb} className="me-1" />
+                          BNB
+                        </button>
+                      </div>
+                      <div className="col-12 col-xl-4 col-lg-6 col-sm-6 p-0">
+                        <button
+                          onClick={() => open({ view: "Networks" })}
+                          className={`BtnStyle2 ${
+                            selectedNetworkId === 137 && chainId === 137
+                              ? "active"
+                              : ""
+                          }`}
+                        >
+                          <img alt="" src={polygon} className="me-1" />
+                          Polygon
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="mt-5 position-relative">
+                    {user?.balance != 0 ? (
+                      <form className="position-relative">
+                        <div className="row p-0 m-0 ">
+                          <div className="col-12 p-0">
+                            <label>
+                              <p>PreDrift Tokens</p>
+                            </label>
+                            <div className="input align-items-center">
+                              <input
+                                readOnly
+                                className="input-field"
+                                type="number"
+                                name="no_of_tokens"
+                                id="no_of_tokens"
+                                value={
+                                  ConvertNumber(Number(user?.balance), true) ||
+                                  0
+                                }
+                                style={{ marginRight: 15 }}
+                              />
+                              <img src={token} alt="" width={32} height={32} />
+                            </div>
+                          </div>
+                        </div>
+                        <div className="row p-0 m-0 mt-3">
+                          <div className="col-12 col-xl-6 ps-0 pe-0 pe-xl-2">
+                            <label>
+                              <p>Staked Tokens</p>
+                            </label>
+                            <div className="input align-items-center">
+                              <input
+                                readOnly
+                                className="input-field"
+                                type="number"
+                                name="no_of_tokens"
+                                id="no_of_tokens"
+                                value={user?.Staked || 0}
+                                style={{ marginRight: 15 }}
+                              />
+                              <img src={token} alt="" width={32} height={32} />
+                            </div>
+                          </div>
+                          <div
+                            className="
+                      col-12 col-xl-6 mt-4 mt-xl-0 pe-0 ps-0 ps-xl-2"
+                          >
+                            <label>
+                              <p>Dynamic Tokens</p>
+                            </label>
+                            <div className="input align-items-center">
+                              <input
+                                readOnly
+                                className="input-field"
+                                type="number"
+                                name="no_of_tokens"
+                                id="no_of_tokens"
+                                value={user?.Dynamic || 0}
+                                style={{ marginRight: 15 }}
+                              />
+
+                              <img src={token} alt="" width={32} height={32} />
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="d-flex mt-5 flex-column align-items-baseline justify-content-between flex-xxl-row align-items-xxl-center">
+                          <div className="mb-3 mb-xxl-0">
+                            {user?.is_allowed ? (
+                              <button
+                                className="btn pinkBtn  BtnStyle1 text-white"
+                                onClick={handleSubmit}
+                                disabled={user?.balance === undefined}
+                              >
+                                Claim $Drift
+                              </button>
+                            ) : (
+                              <button
+                                className="btn pinkBtn  BtnStyle1 text-white"
+                                disabled={user?.balance === undefined}
+                                onClick={allow}
+                              >
+                                Claim $Drift
+                              </button>
+                            )}
+                          </div>
+                          <Link
+                            to="/utilities"
+                            style={{ fontWeight: 800 }}
+                            className="text-uppercase"
+                          >
+                            Learn About Coin Utility
+                          </Link>
+                        </div>
+                      </form>
+                    ) : (
+                      <div
+                        style={{ height: 264 }}
+                        className="white rounded-4  p-3 d-flex align-items-center justify-content-center"
+                      >
+                        {user?.claimed && user?.balance == 0 ? (
+                          <div className="d-flex flex-column justify-content-center align-items-center">
+                            <img src={driftLogo} height={100} />
+                            <p className="m-0 p-0 mt-3 text-center  align-self-center">
+                              🎉{" "}
+                              <span className="Home_Hero_Section_SubHeading fw-bold text-uppercase text-black">
+                                Congratulations!
+                              </span>
+                              <br />
+                              You've successfully claimed your Drift Token!{" "}
+                            </p>
+                          </div>
+                        ) : (
+                          <div>
+                            <p className="m-0 p-0 mt-3 text-center  fw-bold">
+                              No Presale DRIFT tokens found in connected wallet.
+                            </p>
+                            <p className="m-0 p-0 mt-3 text-center  ">
+                              Unable to claim tokens at the moment.
+                            </p>
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </div>
                 </div>
               )}
-
-              <div
-                className="DTSC_Col rounded-4 bg-white mt-4 mt-md-0 position-relative shadow-none "
-                id="claim"
-              >
-                <h2 className="DTSC_Heading text-black mb-0 text-uppercase ">
-                  Claim $DRIFT Token
-                </h2>
-                <div className="row m-0 mt-3 w-100">
-                  <div className="d-flex align-items-start p-0">
-                    <img alt="" src={dot} style={{ marginRight: 10 }} />
-                    <p className="m-0">
-                      Total Remaining Claims{" "}
-                      <span style={{ fontWeight: "bold" }}>
-                        {numberWithCommas(Number(data?.tokensToClaim)) || ""}
-                      </span>
-                    </p>
-                  </div>
-                </div>
-
-                <div className="mt-5">
-                  <div className="NetworkButtons_Row row m-0 w-100">
-                    <p className="p-0">Select Network</p>
-                    <div className="col-12 col-xl-4 col-lg-6 col-sm-6  p-0 pe-lg-2 pe-sm-2 mb-2 mb-xl-0">
-                      <button
-                        onClick={() => open({ view: "Networks" })}
-                        className={`BtnStyle2 ${
-                          selectedNetworkId === 11155111 && chainId === 11155111
-                            ? "active"
-                            : ""
-                        }`}
-                      >
-                        <img alt="" src={eth} className="me-1" />
-                        ETH
-                      </button>
-                    </div>
-                    <div className="col-12 col-xl-4 col-lg-6 col-sm-6 p-0 pe-xl-2 mb-2 mb-xl-0">
-                      <button
-                        onClick={() => open({ view: "Networks" })}
-                        className={`BtnStyle2 ${
-                          selectedNetworkId === 97 && chainId === 97
-                            ? "active"
-                            : ""
-                        }`}
-                      >
-                        <img alt="" src={bnb} className="me-1" />
-                        BNB
-                      </button>
-                    </div>
-                    <div className="col-12 col-xl-4 col-lg-6 col-sm-6 p-0">
-                      <button
-                        onClick={() => open({ view: "Networks" })}
-                        className={`BtnStyle2 ${
-                          selectedNetworkId === 80001 && chainId === 80001
-                            ? "active"
-                            : ""
-                        }`}
-                      >
-                        <img alt="" src={polygon} className="me-1" />
-                        Polygon
-                      </button>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="mt-5 position-relative">
-                  {user?.balance != 0 ? (
-                    <form className="position-relative">
-                      <div className="row p-0 m-0 ">
-                        <div className="col-12 p-0">
-                          <label>
-                            <p>PreDrift Tokens</p>
-                          </label>
-                          <div className="input align-items-center">
-                            <input
-                              readOnly
-                              className="input-field"
-                              type="number"
-                              name="no_of_tokens"
-                              id="no_of_tokens"
-                              value={ConvertNumber(user?.balance, true) || 0}
-                              style={{ marginRight: 15 }}
-                            />
-                            <img src={token} alt="" width={32} height={32} />
-                          </div>
-                        </div>
-                      </div>
-                      <div className="row p-0 m-0 mt-3">
-                        <div className="col-12 col-xl-6 ps-0 pe-0 pe-xl-2">
-                          <label>
-                            <p>Staked Tokens</p>
-                          </label>
-                          <div className="input align-items-center">
-                            <input
-                              readOnly
-                              className="input-field"
-                              type="number"
-                              name="no_of_tokens"
-                              id="no_of_tokens"
-                              value={user?.Staked || 0}
-                              style={{ marginRight: 15 }}
-                            />
-                            <img src={token} alt="" width={32} height={32} />
-                          </div>
-                        </div>
-                        <div
-                          className="
-                      col-12 col-xl-6 mt-4 mt-xl-0 pe-0 ps-0 ps-xl-2"
-                        >
-                          <label>
-                            <p>Dynamic Tokens</p>
-                          </label>
-                          <div className="input align-items-center">
-                            <input
-                              readOnly
-                              className="input-field"
-                              type="number"
-                              name="no_of_tokens"
-                              id="no_of_tokens"
-                              value={user?.Dynamic || 0}
-                              style={{ marginRight: 15 }}
-                            />
-
-                            <img src={token} alt="" width={32} height={32} />
-                          </div>
-                        </div>
-                      </div>
-
-                      <div className="d-flex mt-5 flex-column align-items-baseline justify-content-between flex-xxl-row align-items-xxl-center">
-                        <div className="mb-3 mb-xxl-0">
-                          {user?.is_allowed ? (
-                            <button
-                              className="pinkBtn BtnStyle1"
-                              onClick={handleSubmit}
-                            >
-                              Claim $Drift
-                            </button>
-                          ) : (
-                            <button
-                              className="pinkBtn BtnStyle1"
-                              onClick={allow}
-                            >
-                              Allow pre $drift
-                            </button>
-                          )}
-                        </div>
-                        <Link
-                          to="/utilities"
-                          style={{ fontWeight: 800 }}
-                          className="text-uppercase"
-                        >
-                          Learn About Coin Utility
-                        </Link>
-                      </div>
-                    </form>
-                  ) : (
-                    <div
-                      style={{ height: 264 }}
-                      className="white rounded-4  p-3 d-flex align-items-center justify-content-center"
-                    >
-                      {user?.claimed && user?.balance == 0 ? (
-                        <div className="d-flex flex-column justify-content-center align-items-center">
-                          <img src={driftLogo} height={100} />
-                          <p className="m-0 p-0 mt-3 text-center  align-self-center">
-                            🎉{" "}
-                            <span className="Home_Hero_Section_SubHeading fw-bold text-uppercase text-black">
-                              Congratulations!
-                            </span>
-                            <br />
-                            You've successfully claimed your Drift Token!{" "}
-                          </p>
-                        </div>
-                      ) : (
-                        <div>
-                          <p className="m-0 p-0 mt-3 text-center  fw-bold">
-                            No Presale $DRIFT tokens found in connected wallet.
-                          </p>
-                          <p className="m-0 p-0 mt-3 text-center  ">
-                            Unable to claim tokens at the moment.
-                          </p>
-                        </div>
-                      )}
-                    </div>
-                  )}
-                </div>
-              </div>
             </div>
             <div className="col-12 col-md-6 p-0 ps-md-3 pt-3 pt-md-0 ">
               <div className="p-0 h-100">
@@ -773,13 +807,11 @@ function Home() {
               {/* <div className="py-3">
                 <div className="DTSC_Col rounded-4 bg-white">
                   <p className="DTSC_SubHeading mb-0 text-uppercase fw-bold text-black">
-                    Ambassador Payout to date
+                  Ambassador Payout to date
                   </p>
                   <h2 className="DTSC_Heading text-black mb-0">
-                    ${(data?.ambassadors_payout * ethPrice || 0).toFixed()}
-                  </h2>
-                </div>
-              </div>
+                   ${(data?.ambassadors_payout * ethPrice || 0).toFixed()}
+                  
               <div className="p-0">
                 <div className="DTSC_Col rounded-4 bg-white">
                   <div className="d-flex justify-content-between align-items-center">

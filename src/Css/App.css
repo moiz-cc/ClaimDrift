@@ -844,7 +844,6 @@ input::-webkit-inner-spin-button {
   }
 }
 
-
 /* 
 *****************************************************
                     Ambassador Page CSS 
@@ -1091,7 +1090,7 @@ input::-webkit-inner-spin-button {
 /* *********************************************
             Leaderboard Section Css
 ********************************************* */
-
+.overflowAuto,
 .Leaderboard_BoardCol {
   overflow: auto;
 }

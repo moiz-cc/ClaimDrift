@@ -1,14 +1,24 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import Web3 from "web3";
 import {
+  claimAbi_BNB,
   claimAbi_ETH,
+  claimAbi_POLYGON,
   crowdSaleAbi_BNB,
   crowdSaleAbi_ETH,
+  crowdSaleAbi_POLYGON,
   driftAbi_ETH,
-  driftStakeAbi_ETH,
-  driftStakePoolAbi_ETH,
+  driftAbi_BNB,
+  driftAbi_POLYGON,
   presaletokenAbi_BNB,
   presaletokenAbi_ETH,
+  presaletokenAbi_POLYGON,
+  driftStakeAbi_ETH,
+  driftStakePoolAbi_ETH,
+  driftStakeAbi_BNB,
+  driftStakePoolAbi_BNB,
+  driftStakeAbi_POLYGON,
+  driftStakePoolAbi_POLYGON,
 } from "../config/abi";
 import ConvertNumber from "../Helpers/ConvertNumber";
 import axios from "axios";
@@ -22,20 +32,28 @@ const initialState = {
   contractInstStakePool_ETH: null,
   contractInstDriftStake_ETH: null,
 
-  contractInstICO_BNB: null,
   web3Inst_BNB: null,
-  contractInstTokenBNB: null,
-  contractInstClaimBNB: null,
-  contractInstICO_POLYGON: null,
+  contractInstPresaleToken_BNB: null,
+  contractInstICO_BNB: null,
+  contractInstDrift_BNB: null,
+  contractInstClaim_BNB: null,
+  contractInstStakePool_BNB: null,
+  contractInstDriftStake_BNB: null,
+
   web3Inst_POLYGON: null,
-  contractInstTokenPOLYGON: null,
-  contractInstClaimPOLYGON: null,
+  contractInstPresaleToken_POLYGON: null,
+  contractInstICO_POLYGON: null,
+  contractInstDrift_POLYGON: null,
+  contractInstClaim_POLYGON: null,
+  contractInstStakePool_POLYGON: null,
+  contractInstDriftStake_POLYGON: null,
+
+  pool: null,
   user: null,
   publicBlockchainData: null,
   ethPrice: null,
   bnbPrice: null,
   maticPrice: null,
-  ambassadorList: null,
   isLoading: false,
   error: null,
 };
@@ -62,84 +80,118 @@ export const LoadBlockchainData = createAsyncThunk(
   "LoadBlockchainData",
   async (
     {
-      contractInstICO_ETH,
       web3Inst_ETH,
       contractInstDrift_ETH,
-      contractInstStakePool_ETH,
-
-      // , contractInstICO_BNB, web3Inst_BNB
+      web3Inst_BNB,
+      contractInstDrift_BNB,
+      web3Inst_POLYGON,
+      contractInstDrift_POLYGON,
     },
     { rejectWithValue }
   ) => {
     try {
       // const stage = 4;
 
-      const [
-        totalFunds,
-        tokensTransferredLap2,
-        tokensTransferredLap1,
-        tokensTransferredWarmup,
-        tokensToClaim,
-      ] = await makeBatchRequest(web3Inst_ETH, [
-        contractInstICO_ETH.methods.totalReceivedFunds().call,
-        contractInstICO_ETH.methods.tokensTransferred(4).call,
-        contractInstICO_ETH.methods.tokensTransferred(2).call,
-        contractInstICO_ETH.methods.tokensTransferred(1).call,
+      // const tokensToClaim_ETH = await contractInstDrift_ETH.methods
+      //   .allowance(
+      //     process.env.REACT_APP_OWNER_ADDRESS,
+      //     process.env.REACT_APP_CLAIM_ETH
+      //   )
+      //   .call();
+      // const tokensToClaim_BNB = await contractInstDrift_BNB.methods
+      //   .allowance(
+      //     process.env.REACT_APP_OWNER_ADDRESS,
+      //     process.env.REACT_APP_CLAIM_BNB
+      //   )
+      //   .call();
+      // const tokensToClaim_POLYGON = await contractInstDrift_POLYGON.methods
+      //   .allowance(
+      //     process.env.REACT_APP_OWNER_ADDRESS,
+      //     process.env.REACT_APP_CLAIM_POLYGON
+      //   )
+      //   .call();
+
+      const [tokensToClaim_ETH] = await makeBatchRequest(web3Inst_ETH, [
         contractInstDrift_ETH.methods.allowance(
           process.env.REACT_APP_OWNER_ADDRESS,
           process.env.REACT_APP_CLAIM_ETH
         ).call,
       ]);
-      const apy = await contractInstStakePool_ETH.methods.calculateAPY().call();
-      const total_pending_reward = await contractInstStakePool_ETH.methods
-        .getTotalPendingRewards()
-        .call();
-      const total_staked = await contractInstStakePool_ETH.methods
-        .totalStaked()
-        .call();
-      const stake_end_deadline = await contractInstStakePool_ETH.methods
-        .stakeEndDeadline()
-        .call();
 
-      // const [
-      //   totalFundsBNB,
+      // const [tokensToClaim_BNB] = await makeBatchRequest(web3Inst_BNB, [
+      //   contractInstDrift_BNB.methods.allowance(
+      //     process.env.REACT_APP_OWNER_ADDRESS,
+      //     process.env.REACT_APP_CLAIM_BNB
+      //   ).call,
+      // ]);
 
-      //   tokensTransferredLap2BNB,
-      //   tokensTransferredLap1BNB,
-      // ] = await makeBatchRequest(web3Inst_BNB, [
-      //   contractInstICO_BNB.methods.totalReceivedFunds().call,
-
-      //   contractInstICO_BNB.methods.tokensTransferred(4).call,
-      //   contractInstICO_BNB.methods.tokensTransferred(2).call,
+      // const [tokensToClaim_POLYGON] = await makeBatchRequest(web3Inst_POLYGON, [
+      //   contractInstDrift_POLYGON.methods.allowance(
+      //     process.env.REACT_APP_OWNER_ADDRESS,
+      //     process.env.REACT_APP_CLAIM_POLYGON
+      //   ).call,
       // ]);
 
       return {
-        total_funds_raised: ConvertNumber(totalFunds, true),
-        // total_funds_raisedBNB: ConvertNumber(totalFundsBNB, true),
+        // tokensTransferredLap2: ConvertNumber(
+        //   Number(tokensTransferredLap2) +
+        //     Number(tokensTransferredLap2BNB) +
+        //     Number(tokensTransferredLap2POLYGON),
+        //   true
+        // ),
+        // tokensTransferredLap1: ConvertNumber(
+        //   Number(tokensTransferredLap1) + Number(tokensTransferredLap1BNB),
+        //   true
+        // ),
+        // tokensTransferredWarmup: ConvertNumber(
+        //   Number(tokensTransferredWarmup),
+        //   true
+        // ),
+        // staking_limit: 2000000000,
 
-        tokensTransferredLap2: ConvertNumber(
-          Number(tokensTransferredLap2),
-          // + Number(tokensTransferredLap2BNB)
+        tokensToClaim: ConvertNumber(
+          Number(tokensToClaim_ETH),
+          // Number(tokensToClaim_BNB) +
+          // Number(tokensToClaim_POLYGON)
           true
         ),
-        tokensTransferredLap1: ConvertNumber(
-          Number(tokensTransferredLap1),
-          // + Number(tokensTransferredLap1BNB)
-          true
-        ),
-        tokensTransferredWarmup: ConvertNumber(
-          Number(tokensTransferredWarmup),
-          true
-        ),
-
-        tokensToClaim: ConvertNumber(Number(tokensToClaim), true),
-
+        // token_staked: ConvertNumber(
+        //   Number(token_staked) +
+        //     Number(token_stakedBNB) +
+        //     Number(token_stakedPOLYGON),
+        //   true
+        // ),
+      };
+    } catch (error) {
+      console.log(error);
+      return rejectWithValue(error);
+    }
+  }
+);
+export const LoadPoolData = createAsyncThunk(
+  "LoadPoolData",
+  async ({ web3Inst, contractInstStakePool }, { rejectWithValue }) => {
+    try {
+      const [
         apy,
-
         total_pending_reward,
         total_staked,
-
         stake_end_deadline,
+        stake_info,
+      ] = await makeBatchRequest(web3Inst, [
+        contractInstStakePool.methods.calculateAPY().call,
+        contractInstStakePool.methods.getTotalPendingRewards().call,
+        contractInstStakePool.methods.totalStaked().call,
+        contractInstStakePool.methods.stakeEndDeadline().call,
+        contractInstStakePool.methods.stakeInfo().call,
+      ]);
+
+      return {
+        apy,
+        total_staked,
+        total_pending_reward,
+        stake_end_deadline,
+        locked_time: stake_info?.lockedStake,
       };
     } catch (error) {
       console.log(error);
@@ -152,62 +204,60 @@ export const LoadUser = createAsyncThunk(
   "LoadUser",
   async (data, { rejectWithValue }) => {
     const {
-      contractInstICO_ETH,
+      web3Inst,
+      contractInstICO,
       address,
-      contractInstPresaleToken_ETH,
-      claim_address,
-      contractInstClaim_ETH,
-      contractInstStakePool_ETH,
-      contractInstDriftStake_ETH,
-      contractInstDrift_ETH,
+      contractInstPresaleToken,
+      contractInstClaim,
+      claimAddress,
+      contractInstStakePool,
+      contractInstDriftStake,
+      contractInstDrift,
       pool_address,
     } = data;
 
     try {
-      const balance = await contractInstPresaleToken_ETH.methods
-        .balanceOf(address)
-        .call();
-      const Staked = await contractInstICO_ETH.methods
-        .amountOfAddressPerType(address, 1)
-        .call();
-      const Dynamic = await contractInstICO_ETH.methods
-        .amountOfAddressPerType(address, 0)
-        .call();
+      const [
+        balance,
+        Staked,
+        Dynamic,
+        tokensToMove,
+        is_allowed,
+        stakeDrift,
+        is_pool_allowed,
+        dynamicDrift,
+        Reward,
+      ] = await makeBatchRequest(web3Inst, [
+        contractInstPresaleToken.methods.balanceOf(address).call,
+        contractInstICO.methods.amountOfAddressPerType(address, 1).call,
+        contractInstICO.methods.amountOfAddressPerType(address, 0).call,
+        contractInstClaim.methods.getStakeAmountOfDynamicToStake(address).call,
+        contractInstPresaleToken.methods.allowance(address, claimAddress).call,
+        contractInstDriftStake.methods.balanceOf(address).call,
+        contractInstDriftStake.methods.allowance(address, pool_address).call,
+        contractInstDrift.methods.balanceOf(address).call,
+        contractInstStakePool.methods.getPendingRewards(address).call,
+      ]);
 
-      const is_allowed = await contractInstPresaleToken_ETH.methods
-        .allowance(address, claim_address)
-        .call();
-
-      const tokensToMove = await contractInstClaim_ETH.methods
-        .getStakeAmountOfDynamicToStake(address)
-        .call();
-
-      const stakeDrift = await contractInstDriftStake_ETH.methods
-        .balanceOf(address)
-        .call();
-
-      const is_pool_allowed = await contractInstDriftStake_ETH.methods
-        .allowance(address, pool_address)
-        .call();
-
-      const dynamicDrift = await contractInstDrift_ETH.methods
-        .balanceOf(address)
-        .call();
-      const Reward = await contractInstStakePool_ETH.methods
-        .getPendingRewards(address)
+      const stakedTime = await contractInstStakePool.methods
+        .getUserInfo(address)
         .call();
 
       return {
         balance,
         Staked: ConvertNumber(Number(Staked) + Number(tokensToMove), true),
         Dynamic: ConvertNumber(Number(Dynamic) - Number(tokensToMove), true),
+        is_allowed:
+          Number(is_allowed) > 0 && Number(is_allowed) >= Number(balance),
+        claimed:
+          Number(balance) == 0 && (Number(Staked) > 0 || Number(Dynamic) > 0)
+            ? true
+            : false,
         is_pool_allowed: is_pool_allowed > 0,
-
         remaining_claim: Reward.pendingRewards,
         dynamicDrift,
         stakeDrift,
-        claimed: (balance == 0 && Staked > 0) || Dynamic > 0 ? true : false,
-        is_allowed: is_allowed >= balance && balance !== 0,
+        stakedTime: stakedTime.lastStakedTime,
       };
     } catch (error) {
       console.log(error);
@@ -244,8 +294,10 @@ export const blockchainSlice = createSlice({
   reducers: {
     createInstance: (state, action) => {
       let web3Instance = new Web3(process.env.REACT_APP_RPC_ETH);
+
       if (action.payload?.walletProvider) {
         let { walletProvider } = action.payload;
+
         web3Instance = new Web3(walletProvider);
       }
       state.web3Inst_ETH = web3Instance;
@@ -257,7 +309,6 @@ export const blockchainSlice = createSlice({
         presaletokenAbi_ETH,
         process.env.REACT_APP_TOKEN_CONTRACT_ETH
       );
-
       state.contractInstClaim_ETH = new web3Instance.eth.Contract(
         claimAbi_ETH,
         process.env.REACT_APP_CLAIM_ETH
@@ -266,6 +317,7 @@ export const blockchainSlice = createSlice({
         driftAbi_ETH,
         process.env.REACT_APP_DRIFT_ETH
       );
+      // New Inst ETH
       state.contractInstDriftStake_ETH = new web3Instance.eth.Contract(
         driftStakeAbi_ETH,
         process.env.REACT_APP_ST_DRIFT_ETH
@@ -276,21 +328,80 @@ export const blockchainSlice = createSlice({
       );
 
       // BNB INS
-      // let web3InstanceBNB = new Web3(process.env.REACT_APP_RPC_BNB);
-      // if (action.payload?.walletProvider) {
-      //   let { walletProvider } = action.payload;
-      //   web3InstanceBNB = new Web3(walletProvider);
-      // }
-      // state.web3Inst_BNB = web3InstanceBNB;
-      // state.contractInstICO_BNB = new web3InstanceBNB.eth.Contract(
-      //   crowdSaleAbi_BNB,
-      //   process.env.REACT_APP_CROWDSALE_BNB
-      // );
+      let web3InstanceBNB = new Web3(process.env.REACT_APP_RPC_BNB);
 
-      // state.contractInstTokenBNB = new web3InstanceBNB.eth.Contract(
-      //   presaletokenAbi_BNB,
-      //   process.env.REACT_APP_TOKEN_CONTRACT_BNB
-      // );
+      if (action.payload?.walletProvider) {
+        let { walletProvider } = action.payload;
+        web3InstanceBNB = new Web3(walletProvider);
+      }
+      state.web3Inst_BNB = web3InstanceBNB;
+      state.contractInstICO_BNB = new web3InstanceBNB.eth.Contract(
+        crowdSaleAbi_BNB,
+        process.env.REACT_APP_CROWDSALE_BNB
+      );
+
+      state.contractInstPresaleToken_BNB = new web3InstanceBNB.eth.Contract(
+        presaletokenAbi_BNB,
+        process.env.REACT_APP_TOKEN_CONTRACT_BNB
+      );
+
+      state.contractInstClaim_BNB = new web3InstanceBNB.eth.Contract(
+        claimAbi_BNB,
+        process.env.REACT_APP_CLAIM_BNB
+      );
+
+      state.contractInstDrift_BNB = new web3InstanceBNB.eth.Contract(
+        driftAbi_BNB,
+        process.env.REACT_APP_DRIFT_BNB
+      );
+
+      state.contractInstDriftStake_BNB = new web3InstanceBNB.eth.Contract(
+        driftStakeAbi_BNB,
+        process.env.REACT_APP_ST_DRIFT_BNB
+      );
+      state.contractInstStakePool_BNB = new web3InstanceBNB.eth.Contract(
+        driftStakePoolAbi_BNB,
+        process.env.REACT_APP_ST_POOL_DRIFT_BNB
+      );
+
+      // POLYGON INS
+      let web3InstancePOLYGON = new Web3(process.env.REACT_APP_RPC_POLYGON);
+
+      if (action.payload?.walletProvider) {
+        let { walletProvider } = action.payload;
+        web3InstancePOLYGON = new Web3(walletProvider);
+      }
+      state.web3Inst_POLYGON = web3InstancePOLYGON;
+      state.contractInstICO_POLYGON = new web3InstancePOLYGON.eth.Contract(
+        crowdSaleAbi_POLYGON,
+        process.env.REACT_APP_CROWDSALE_POLYGON
+      );
+      state.contractInstPresaleToken_POLYGON =
+        new web3InstancePOLYGON.eth.Contract(
+          presaletokenAbi_POLYGON,
+          process.env.REACT_APP_TOKEN_CONTRACT_POLYGON
+        );
+
+      state.contractInstClaim_POLYGON = new web3InstancePOLYGON.eth.Contract(
+        claimAbi_POLYGON,
+        process.env.REACT_APP_CLAIM_POLYGON
+      );
+
+      state.contractInstDrift_POLYGON = new web3InstancePOLYGON.eth.Contract(
+        driftAbi_POLYGON,
+        process.env.REACT_APP_DRIFT_POLYGON
+      );
+
+      state.contractInstDriftStake_POLYGON =
+        new web3InstancePOLYGON.eth.Contract(
+          driftStakeAbi_POLYGON,
+          process.env.REACT_APP_ST_DRIFT_POLYGON
+        );
+      state.contractInstStakePool_POLYGON =
+        new web3InstancePOLYGON.eth.Contract(
+          driftStakePoolAbi_POLYGON,
+          process.env.REACT_APP_ST_POOL_DRIFT_POLYGON
+        );
     },
 
     UpdateUser: (state, action) => {
@@ -316,13 +427,11 @@ export const blockchainSlice = createSlice({
     builder.addCase(LoadBlockchainData.fulfilled, (state, action) => {
       state.isLoading = false;
 
-      // state.ambassadorList = [...action.payload.ambassadors_list];
-      state.ambassadorList = action.payload.ambassadors_list;
       state.publicBlockchainData = { ...action.payload };
     });
     builder.addCase(LoadBlockchainData.rejected, (state, action) => {
       state.isLoading = false;
-      console.log("Builder Rejected");
+      console.log("Blockchain Builder Rejected");
     });
     builder.addCase(LoadUser.pending, (state, action) => {
       state.isLoading = true;
@@ -333,7 +442,18 @@ export const blockchainSlice = createSlice({
     });
     builder.addCase(LoadUser.rejected, (state, action) => {
       state.isLoading = false;
-      console.log("Builder Rejected");
+      console.log("User Builder Rejected");
+    });
+    builder.addCase(LoadPoolData.pending, (state, action) => {
+      state.isLoading = true;
+    });
+    builder.addCase(LoadPoolData.fulfilled, (state, action) => {
+      state.isLoading = false;
+      state.pool = { ...action.payload };
+    });
+    builder.addCase(LoadPoolData.rejected, (state, action) => {
+      state.isLoading = false;
+      console.log("Pool Builder Rejected");
     });
     builder.addCase(GetUSDPrice.pending, (state, action) => {});
     builder.addCase(GetUSDPrice.fulfilled, (state, action) => {

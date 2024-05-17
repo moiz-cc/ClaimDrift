@@ -16,7 +16,7 @@ function Header() {
   const { selectedNetworkId } = useWeb3ModalState();
   const { web3Inst_ETH } = useSelector((state) => state.Blockchain);
 
-  const supportChain = [11155111, 97, 80001];
+  const supportChain = [11155111];
 
   useEffect(() => {
     if (
@@ -30,7 +30,7 @@ function Header() {
         web3Inst_ETH.currentProvider
           .request({
             method: "wallet_switchEthereumChain",
-            params: [{ chainId: "0xaa36a7" }],
+            params: [{ chainId: "0x1" }],
           })
           .catch((e) => console.log(e)))();
     }
@@ -83,6 +83,16 @@ function Header() {
                   to={"/ambassador"}
                 >
                   Amba$$ador
+                </Link>
+              </li>
+              <li className="list-group-item border-0 bg-transparent p-0 ms-4">
+                <Link
+                  className={`HeaderMenuContainer_Link text-uppercase ${
+                    location.pathname === "/staking-portal" ? "Active" : ""
+                  }`}
+                  to={"/staking-portal"}
+                >
+                  Staking Portal
                 </Link>
               </li>
             </ul>
@@ -177,6 +187,20 @@ function Header() {
                     to={"/ambassador"}
                   >
                     Amba$$ador
+                  </Link>
+                </li>
+                <li
+                  className={`list-group-item border-0 rounded-0 SideBarMenu_ListItem py-2 px-3 ${
+                    location.pathname === "/staking-portal" ? "Active" : ""
+                  }`}
+                >
+                  <Link
+                    className={`HeaderMenuContainer_Link ${
+                      location.pathname === "/staking-portal" ? "Active" : ""
+                    }`}
+                    to={"/staking-portal"}
+                  >
+                    Staking Portal
                   </Link>
                 </li>
               </ul>

@@ -45,12 +45,14 @@ body {
   border: 2px solid #ff98d1;
 }
 button,
-.Copy {
+.BtnStyle2,
+.BtnStyle1 .Copy {
   transition: all 0.3s ease-in-out;
   cursor: pointer;
 }
 button:hover,
-.Copy:hover {
+.BtnStyle2:hover,
+.BtnStyle1:hover .Copy:hover {
   transform: scale(1.05);
 }
 
