@@ -8,6 +8,7 @@ import Wallet from "../Assets/Images/wallet.svg";
 import { useWeb3Modal, useWeb3ModalState } from "@web3modal/ethers5/react";
 import { useWeb3ModalAccount } from "@web3modal/ethers5/react";
 import { useSelector } from "react-redux";
+import { Links } from "../config/Links";
 
 function Header() {
   const location = useLocation();
@@ -53,59 +54,29 @@ function Header() {
           </div>
 
           <div className="HeaderMenuContainer ">
-            <ul className="HeaderMenuItems m-0 list-group d-flex align-items-center flex-row">
-              <li className="list-group-item border-0 bg-transparent p-0">
-                <Link
-                  className={`HeaderMenuContainer_Link text-uppercase ${
-                    location.pathname === "/" ? "Active" : ""
-                  }`}
-                  to={"/"}
-                >
-                  Home
-                </Link>
-              </li>
-              <li className="list-group-item border-0 bg-transparent p-0 mx-4">
-                <Link
-                  className={`HeaderMenuContainer_Link text-uppercase ${
-                    location.pathname === "/utilities" ? "Active" : ""
-                  }`}
-                  to={"/utilities"}
-                >
-                  Utilities
-                </Link>
-              </li>
-
-              <li className="list-group-item border-0 bg-transparent p-0">
-                <Link
-                  className={`HeaderMenuContainer_Link text-uppercase ${
-                    location.pathname === "/ambassador" ? "Active" : ""
-                  }`}
-                  to={"/ambassador"}
-                >
-                  Amba$$ador
-                </Link>
-              </li>
-              <li className="list-group-item border-0 bg-transparent p-0 ms-4">
-                <Link
-                  className={`HeaderMenuContainer_Link text-uppercase ${
-                    location.pathname === "/staking-portal" ? "Active" : ""
-                  }`}
-                  to={"/staking-portal"}
-                >
-                  Staking Portal
-                </Link>
-              </li>
+            <ul className="HeaderMenuItems m-0 list-group d-flex align-items-center flex-row gap-xl-3 gap-2">
+              {Links?.map((linkItem, index) => {
+                const { title, link } = linkItem;
+                return (
+                  <li
+                    className="list-group-item border-0 bg-transparent p-0"
+                    key={index}
+                  >
+                    <Link
+                      className={`HeaderMenuContainer_Link text-uppercase ${
+                        location.pathname === link ? "Active" : ""
+                      }`}
+                      to={link}
+                    >
+                      {title || ""}
+                    </Link>
+                  </li>
+                );
+              })}
             </ul>
           </div>
           <div className="HeaderRight d-flex align-items-center">
             <div className="HeaderBtnContainer">
-              {/* <Link
-              to={"https://play.payoutpursuit.com/"}
-              style={{ color: "#ff008c" }}
-              target="_blank"
-            >
-              <button className="white BtnStyle1">Play</button>
-            </Link> */}
               <button className="transparent BtnStyle1" onClick={() => open()}>
                 {!isConnected ? (
                   <p className="m-0 text-white">Connect Wallet</p>
@@ -147,62 +118,26 @@ function Header() {
             </div>
             <div className="SideBar_MenuContainer mt-3">
               <ul className="m-0 list-group d-flex  flex-column">
-                <li
-                  className={`list-group-item border-0 rounded-0 SideBarMenu_ListItem py-2 px-3 ${
-                    location.pathname === "/" ? "Active" : ""
-                  }`}
-                >
-                  <Link
-                    className={`HeaderMenuContainer_Link   ${
-                      location.pathname === "/" ? "Active" : ""
-                    }`}
-                    to={"/"}
-                  >
-                    Home
-                  </Link>
-                </li>
-                <li
-                  className={`list-group-item border-0 rounded-0 SideBarMenu_ListItem py-2 px-3 ${
-                    location.pathname === "/utilities" ? "Active" : ""
-                  }`}
-                >
-                  <Link
-                    className={`HeaderMenuContainer_Link ${
-                      location.pathname === "/utilities" ? "Active" : ""
-                    }`}
-                    to={"/utilities"}
-                  >
-                    Utilities
-                  </Link>
-                </li>
-                <li
-                  className={`list-group-item border-0 rounded-0 SideBarMenu_ListItem py-2 px-3 ${
-                    location.pathname === "/ambassador" ? "Active" : ""
-                  }`}
-                >
-                  <Link
-                    className={`HeaderMenuContainer_Link ${
-                      location.pathname === "/ambassador" ? "Active" : ""
-                    }`}
-                    to={"/ambassador"}
-                  >
-                    Amba$$ador
-                  </Link>
-                </li>
-                <li
-                  className={`list-group-item border-0 rounded-0 SideBarMenu_ListItem py-2 px-3 ${
-                    location.pathname === "/staking-portal" ? "Active" : ""
-                  }`}
-                >
-                  <Link
-                    className={`HeaderMenuContainer_Link ${
-                      location.pathname === "/staking-portal" ? "Active" : ""
-                    }`}
-                    to={"/staking-portal"}
-                  >
-                    Staking Portal
-                  </Link>
-                </li>
+                {Links?.map((linkItem, index) => {
+                  const { title, link } = linkItem;
+                  return (
+                    <li
+                      className={`list-group-item border-0 rounded-0 SideBarMenu_ListItem p-0 ${
+                        location.pathname === link ? "Active" : ""
+                      }`}
+                      key={index}
+                    >
+                      <Link
+                        className={`SideBarMenu_ListItem_Link d-block text-uppercase SideBarMenu_ListItem w-100 py-2 px-3 ${
+                          location.pathname === link ? "Active" : ""
+                        }`}
+                        to={link}
+                      >
+                        {title || ""}
+                      </Link>
+                    </li>
+                  );
+                })}
               </ul>
             </div>
           </div>

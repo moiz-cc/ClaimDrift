@@ -83,38 +83,29 @@ input::-webkit-inner-spin-button {
 
 .HomeHeroSection {
   background-image: url("./Assets/Images/HomeBg.png");
-  padding-top: 160px;
-  padding-bottom: 80px;
-  background-size: cover;
-  background-position: bottom;
-  border-bottom-right-radius: 300px;
-  height: 600px;
 }
 .UtilitiesHeroSection {
   background-image: url("./Assets/Images/Supra.jpg");
+}
+.AmbassadorHeroSection {
+  background-image: url("./Assets/Images/Ambassador\ Background.png");
+}
+.StakingHeroSection {
+  background-image: url("./Assets/Images/Staking-pagebg.jpg");
+}
+.CrossSwapSection {
+  background-image: url("./Assets/Images/Staking-pagebg.jpg");
+}
+.HomeHeroSection,
+.UtilitiesHeroSection,
+.AmbassadorHeroSection,
+.StakingHeroSection,
+.CrossSwapSection {
   height: 600px;
   padding-top: 160px;
   padding-bottom: 80px;
   background-size: cover;
   background-position: bottom;
-  border-bottom-right-radius: 300px;
-}
-.AmbassadorHeroSection {
-  height: 600px;
-  background-image: url("./Assets/Images/Ambassador\ Background.png");
-  padding-top: 160px;
-  padding-bottom: 80px;
-  background-size: cover;
-  background-position: right center;
-  border-bottom-right-radius: 300px;
-}
-.StakingHeroSection {
-  height: 600px;
-  background-image: url("./Assets/Images/Staking-pagebg.jpg");
-  padding-top: 160px;
-  padding-bottom: 80px;
-  background-size: cover;
-  background-position: center center;
   border-bottom-right-radius: 300px;
 }
 .SocialIcon {
@@ -178,7 +169,8 @@ tr {
   .HomeHeroSection,
   .UtilitiesHeroSection,
   .AmbassadorHeroSection,
-  .StakingHeroSection {
+  .StakingHeroSection,
+  .CrossSwapSection {
     height: auto;
     padding-bottom: 60px;
     border-radius: 0;

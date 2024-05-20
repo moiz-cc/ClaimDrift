@@ -1,5 +1,4 @@
-import "./Css/App.css";
-
+import "./App.css";
 import Header from "./Component/Header";
 import Home from "./Pages/Home";
 import Footer from "./Component/Footer";
@@ -26,6 +25,7 @@ import { LoadUser, LoadPoolData } from "./Store/blockchainSlice.js";
 import PrivacyPolicy from "./Pages/PrivacyPolicy.js";
 import PriceRiskDisclosure from "./Pages/PriceRiskDisclosure.js";
 import Staking from "./Pages/Staking.js";
+import CrossSwap from "./Pages/CrossSwap.js";
 import Tokenomics from "./Pages/Tokenomics.js";
 
 function App() {
@@ -253,6 +253,7 @@ function App() {
         <Route path="/ambassador" element={<Ambassador />} />
         <Route path="/privacy-policy" element={<PrivacyPolicy />} />
         <Route path="/staking-portal" element={<Staking />} />
+        <Route path="/cross-swap" element={<CrossSwap />} />
         <Route path="/03052024tok" element={<Tokenomics />} />
         <Route
           path="/price-risk-disclosure"

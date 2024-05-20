@@ -731,7 +731,7 @@ const Staking = () => {
           {!address && (
             <div
               className="h-100 w-100  position-absolute rounded-4 d-flex flex-column justify-content-center align-items-center p-5"
-              style={{ zIndex: 99, background: "rgba(0, 0, 0, 0.75)" }}
+              style={{ zIndex: 89, background: "rgba(0, 0, 0, 0.75)" }}
             >
               <p className="text-white text-center">
                 To explore our staking pool and all the rewards waiting for you,
