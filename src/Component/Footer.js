@@ -188,56 +188,7 @@ function Footer() {
                 height={28}
               />
             </div>
-            <div
-              className="d-flex justify-content-between align-items-center p-2 rounded-2 mt-3"
-              style={{
-                backgroundColor: "#222",
-                border: "1px solid #8b8b8b",
-              }}
-            >
-              <img src={bnb} className="me-3" alt="" width={24} height={24} />
-              <p className="mb-0 FooterContractAddress text-white">
-                {process.env.REACT_APP_DRIFT_BNB}
-              </p>
-              <img
-                src={copy}
-                className="Copy ms-3 YourCode_Copy_Icon"
-                alt=""
-                onClick={(e) =>
-                  HandleCopyCode(e, process.env.REACT_APP_DRIFT_BNB)
-                }
-                width={28}
-                height={28}
-              />
-            </div>
-            <div
-              className="d-flex justify-content-between align-items-center p-2 rounded-2 mt-3"
-              style={{
-                backgroundColor: "#222",
-                border: "1px solid #8b8b8b",
-              }}
-            >
-              <img
-                src={polygon}
-                className="me-3"
-                alt=""
-                width={24}
-                height={24}
-              />
-              <p className="mb-0 FooterContractAddress text-white">
-                {process.env.REACT_APP_DRIFT_POLYGON}
-              </p>
-              <img
-                src={copy}
-                className="Copy ms-3 YourCode_Copy_Icon"
-                alt=""
-                onClick={(e) =>
-                  HandleCopyCode(e, process.env.REACT_APP_DRIFT_POLYGON)
-                }
-                width={28}
-                height={28}
-              />
-            </div>
+
             <h3 className="FooterHeading my-4 text-white fw-bolder text-capitalize mb-4 text-white fw-bolder text-capitalize ">
               Stake Drift Token Address{" "}
             </h3>
@@ -258,56 +209,6 @@ function Footer() {
                 alt=""
                 onClick={(e) =>
                   HandleCopyCode(e, process.env.REACT_APP_ST_DRIFT_ETH)
-                }
-                width={28}
-                height={28}
-              />
-            </div>
-            <div
-              className="d-flex justify-content-between align-items-center p-2 rounded-2 mt-3"
-              style={{
-                backgroundColor: "#222",
-                border: "1px solid #8b8b8b",
-              }}
-            >
-              <img src={bnb} className="me-3" alt="" width={24} height={24} />
-              <p className="mb-0 FooterContractAddress text-white">
-                {process.env.REACT_APP_ST_DRIFT_BNB}
-              </p>
-              <img
-                src={copy}
-                className="Copy ms-3 YourCode_Copy_Icon"
-                alt=""
-                onClick={(e) =>
-                  HandleCopyCode(e, process.env.REACT_APP_ST_DRIFT_BNB)
-                }
-                width={28}
-                height={28}
-              />
-            </div>
-            <div
-              className="d-flex justify-content-between align-items-center p-2 rounded-2 mt-3"
-              style={{
-                backgroundColor: "#222",
-                border: "1px solid #8b8b8b",
-              }}
-            >
-              <img
-                src={polygon}
-                className="me-3"
-                alt=""
-                width={24}
-                height={24}
-              />
-              <p className="mb-0 FooterContractAddress text-white">
-                {process.env.REACT_APP_ST_DRIFT_POLYGON}
-              </p>
-              <img
-                src={copy}
-                className="Copy ms-3 YourCode_Copy_Icon"
-                alt=""
-                onClick={(e) =>
-                  HandleCopyCode(e, process.env.REACT_APP_ST_DRIFT_POLYGON)
                 }
                 width={28}
                 height={28}

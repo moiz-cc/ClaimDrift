@@ -243,6 +243,7 @@ export const LoadUser = createAsyncThunk(
         .getUserInfo(address)
         .call();
 
+      console.log(is_pool_allowed);
       return {
         balance,
         Staked: ConvertNumber(Number(Staked) + Number(tokensToMove), true),
@@ -253,7 +254,7 @@ export const LoadUser = createAsyncThunk(
           Number(balance) == 0 && (Number(Staked) > 0 || Number(Dynamic) > 0)
             ? true
             : false,
-        is_pool_allowed: is_pool_allowed > 0,
+        is_pool_allowed: Number(is_pool_allowed) > 0,
         remaining_claim: Reward.pendingRewards,
         dynamicDrift,
         stakeDrift,
