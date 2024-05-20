@@ -4,19 +4,15 @@ import eth from "../Assets/Images/Ethereum.svg";
 import polygon from "../Assets/Images/Polygon.svg";
 import presale_ended from "../Assets/Images/PresaleEnded.png";
 import driftLogo from "../Assets/Images/Drift Logo Spin.svg";
-
 import bnb from "../Assets/Images/BNB.svg";
-// import ambassadorIcon from "../Assets/Images/AmbassadorIcon.svg";
 import calendar from "../Assets/Images/calendar-icon.svg";
 import gold from "../Assets/Images/gold-icon.svg";
 import money from "../Assets/Images/money-icon.svg";
-import josh from "../Assets/Images/josh.svg";
 import linkedin from "../Assets/Images/LinkedIn_Icon.png";
 import twitter from "../Assets/Images/Twitter_Icon.png";
 import breakdown from "../Assets/Images/AllocationBreakdown.png";
 import presaleFunds from "../Assets/Images/PresaleUseofFunds.png";
 import token from "../Assets/Images/Drift_Icon.svg";
-
 import Presale from "../Assets/Images/Presale.svg";
 import Lp from "../Assets/Images/Lp.svg";
 import ReserveTank from "../Assets/Images/ReserveTank.svg";
@@ -25,16 +21,17 @@ import Ambassador from "../Assets/Images/Ambassador.svg";
 import Close from "../Assets/Images/Close.svg";
 import Error from "../Assets/Images/Error.svg";
 import Loading from "../Assets/Images/loading.gif";
-import paul from "../Assets/Images/paul.svg";
-import michael from "../Assets/Images/michael.svg";
-import sophie from "../Assets/Images/sophie.svg";
+
+import josh from "../Assets/Images/Josh.png";
+import paul from "../Assets/Images/Paul.png";
+import michael from "../Assets/Images/Michael.png";
+import sophie from "../Assets/Images/Sophie.png";
+
 import checked from "../Assets/Images/marked.png";
 import unchecked from "../Assets/Images/unmarked.png";
-
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { getErrorMessage } from "../blockchainErrors";
-
 import {
   useWeb3Modal,
   useWeb3ModalAccount,
@@ -55,7 +52,6 @@ function Home() {
     publicBlockchainData: data,
     user,
     isLoading,
-
     web3Inst_ETH,
     contractInstICO_ETH,
     contractInstPresaleToken_ETH,
@@ -82,12 +78,9 @@ function Home() {
   const { address, chainId } = useWeb3ModalAccount();
   const { selectedNetworkId } = useWeb3ModalState();
   const { open } = useWeb3Modal();
-
   const [transactionModal, setTransactionModal] = useState(false);
-
   const [loading, setLoading] = useState(false);
   const [txHash, setTxHash] = useState("");
-
   const [errors, setErrors] = useState({
     transaction: "",
   });
@@ -113,7 +106,6 @@ function Home() {
       return;
     }
     setTransactionModal(true);
-
     setLoading(true);
 
     let Presale_TokenAddress;
@@ -761,7 +753,11 @@ function Home() {
                       >
                         {user?.claimed && user?.balance == 0 ? (
                           <div className="d-flex flex-column justify-content-center align-items-center">
-                            <img src={driftLogo} height={100} />
+                            <img
+                              src={driftLogo}
+                              height={100}
+                              alt="drift_logo"
+                            />
                             <p className="m-0 p-0 mt-3 text-center  align-self-center">
                               🎉{" "}
                               <span className="Home_Hero_Section_SubHeading fw-bold text-uppercase text-black">
@@ -799,7 +795,11 @@ function Home() {
                     Don't miss out on this opportunity to secure your stake.
                   </p>
                   <div>
-                    <img src={presale_ended} className="img-fluid" />
+                    <img
+                      src={presale_ended}
+                      className="img-fluid"
+                      alt="drifting_car"
+                    />
                   </div>
                 </div>
               </div>
@@ -1155,7 +1155,7 @@ function Home() {
                         </li>
 
                         <li className="list-group-item p-0 border-0 mb-1 d-flex align-items-start bg-transparent">
-                          <img src={unchecked} className="me-2" />
+                          <img alt="" src={unchecked} className="me-2" />
                           China-market expansion in GameFi segment through
                           Chinese social media KOLs
                         </li>

@@ -399,14 +399,12 @@ const Staking = () => {
       }));
     }
 
-    // console.log(
-    //   "Token to Unstake",
-    //   Number(tokens_in_wei) >= Number(user?.stakeDrift)
-    // ? user?.stakeDrift
-    // : tokens_in_wei
-    // );
     try {
-      const unstake = await Pool_Inst.methods.unstake(tokens_in_wei);
+      const unstake = await Pool_Inst.methods.unstake(
+        Number(tokens_in_wei) >= Number(user?.stakeDrift)
+          ? user?.stakeDrift
+          : tokens_in_wei
+      );
 
       const estimateGas = await unstake.estimateGas({
         from: address,
