@@ -229,9 +229,6 @@ const Staking = () => {
 
     setLoading(true);
 
-    console.log(tokens);
-    console.log(user?.stakeDrift);
-
     let Claim_TokenAddress;
     let PresaleToken_Inst;
     let ICO_Inst;
@@ -345,7 +342,6 @@ const Staking = () => {
     // e.preventDefault();
 
     const tokens_in_wei = ConvertNumber(tokens);
-    console.log(tokens_in_wei);
 
     if (!address) {
       open();
@@ -396,11 +392,21 @@ const Staking = () => {
       Stake_Drift_Inst = contractInstDriftStake_POLYGON;
       Drift_Inst = contractInstDrift_POLYGON;
       Pool_Address = process.env.REACT_APP_ST_POOL_DRIFT_POLYGON;
+    } else {
+      setErrors((state) => ({
+        ...state,
+        transaction: "Something went wrong please refresh your page",
+      }));
     }
+
+    // console.log(
+    //   "Token to Unstake",
+    //   Number(tokens_in_wei) >= Number(user?.stakeDrift)
+    // ? user?.stakeDrift
+    // : tokens_in_wei
+    // );
     try {
-      const unstake = await contractInstStakePool_ETH.methods.unstake(
-        tokens_in_wei
-      );
+      const unstake = await Pool_Inst.methods.unstake(tokens_in_wei);
 
       const estimateGas = await unstake.estimateGas({
         from: address,
@@ -1115,7 +1121,7 @@ col-12 col-sm-6 pe-0 ps-0 ps-sm-2 d-flex justify-content-end align-items-end "
                                 isLocked
                               }
                             >
-                              Allow
+                              Unstake
                             </button>
                           ) : (
                             <button

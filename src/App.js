@@ -105,22 +105,16 @@ function App() {
   const { selectedNetworkId } = useWeb3ModalState();
 
   const getBlockchainData = () => {
-    if (
-      contractInstDrift_ETH &&
-      contractInstDrift_BNB &&
-      contractInstDrift_POLYGON
-    ) {
-      dispatch(
-        LoadBlockchainData({
-          web3Inst_ETH,
-          contractInstDrift_ETH,
-          web3Inst_BNB,
-          contractInstDrift_BNB,
-          web3Inst_POLYGON,
-          contractInstDrift_POLYGON,
-        })
-      );
-    }
+    dispatch(
+      LoadBlockchainData({
+        web3Inst_ETH,
+        contractInstDrift_ETH,
+        web3Inst_BNB,
+        contractInstDrift_BNB,
+        web3Inst_POLYGON,
+        contractInstDrift_POLYGON,
+      })
+    );
   };
 
   const getUserData = async () => {
@@ -207,16 +201,27 @@ function App() {
   };
 
   useEffect(() => {
-    if (
-      !contractInstDrift_ETH ||
-      !contractInstDrift_BNB ||
-      !contractInstDrift_POLYGON
-    ) {
+    if (!web3Inst_ETH || !web3Inst_BNB || !web3Inst_POLYGON) {
       loadcontract();
     }
-
-    getBlockchainData();
-  }, [contractInstDrift_ETH, contractInstDrift_BNB, contractInstDrift_POLYGON]);
+    if (
+      contractInstDrift_ETH &&
+      contractInstDrift_BNB &&
+      contractInstDrift_POLYGON &&
+      web3Inst_ETH &&
+      web3Inst_BNB &&
+      web3Inst_POLYGON
+    ) {
+      getBlockchainData();
+    }
+  }, [
+    contractInstDrift_ETH,
+    contractInstDrift_BNB,
+    contractInstDrift_POLYGON,
+    web3Inst_ETH,
+    web3Inst_BNB,
+    web3Inst_POLYGON,
+  ]);
 
   useEffect(() => {
     if (isConnected && walletProvider && !isWeb3InstanceConnect) {
