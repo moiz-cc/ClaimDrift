@@ -14,6 +14,10 @@
 
 body {
   font-family: "Public Sans", sans-serif;
+  background-color: #e9e9e9;
+}
+.bodyBgColor {
+  background-color: #e9e9e9;
 }
 .customStartBorder {
   border-left: 1px solid #fff;
@@ -55,7 +59,9 @@ button:hover,
 .BtnStyle1:hover .Copy:hover {
   transform: scale(1.05);
 }
-
+.removeBtnTransform:hover {
+  transform: scale(1);
+}
 /* @media (max-width: 991px) {
   .BtnStyle2 {
     width: 50%;
@@ -80,7 +86,20 @@ input::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
-
+.FS_14 {
+  font-size: 14px;
+}
+.FS_12 {
+  font-size: 12px;
+}
+@media (max-width: 768px) {
+  .FS_14 {
+    font-size: 12px;
+  }
+  .FS_12 {
+    font-size: 10px;
+  }
+}
 .HomeHeroSection {
   background-image: url("./Assets/Images/HomeBg.png");
 }
@@ -101,7 +120,7 @@ input::-webkit-inner-spin-button {
 .AmbassadorHeroSection,
 .StakingHeroSection,
 .CrossSwapSection {
-  height: 600px;
+  min-height: 600px;
   padding-top: 160px;
   padding-bottom: 80px;
   background-size: cover;

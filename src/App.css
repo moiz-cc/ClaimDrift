@@ -4,10 +4,6 @@
     url("./Assets/Fonts/EurostileExtendedBlack.ttf") format("ttf");
 }
 
-.App {
-  text-align: center;
-}
-
 .App-logo {
   height: 40vmin;
   pointer-events: none;
@@ -1202,14 +1198,93 @@ input::-webkit-inner-spin-button {
                     Cross Swap CSS 
 ***************************************************** 
 */
-.CrossSwapSection_Container {
-  width: 600px;
-}
-@media (max-width: 768px) {
+/* .CrossSwapSection_Container {
+  width: 700px;
+} */
+/* @media (max-width: 768px) {
   .CrossSwapSection_Container {
     width: 100%;
   }
+} */
+
+/* 
+*****************************************************
+                    Stepper CSS 
+***************************************************** */
+
+.stepper-vertical {
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  position: relative;
 }
+
+.step {
+  position: relative;
+  padding-left: 2.5rem;
+  min-height: 100px;
+}
+
+.step::before {
+  content: " ";
+  position: absolute;
+  left: 16px;
+  top: 32px;
+  bottom: 0;
+  width: 2px;
+  background-color: #000000;
+  z-index: 1;
+}
+.step.active::before {
+  background: linear-gradient(
+    214deg,
+    #ff6abd -2.56%,
+    #ff008c 45.94%,
+    #8f0157 82.09%
+  );
+}
+
+.step:last-child {
+  min-height: auto;
+}
+
+.step:last-child::before {
+  bottom: 100%;
+}
+
+.step-circle {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  background-color: #000000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: hsl(0, 0%, 100%);
+  font-size: 0.75rem;
+}
+
+.step.active .step-circle {
+  background: linear-gradient(
+    214deg,
+    #ff6abd -2.56%,
+    #ff008c 45.94%,
+    #8f0157 82.09%
+  );
+}
+
+.step-title {
+  font-weight: bold;
+}
+
+.step-content {
+  width: "100%";
+  font-size: 14px;
+}
+
 /* *********************************************
             Privacy Policy Css
 ********************************************* */
