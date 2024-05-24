@@ -270,3 +270,13 @@ tr {
 .max-btn:hover {
   transform: scale(1);
 }
+
+.CrossSwapSectionCardContainer {
+  width: 600px;
+  margin: auto;
+}
+@media (max-width: 768px) {
+  .CrossSwapSectionCardContainer {
+    width: 100%;
+  }
+}

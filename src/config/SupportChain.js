@@ -1,27 +1,30 @@
 import Polygon from "../Assets/Images/polygon-matic-logo.png";
 import BNB from "../Assets/Images/bnb-bnb-logo.png";
 import Ethereum from "../Assets/Images/ethereum-eth-logo.png";
-const SupportTokens = [
+const SupportChain = [
   {
     chainId: 1,
     name: "Ethereum",
-    secondaryName: "ETH",
+    currency: "ETH",
+    selector: "5009297550715157269",
     icon: Ethereum,
-    value: 0,
+    value: "",
   },
   {
     chainId: 137,
     name: "Polygon",
-    secondaryName: "Polygon",
+    currency: "MATIC",
+    selector: "4051577828743386545",
     icon: Polygon,
-    value: 0,
+    value: "",
   },
   {
     chainId: 56,
     name: "Binance Smart Chain",
-    secondaryName: "BNB",
+    currency: "BNB",
+    selector: "11344663589394136015",
     icon: BNB,
-    value: 0,
+    value: "",
   },
 ];
-export default SupportTokens;
+export default SupportChain;

@@ -119,7 +119,7 @@ function App() {
 
   const getUserData = async () => {
     if (isConnected && typeof address !== "undefined") {
-      selectedNetworkId === 1 || chainId === 1
+      selectedNetworkId === 1 && chainId === 1
         ? dispatch(
             LoadUser({
               web3Inst: web3Inst_ETH,
@@ -132,9 +132,10 @@ function App() {
               contractInstDriftStake: contractInstDriftStake_ETH,
               contractInstDrift: contractInstDrift_ETH,
               pool_address: process.env.REACT_APP_ST_POOL_DRIFT_ETH,
+              bridge_address: process.env.REACT_APP_BRIDGE_ETH,
             })
           )
-        : selectedNetworkId === 56 || chainId === 56
+        : selectedNetworkId === 56 && chainId === 56
         ? dispatch(
             LoadUser({
               web3Inst: web3Inst_BNB,
@@ -147,9 +148,10 @@ function App() {
               contractInstDriftStake: contractInstDriftStake_BNB,
               contractInstDrift: contractInstDrift_BNB,
               pool_address: process.env.REACT_APP_ST_POOL_DRIFT_BNB,
+              bridge_address: process.env.REACT_APP_BRIDGE_BNB,
             })
           )
-        : selectedNetworkId === 137 || chainId === 137
+        : selectedNetworkId === 137 && chainId === 137
         ? dispatch(
             LoadUser({
               web3Inst: web3Inst_POLYGON,
@@ -162,9 +164,12 @@ function App() {
               contractInstDriftStake: contractInstDriftStake_POLYGON,
               contractInstDrift: contractInstDrift_POLYGON,
               pool_address: process.env.REACT_APP_ST_POOL_DRIFT_POLYGON,
+              bridge_address: process.env.REACT_APP_BRIDGE_POLYGON,
             })
           )
         : dispatch(UpdateUser(null));
+    } else {
+      dispatch(UpdateUser(null));
     }
   };
   const getPoolData = async () => {
@@ -225,7 +230,7 @@ function App() {
 
   useEffect(() => {
     if (isConnected && walletProvider && !isWeb3InstanceConnect) {
-      dispatch(createInstance({ walletProvider }));
+      dispatch(createInstance({ walletProvider, chainId }));
       setIsWeb3InstanceConnect(true);
     }
     getUserData();
@@ -234,15 +239,10 @@ function App() {
     isConnected,
     walletProvider,
     isWeb3InstanceConnect,
-    address,
+    // address,
     selectedNetworkId,
     chainId,
   ]);
-
-  useEffect(() => {
-    getUserData();
-    getPoolData();
-  }, [address, isConnected]);
 
   return (
     <div className="App">

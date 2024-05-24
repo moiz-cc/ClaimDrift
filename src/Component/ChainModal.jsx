@@ -1,10 +1,18 @@
-import { useSwitchNetwork } from "@web3modal/ethers5/react";
+import {
+  useSwitchNetwork,
+  useWeb3ModalAccount,
+  useWeb3ModalState,
+} from "@web3modal/ethers5/react";
 import React, { useEffect, useState } from "react";
-import SupportTokens from "../config/SupportTokens";
+import SupportChain from "../config/SupportChain";
 import { useDebounce } from "use-debounce";
+import { useSelector } from "react-redux";
 
-const TokenModal = ({ state }) => {
+const ChainModal = ({ state }) => {
+  const { user } = useSelector((state) => state.Blockchain);
   const { switchNetwork } = useSwitchNetwork();
+  const { address, chainId } = useWeb3ModalAccount();
+  const { selectedNetworkId } = useWeb3ModalState();
   const {
     selectedChain,
     setSelectedChain,
@@ -12,47 +20,66 @@ const TokenModal = ({ state }) => {
     setConvSelectedChain,
     isFirstModal,
     setIsFirstModal,
-    chain,
+    GetCurrentInstance,
   } = state;
   const [query, setQuery] = useState("");
   const [debouncedQuery] = useDebounce(query, 1000);
-  const [tokens, setTokens] = useState(SupportTokens);
+  const [chains, setChains] = useState(SupportChain);
 
-  const onChainChange = async (token) => {
-    if (isFirstModal) {
-      await switchNetwork(token?.chainId);
+  const onChainChange = async (chain) => {
+    const currentInst = GetCurrentInstance();
+    const bridgeFees = await currentInst?.Bridge_Inst.methods
+      .getBridgeFees(
+        chain.selector,
+        address,
+        currentInst?.Drift_Address,
+        user?.dynamicDrift
+      )
+      .call();
+    if (isFirstModal && chainId) {
+      await switchNetwork(chain?.chainId);
       return;
+    } else {
+      if (isFirstModal) {
+        setSelectedChain({ ...chain });
+        const filterTokenChains = SupportChain?.filter(
+          (stoken) => stoken?.chainId !== chain?.chainId
+        )[0];
+        setConvSelectedChain(filterTokenChains);
+      } else {
+        const oldValue = convSelectedChain?.value;
+
+        setConvSelectedChain({ ...chain, value: oldValue, bridgeFees });
+      }
     }
-    setConvSelectedChain(token);
   };
+
   useEffect(() => {
     if (debouncedQuery) {
-      const filterRes = SupportTokens.filter(
-        (token) =>
-          token?.name.toLowerCase().includes(debouncedQuery.toLowerCase()) ||
-          token?.secondaryName
-            .toLowerCase()
-            .includes(debouncedQuery.toLowerCase())
+      const filterRes = SupportChain.filter(
+        (chain) =>
+          chain?.name.toLowerCase().includes(debouncedQuery.toLowerCase()) ||
+          chain?.currency.toLowerCase().includes(debouncedQuery.toLowerCase())
       );
-      setTokens(filterRes);
+      setChains(filterRes);
     } else {
-      setTokens(SupportTokens);
+      setChains(SupportChain);
     }
   }, [debouncedQuery, query]);
 
   return (
     <div
       className="modal fade"
-      id="tokenModal"
+      id="chainModal"
       tabIndex="-1"
-      aria-labelledby="tokenModal"
+      aria-labelledby="chainModal"
       aria-hidden="true"
     >
       <div className="modal-dialog modal-dialog-centered modal-dialog-scrollable">
         <div className="modal-content bodyBgColor">
           <div className="modal-body">
             <div className="d-flex align-items-center justify-content-between">
-              <h1 className="modal-title fs-5 fw-semibold" id="tokenModal">
+              <h1 className="modal-title fs-5 fw-semibold" id="chainModal">
                 Select a chain
               </h1>
               <button
@@ -63,7 +90,7 @@ const TokenModal = ({ state }) => {
               ></button>
             </div>
             <div className="d-flex align-items-center mb-3 bg-light px-3 rounded-5 my-3">
-              <label htmlFor="TokenSearchInput">
+              <label htmlFor="ChainSearchInput">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   width="16"
@@ -77,9 +104,9 @@ const TokenModal = ({ state }) => {
               </label>
               <input
                 type="text"
-                name="TokenSearchInput"
+                name="ChainSearchInput"
                 className="form-control bg-light border-0 shadow-none FS_14"
-                id="TokenSearchInput"
+                id="ChainSearchInput"
                 placeholder="Search"
                 aria-label="Search"
                 value={query || ""}
@@ -87,36 +114,36 @@ const TokenModal = ({ state }) => {
               />
             </div>
             <div className="list-group d-flex flex-column gap-2 rounded-0">
-              {tokens
+              {chains
                 .filter(
                   (filteredToken) =>
                     filteredToken?.chainId !== selectedChain?.chainId
                 )
-                ?.map((token, index) => {
+                ?.map((chain, index) => {
                   return (
                     <button
                       type="button"
                       className={`${
-                        token?.chainId === selectedChain?.chainId &&
+                        chain?.chainId === selectedChain?.chainId &&
                         "btn bg-white fst-italic"
                       } list-group-item-action d-flex align-items-center gap-2 removeBtnTransform border-0 p-3 rounded-3`}
                       key={index}
-                      disabled={token?.chainId === selectedChain?.chainId}
-                      onClick={() => onChainChange(token)}
+                      disabled={chain?.chainId === selectedChain?.chainId}
+                      onClick={() => onChainChange(chain)}
                       data-bs-dismiss="modal"
                       aria-label="Close"
                     >
                       <img
-                        src={token?.icon || ""}
-                        alt={token?.name || ""}
+                        src={chain?.icon || ""}
+                        alt={chain?.name || ""}
                         width={"40px"}
                       />
                       <div className="d-flex flex-column gap-1">
                         <span className="mb-0 fw-semibold lh-1">
-                          {token?.name || ""}
+                          {chain?.name || ""}
                         </span>
                         <span className="FS_12 text-secondary lh-1">
-                          {token?.secondaryName || ""}
+                          {chain?.currency || ""}
                         </span>
                       </div>
                     </button>
@@ -130,4 +157,4 @@ const TokenModal = ({ state }) => {
   );
 };
 
-export default TokenModal;
+export default ChainModal;

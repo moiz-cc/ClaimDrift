@@ -119,6 +119,8 @@ const Staking = () => {
     let Drift_Inst;
     let Pool_Address;
     let Web3_Inst;
+    let Bridge_Address;
+
     if (selectedNetworkId === 1 && chainId === 1) {
       Web3_Inst = web3Inst_ETH;
       Claim_TokenAddress = process.env.REACT_APP_CLAIM_ETH;
@@ -130,6 +132,7 @@ const Staking = () => {
       Drift_Inst = contractInstDrift_ETH;
       Pool_Address = process.env.REACT_APP_ST_POOL_DRIFT_ETH;
       Stake_Drift_Address = process.env.REACT_APP_ST_DRIFT_ETH;
+      Bridge_Address = process.env.REACT_APP_BRIDGE_ETH;
     } else if (selectedNetworkId === 56 && chainId === 56) {
       Web3_Inst = web3Inst_BNB;
       Claim_TokenAddress = process.env.REACT_APP_CLAIM_BNB;
@@ -141,6 +144,7 @@ const Staking = () => {
       Drift_Inst = contractInstDrift_BNB;
       Pool_Address = process.env.REACT_APP_ST_POOL_DRIFT_BNB;
       Stake_Drift_Address = process.env.REACT_APP_ST_DRIFT_BNB;
+      Bridge_Address = process.env.REACT_APP_BRIDGE_BNB;
     } else if (selectedNetworkId === 137 && chainId === 137) {
       Web3_Inst = web3Inst_POLYGON;
       Claim_TokenAddress = process.env.REACT_APP_CLAIM_POLYGON;
@@ -152,6 +156,7 @@ const Staking = () => {
       Drift_Inst = contractInstDrift_POLYGON;
       Pool_Address = process.env.REACT_APP_ST_POOL_DRIFT_POLYGON;
       Stake_Drift_Address = process.env.REACT_APP_ST_DRIFT_POLYGON;
+      Bridge_Address = process.env.REACT_APP_BRIDGE_POLYGON;
     } else return;
 
     try {
@@ -189,6 +194,7 @@ const Staking = () => {
               contractInstDriftStake: Stake_Drift_Inst,
               contractInstDrift: Drift_Inst,
               pool_address: Pool_Address,
+              bridge_address: Bridge_Address,
             })
           );
           dispatch(
@@ -239,6 +245,7 @@ const Staking = () => {
     let Pool_Address;
     let Stake_Drift_Address;
     let Web3_Inst;
+    let Bridge_Address;
 
     if (selectedNetworkId === 1 && chainId === 1) {
       Web3_Inst = web3Inst_ETH;
@@ -249,6 +256,7 @@ const Staking = () => {
       Drift_Inst = contractInstDrift_ETH;
       Pool_Address = process.env.REACT_APP_ST_POOL_DRIFT_ETH;
       Stake_Drift_Address = process.env.REACT_APP_ST_DRIFT_ETH;
+      Bridge_Address = process.env.REACT_APP_BRIDGE_ETH;
     } else if (selectedNetworkId === 56 && chainId === 56) {
       Web3_Inst = web3Inst_BNB;
       Claim_Inst = contractInstClaim_BNB;
@@ -258,6 +266,7 @@ const Staking = () => {
       Drift_Inst = contractInstDrift_BNB;
       Pool_Address = process.env.REACT_APP_ST_POOL_DRIFT_BNB;
       Stake_Drift_Address = process.env.REACT_APP_ST_DRIFT_BNB;
+      Bridge_Address = process.env.REACT_APP_BRIDGE_BNB;
     } else if (selectedNetworkId === 137 && chainId === 137) {
       Web3_Inst = web3Inst_POLYGON;
       Claim_Inst = contractInstClaim_POLYGON;
@@ -267,6 +276,7 @@ const Staking = () => {
       Drift_Inst = contractInstDrift_POLYGON;
       Pool_Address = process.env.REACT_APP_ST_POOL_DRIFT_POLYGON;
       Stake_Drift_Address = process.env.REACT_APP_ST_DRIFT_POLYGON;
+      Bridge_Address = process.env.REACT_APP_BRIDGE_POLYGON;
     }
 
     try {
@@ -307,6 +317,7 @@ const Staking = () => {
               contractInstDriftStake: Stake_Drift_Inst,
               contractInstDrift: Drift_Inst,
               pool_address: Pool_Address,
+              bridge_address: Bridge_Address,
             })
           );
           dispatch(
@@ -361,6 +372,7 @@ const Staking = () => {
     let ICO_Inst;
     let PresaleToken_Inst;
     let Web3_Inst;
+    let Bridge_Address;
 
     if (selectedNetworkId === 1 && chainId === 1) {
       Web3_Inst = web3Inst_ETH;
@@ -372,6 +384,7 @@ const Staking = () => {
       Stake_Drift_Inst = contractInstDriftStake_ETH;
       Drift_Inst = contractInstDrift_ETH;
       Pool_Address = process.env.REACT_APP_ST_POOL_DRIFT_ETH;
+      Bridge_Address = process.env.REACT_APP_BRIDGE_ETH;
     } else if (selectedNetworkId === 56 && chainId === 56) {
       Web3_Inst = web3Inst_BNB;
       ICO_Inst = contractInstICO_BNB;
@@ -382,6 +395,7 @@ const Staking = () => {
       Stake_Drift_Inst = contractInstDriftStake_BNB;
       Drift_Inst = contractInstDrift_BNB;
       Pool_Address = process.env.REACT_APP_ST_POOL_DRIFT_BNB;
+      Bridge_Address = process.env.REACT_APP_BRIDGE_BNB;
     } else if (selectedNetworkId === 137 && chainId === 137) {
       Web3_Inst = web3Inst_POLYGON;
       ICO_Inst = contractInstICO_POLYGON;
@@ -392,6 +406,7 @@ const Staking = () => {
       Stake_Drift_Inst = contractInstDriftStake_POLYGON;
       Drift_Inst = contractInstDrift_POLYGON;
       Pool_Address = process.env.REACT_APP_ST_POOL_DRIFT_POLYGON;
+      Bridge_Address = process.env.REACT_APP_BRIDGE_POLYGON;
     } else {
       setErrors((state) => ({
         ...state,
@@ -438,6 +453,7 @@ const Staking = () => {
               contractInstDriftStake: Stake_Drift_Inst,
               contractInstDrift: Drift_Inst,
               pool_address: Pool_Address,
+              bridge_address: Bridge_Address,
             })
           );
           dispatch(

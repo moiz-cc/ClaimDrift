@@ -1,24 +1,17 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import Web3 from "web3";
 import {
-  claimAbi_BNB,
-  claimAbi_ETH,
-  claimAbi_POLYGON,
+  claimAbi,
   crowdSaleAbi_BNB,
   crowdSaleAbi_ETH,
   crowdSaleAbi_POLYGON,
-  driftAbi_ETH,
-  driftAbi_BNB,
-  driftAbi_POLYGON,
+  driftAbi,
   presaletokenAbi_BNB,
   presaletokenAbi_ETH,
   presaletokenAbi_POLYGON,
-  driftStakeAbi_ETH,
-  driftStakePoolAbi_ETH,
-  driftStakeAbi_BNB,
-  driftStakePoolAbi_BNB,
-  driftStakeAbi_POLYGON,
-  driftStakePoolAbi_POLYGON,
+  driftStakeAbi,
+  driftStakePoolAbi,
+  swapBridge_Abi,
 } from "../config/abi";
 import ConvertNumber from "../Helpers/ConvertNumber";
 import axios from "axios";
@@ -31,6 +24,7 @@ const initialState = {
   contractInstClaim_ETH: null,
   contractInstStakePool_ETH: null,
   contractInstDriftStake_ETH: null,
+  contractInstBridge_ETH: null,
 
   web3Inst_BNB: null,
   contractInstPresaleToken_BNB: null,
@@ -39,6 +33,7 @@ const initialState = {
   contractInstClaim_BNB: null,
   contractInstStakePool_BNB: null,
   contractInstDriftStake_BNB: null,
+  contractInstBridge_BNB: null,
 
   web3Inst_POLYGON: null,
   contractInstPresaleToken_POLYGON: null,
@@ -47,6 +42,7 @@ const initialState = {
   contractInstClaim_POLYGON: null,
   contractInstStakePool_POLYGON: null,
   contractInstDriftStake_POLYGON: null,
+  contractInstBridge_POLYGON: null,
 
   pool: null,
   user: null,
@@ -90,27 +86,6 @@ export const LoadBlockchainData = createAsyncThunk(
     { rejectWithValue }
   ) => {
     try {
-      // const stage = 4;
-
-      // const tokensToClaim_ETH = await contractInstDrift_ETH.methods
-      //   .allowance(
-      //     process.env.REACT_APP_OWNER_ADDRESS,
-      //     process.env.REACT_APP_CLAIM_ETH
-      //   )
-      //   .call();
-      // const tokensToClaim_BNB = await contractInstDrift_BNB.methods
-      //   .allowance(
-      //     process.env.REACT_APP_OWNER_ADDRESS,
-      //     process.env.REACT_APP_CLAIM_BNB
-      //   )
-      //   .call();
-      // const tokensToClaim_POLYGON = await contractInstDrift_POLYGON.methods
-      //   .allowance(
-      //     process.env.REACT_APP_OWNER_ADDRESS,
-      //     process.env.REACT_APP_CLAIM_POLYGON
-      //   )
-      //   .call();
-
       const [tokensToClaim_ETH] = await makeBatchRequest(web3Inst_ETH, [
         contractInstDrift_ETH.methods.allowance(
           process.env.REACT_APP_OWNER_ADDRESS,
@@ -133,34 +108,12 @@ export const LoadBlockchainData = createAsyncThunk(
       ]);
 
       return {
-        // tokensTransferredLap2: ConvertNumber(
-        //   Number(tokensTransferredLap2) +
-        //     Number(tokensTransferredLap2BNB) +
-        //     Number(tokensTransferredLap2POLYGON),
-        //   true
-        // ),
-        // tokensTransferredLap1: ConvertNumber(
-        //   Number(tokensTransferredLap1) + Number(tokensTransferredLap1BNB),
-        //   true
-        // ),
-        // tokensTransferredWarmup: ConvertNumber(
-        //   Number(tokensTransferredWarmup),
-        //   true
-        // ),
-        // staking_limit: 2000000000,
-
         tokensToClaim: ConvertNumber(
           Number(tokensToClaim_ETH) +
             Number(tokensToClaim_BNB) +
             Number(tokensToClaim_POLYGON),
           true
         ),
-        // token_staked: ConvertNumber(
-        //   Number(token_staked) +
-        //     Number(token_stakedBNB) +
-        //     Number(token_stakedPOLYGON),
-        //   true
-        // ),
       };
     } catch (error) {
       console.log(error);
@@ -199,7 +152,6 @@ export const LoadPoolData = createAsyncThunk(
     }
   }
 );
-
 export const LoadUser = createAsyncThunk(
   "LoadUser",
   async (data, { rejectWithValue }) => {
@@ -214,6 +166,7 @@ export const LoadUser = createAsyncThunk(
       contractInstDriftStake,
       contractInstDrift,
       pool_address,
+      bridge_address,
     } = data;
 
     try {
@@ -255,9 +208,9 @@ export const LoadUser = createAsyncThunk(
             : false,
         is_pool_allowed: Number(is_pool_allowed) > 0,
         remaining_claim: Reward.pendingRewards,
-        dynamicDrift,
         stakeDrift,
         stakedTime: stakedTime.lastStakedTime,
+        dynamicDrift,
       };
     } catch (error) {
       console.log(error);
@@ -265,7 +218,6 @@ export const LoadUser = createAsyncThunk(
     }
   }
 );
-
 export const GetUSDPrice = createAsyncThunk(
   "usdPrice",
   async (data, { rejectWithValue }) => {
@@ -287,6 +239,17 @@ export const GetUSDPrice = createAsyncThunk(
     }
   }
 );
+export const GetBridgeFee = createAsyncThunk(
+  "GetBridgeFee",
+  async (data, { rejectWithValue }) => {
+    try {
+      return;
+    } catch (error) {
+      console.log(error.message);
+      return rejectWithValue(error);
+    }
+  }
+);
 
 export const blockchainSlice = createSlice({
   name: "BlockChain",
@@ -294,46 +257,55 @@ export const blockchainSlice = createSlice({
   reducers: {
     createInstance: (state, action) => {
       let web3Instance = new Web3(process.env.REACT_APP_RPC_ETH);
+      let web3InstancePOLYGON = new Web3(process.env.REACT_APP_RPC_POLYGON);
+      let web3InstanceBNB = new Web3(process.env.REACT_APP_RPC_BNB);
 
       if (action.payload?.walletProvider) {
-        let { walletProvider } = action.payload;
-
-        web3Instance = new Web3(walletProvider);
+        const { walletProvider, chainId } = action.payload;
+        if (chainId === 1) {
+          web3Instance = new Web3(walletProvider);
+        } else if (chainId == 56) {
+          web3InstanceBNB = new Web3(walletProvider);
+        } else if (chainId == 137) {
+          web3InstancePOLYGON = new Web3(walletProvider);
+        }
       }
+
       state.web3Inst_ETH = web3Instance;
       state.contractInstICO_ETH = new web3Instance.eth.Contract(
         crowdSaleAbi_ETH,
         process.env.REACT_APP_CROWDSALE_ETH
       );
+
       state.contractInstPresaleToken_ETH = new web3Instance.eth.Contract(
         presaletokenAbi_ETH,
         process.env.REACT_APP_TOKEN_CONTRACT_ETH
       );
       state.contractInstClaim_ETH = new web3Instance.eth.Contract(
-        claimAbi_ETH,
+        claimAbi,
         process.env.REACT_APP_CLAIM_ETH
       );
       state.contractInstDrift_ETH = new web3Instance.eth.Contract(
-        driftAbi_ETH,
+        driftAbi,
         process.env.REACT_APP_DRIFT_ETH
       );
       // New Inst ETH
       state.contractInstDriftStake_ETH = new web3Instance.eth.Contract(
-        driftStakeAbi_ETH,
+        driftStakeAbi,
         process.env.REACT_APP_ST_DRIFT_ETH
       );
       state.contractInstStakePool_ETH = new web3Instance.eth.Contract(
-        driftStakePoolAbi_ETH,
+        driftStakePoolAbi,
         process.env.REACT_APP_ST_POOL_DRIFT_ETH
       );
 
-      // BNB INS
-      let web3InstanceBNB = new Web3(process.env.REACT_APP_RPC_BNB);
+      state.contractInstBridge_ETH = new web3Instance.eth.Contract(
+        swapBridge_Abi,
+        process.env.REACT_APP_BRIDGE_ETH
+      );
 
-      if (action.payload?.walletProvider) {
-        let { walletProvider } = action.payload;
-        web3InstanceBNB = new Web3(walletProvider);
-      }
+      // BNB INS
+
       state.web3Inst_BNB = web3InstanceBNB;
       state.contractInstICO_BNB = new web3InstanceBNB.eth.Contract(
         crowdSaleAbi_BNB,
@@ -346,31 +318,30 @@ export const blockchainSlice = createSlice({
       );
 
       state.contractInstClaim_BNB = new web3InstanceBNB.eth.Contract(
-        claimAbi_BNB,
+        claimAbi,
         process.env.REACT_APP_CLAIM_BNB
       );
 
       state.contractInstDrift_BNB = new web3InstanceBNB.eth.Contract(
-        driftAbi_BNB,
+        driftAbi,
         process.env.REACT_APP_DRIFT_BNB
       );
 
       state.contractInstDriftStake_BNB = new web3InstanceBNB.eth.Contract(
-        driftStakeAbi_BNB,
+        driftStakeAbi,
         process.env.REACT_APP_ST_DRIFT_BNB
       );
       state.contractInstStakePool_BNB = new web3InstanceBNB.eth.Contract(
-        driftStakePoolAbi_BNB,
+        driftStakePoolAbi,
         process.env.REACT_APP_ST_POOL_DRIFT_BNB
+      );
+      state.contractInstBridge_BNB = new web3InstanceBNB.eth.Contract(
+        swapBridge_Abi,
+        process.env.REACT_APP_BRIDGE_BNB
       );
 
       // POLYGON INS
-      let web3InstancePOLYGON = new Web3(process.env.REACT_APP_RPC_POLYGON);
 
-      if (action.payload?.walletProvider) {
-        let { walletProvider } = action.payload;
-        web3InstancePOLYGON = new Web3(walletProvider);
-      }
       state.web3Inst_POLYGON = web3InstancePOLYGON;
       state.contractInstICO_POLYGON = new web3InstancePOLYGON.eth.Contract(
         crowdSaleAbi_POLYGON,
@@ -383,25 +354,29 @@ export const blockchainSlice = createSlice({
         );
 
       state.contractInstClaim_POLYGON = new web3InstancePOLYGON.eth.Contract(
-        claimAbi_POLYGON,
+        claimAbi,
         process.env.REACT_APP_CLAIM_POLYGON
       );
 
       state.contractInstDrift_POLYGON = new web3InstancePOLYGON.eth.Contract(
-        driftAbi_POLYGON,
+        driftAbi,
         process.env.REACT_APP_DRIFT_POLYGON
       );
 
       state.contractInstDriftStake_POLYGON =
         new web3InstancePOLYGON.eth.Contract(
-          driftStakeAbi_POLYGON,
+          driftStakeAbi,
           process.env.REACT_APP_ST_DRIFT_POLYGON
         );
       state.contractInstStakePool_POLYGON =
         new web3InstancePOLYGON.eth.Contract(
-          driftStakePoolAbi_POLYGON,
+          driftStakePoolAbi,
           process.env.REACT_APP_ST_POOL_DRIFT_POLYGON
         );
+      state.contractInstBridge_POLYGON = new web3InstancePOLYGON.eth.Contract(
+        swapBridge_Abi,
+        process.env.REACT_APP_BRIDGE_POLYGON
+      );
     },
 
     UpdateUser: (state, action) => {
@@ -426,7 +401,6 @@ export const blockchainSlice = createSlice({
     });
     builder.addCase(LoadBlockchainData.fulfilled, (state, action) => {
       state.isLoading = false;
-
       state.publicBlockchainData = { ...action.payload };
     });
     builder.addCase(LoadBlockchainData.rejected, (state, action) => {
@@ -464,6 +438,17 @@ export const blockchainSlice = createSlice({
       }
     });
     builder.addCase(GetUSDPrice.rejected, (state, action) => {
+      console.log("Builder Rejected GetUSDPrice");
+    });
+
+    builder.addCase(GetBridgeFee.fulfilled, (state, action) => {
+      if (action.payload) {
+        state.ethPrice = action.payload?.[0]?.current_price;
+        state.bnbPrice = action.payload?.[1]?.current_price;
+        state.maticPrice = action.payload?.[2]?.current_price;
+      }
+    });
+    builder.addCase(GetBridgeFee.rejected, (state, action) => {
       console.log("Builder Rejected GetUSDPrice");
     });
   },
