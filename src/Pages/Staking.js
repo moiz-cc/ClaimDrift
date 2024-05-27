@@ -194,7 +194,6 @@ const Staking = () => {
               contractInstDriftStake: Stake_Drift_Inst,
               contractInstDrift: Drift_Inst,
               pool_address: Pool_Address,
-              bridge_address: Bridge_Address,
             })
           );
           dispatch(
@@ -317,7 +316,6 @@ const Staking = () => {
               contractInstDriftStake: Stake_Drift_Inst,
               contractInstDrift: Drift_Inst,
               pool_address: Pool_Address,
-              bridge_address: Bridge_Address,
             })
           );
           dispatch(
@@ -453,7 +451,6 @@ const Staking = () => {
               contractInstDriftStake: Stake_Drift_Inst,
               contractInstDrift: Drift_Inst,
               pool_address: Pool_Address,
-              bridge_address: Bridge_Address,
             })
           );
           dispatch(

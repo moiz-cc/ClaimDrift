@@ -55,21 +55,25 @@ const initialState = {
 };
 
 export const makeBatchRequest = async (web3, calls) => {
-  let batch = new web3.BatchRequest();
-  let promises = calls.map((call) => {
-    return new Promise((res, rej) => {
-      let req = call.request(
-        { from: "0x0000000000000000000000000000000000000000" },
-        (err, data) => {
-          if (err) rej(err);
-          else res(data);
-        }
-      );
-      batch.add(req);
+  try {
+    let batch = new web3.BatchRequest();
+    let promises = calls.map((call) => {
+      return new Promise((res, rej) => {
+        let req = call.request(
+          { from: "0x0000000000000000000000000000000000000000" },
+          (err, data) => {
+            if (err) rej(err);
+            else res(data);
+          }
+        );
+        batch.add(req);
+      });
     });
-  });
-  batch.execute();
-  return Promise.all([...promises]);
+    batch.execute();
+    return await Promise.all([...promises]);
+  } catch (error) {
+    return error;
+  }
 };
 
 export const LoadBlockchainData = createAsyncThunk(
@@ -77,46 +81,42 @@ export const LoadBlockchainData = createAsyncThunk(
   async (
     {
       web3Inst_ETH,
-      contractInstDrift_ETH,
-      web3Inst_BNB,
-      contractInstDrift_BNB,
       web3Inst_POLYGON,
+      web3Inst_BNB,
+      contractInstDrift_ETH,
+      contractInstDrift_BNB,
       contractInstDrift_POLYGON,
     },
     { rejectWithValue }
   ) => {
     try {
+      const OwnerAddress = process.env.REACT_APP_OWNER_ADDRESS;
+      const Claim_ETH = process.env.REACT_APP_CLAIM_ETH;
+      const Claim_BNB = process.env.REACT_APP_CLAIM_BNB;
+      const Claim_POLYGON = process.env.REACT_APP_CLAIM_POLYGON;
+
       const [tokensToClaim_ETH] = await makeBatchRequest(web3Inst_ETH, [
-        contractInstDrift_ETH.methods.allowance(
-          process.env.REACT_APP_OWNER_ADDRESS,
-          process.env.REACT_APP_CLAIM_ETH
-        ).call,
+        contractInstDrift_ETH.methods.allowance(OwnerAddress, Claim_ETH).call,
       ]);
 
       const [tokensToClaim_BNB] = await makeBatchRequest(web3Inst_BNB, [
-        contractInstDrift_BNB.methods.allowance(
-          process.env.REACT_APP_OWNER_ADDRESS,
-          process.env.REACT_APP_CLAIM_BNB
-        ).call,
+        contractInstDrift_BNB.methods.allowance(OwnerAddress, Claim_BNB).call,
       ]);
 
       const [tokensToClaim_POLYGON] = await makeBatchRequest(web3Inst_POLYGON, [
-        contractInstDrift_POLYGON.methods.allowance(
-          process.env.REACT_APP_OWNER_ADDRESS,
-          process.env.REACT_APP_CLAIM_POLYGON
-        ).call,
+        contractInstDrift_POLYGON.methods.allowance(OwnerAddress, Claim_POLYGON)
+          .call,
       ]);
 
-      return {
-        tokensToClaim: ConvertNumber(
-          Number(tokensToClaim_ETH) +
-            Number(tokensToClaim_BNB) +
-            Number(tokensToClaim_POLYGON),
-          true
-        ),
-      };
+      const tokensToClaim = ConvertNumber(
+        Number(tokensToClaim_ETH) +
+          Number(tokensToClaim_BNB) +
+          Number(tokensToClaim_POLYGON),
+        true
+      );
+      return { tokensToClaim };
     } catch (error) {
-      console.log(error);
+      console.log(error.message);
       return rejectWithValue(error);
     }
   }
@@ -147,7 +147,7 @@ export const LoadPoolData = createAsyncThunk(
         locked_time: stake_info?.lockedStake,
       };
     } catch (error) {
-      console.log(error);
+      console.log(error.message);
       return rejectWithValue(error);
     }
   }
@@ -166,7 +166,6 @@ export const LoadUser = createAsyncThunk(
       contractInstDriftStake,
       contractInstDrift,
       pool_address,
-      bridge_address,
     } = data;
 
     try {
@@ -195,8 +194,7 @@ export const LoadUser = createAsyncThunk(
       const stakedTime = await contractInstStakePool.methods
         .getUserInfo(address)
         .call();
-
-      return {
+      const result = {
         balance,
         Staked: ConvertNumber(Number(Staked) + Number(tokensToMove), true),
         Dynamic: ConvertNumber(Number(Dynamic) - Number(tokensToMove), true),
@@ -212,9 +210,11 @@ export const LoadUser = createAsyncThunk(
         stakedTime: stakedTime.lastStakedTime,
         dynamicDrift,
       };
+
+      return result;
     } catch (error) {
-      console.log(error);
-      return rejectWithValue(error);
+      console.log(error.message);
+      return rejectWithValue(error.message);
     }
   }
 );
@@ -401,11 +401,13 @@ export const blockchainSlice = createSlice({
     });
     builder.addCase(LoadBlockchainData.fulfilled, (state, action) => {
       state.isLoading = false;
-      state.publicBlockchainData = { ...action.payload };
+      state.publicBlockchainData = {
+        ...state.publicBlockchainData,
+        ...action.payload,
+      };
     });
     builder.addCase(LoadBlockchainData.rejected, (state, action) => {
       state.isLoading = false;
-      console.log("Blockchain Builder Rejected");
     });
     builder.addCase(LoadUser.pending, (state, action) => {
       state.isLoading = true;
@@ -429,7 +431,7 @@ export const blockchainSlice = createSlice({
       state.isLoading = false;
       console.log("Pool Builder Rejected");
     });
-    builder.addCase(GetUSDPrice.pending, (state, action) => {});
+
     builder.addCase(GetUSDPrice.fulfilled, (state, action) => {
       if (action.payload) {
         state.ethPrice = action.payload?.[0]?.current_price;

@@ -8433,19 +8433,24 @@ export const swapBridge_Abi = [
   { stateMutability: "payable", type: "receive" },
 ];
 
-const err1 = new web3errors(process.env.REACT_APP_RPC_ETH, [
+export const err1 = new web3errors(process.env.REACT_APP_RPC_ETH, [
   presaletokenAbi_ETH,
   crowdSaleAbi_ETH,
 ]);
 
-const err2 = new web3errors(process.env.REACT_APP_RPC_BNB, [
+export const err2 = new web3errors(process.env.REACT_APP_RPC_BNB, [
   presaletokenAbi_BNB,
   crowdSaleAbi_BNB,
 ]);
 
-const err3 = new web3errors(process.env.REACT_APP_RPC_POLYGON, [
+export const err3 = new web3errors(process.env.REACT_APP_RPC_POLYGON, [
   presaletokenAbi_POLYGON,
   crowdSaleAbi_POLYGON,
+]);
+
+export const err4 = new web3errors(process.env.REACT_APP_RPC_ETH, [
+  swapBridge_Abi,
+  driftAbi,
 ]);
 
 /*
@@ -8457,15 +8462,19 @@ const err3 = new web3errors(process.env.REACT_APP_RPC_POLYGON, [
  * Get an error message by providing an exception error object of any blockchain (send or call) tx you received in return
  *,
  */
-err1
-  .getErrorMessage([{ err: "From ABI ETH" }])
-  .then(console.log)
-  .catch(console.error);
-err2
-  .getErrorMessage([{ err: "From ABI BNB" }])
-  .then(console.log)
-  .catch(console.error);
-err3
-  .getErrorMessage([{ err: "From ABI POLYGON" }])
-  .then(console.log)
-  .catch(console.error);
+// err1
+//   .getErrorMessage([{ err: "From ABI ETH" }])
+//   .then(console.log)
+//   .catch(console.error);
+// err2
+//   .getErrorMessage([{ err: "From ABI BNB" }])
+//   .then(console.log)
+//   .catch(console.error);
+// err3
+//   .getErrorMessage([{ err: "From ABI POLYGON" }])
+//   .then(console.log)
+//   .catch(console.error);
+// err4
+//   .getErrorMessage([{ err: "From ABI swapBridge_Abi" }])
+//   .then(console.log)
+//   .catch(console.error);

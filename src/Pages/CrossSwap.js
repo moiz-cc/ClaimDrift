@@ -18,6 +18,13 @@ import GetChain from "../Helpers/GetChain";
 import LoadingGif from "../Assets/Images/loading.gif";
 import { LoadUser } from "../Store/blockchainSlice";
 
+// Function Calls Flow.
+/*
+GetBridgeFee.
+CheckAllowance.
+CheckEstimateGas.
+CheckBalance.
+*/
 const CrossSwap = () => {
   const {
     user,
@@ -60,6 +67,8 @@ const CrossSwap = () => {
   const [debouncedQuery] = useDebounce(selectedChain?.value, 2000);
   const [isInsuffBalance, setIsInsuffBalance] = useState(false);
   const [isApproved, setIsApproved] = useState(true);
+  const [isInsuffGas, setIsInsuffGas] = useState(false);
+  const [isInsuffGasErr, setIsInsuffGasErr] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [loadingTransaction, setLoadingTransaction] = useState(false);
   const [transactionModal, setTransactionModal] = useState(false);
@@ -184,15 +193,19 @@ const CrossSwap = () => {
           user?.dynamicDrift
         )
         .call();
-      await CheckAllowance();
+
+      await CheckAllowance(bridgeFees);
       return bridgeFees || 0;
     } catch (error) {
       console.log("Error fetching bridge fees:", error);
       ResetLoading();
     }
   };
-  const CalculateValue = async (e) => {
-    setIsLoading(true);
+  const onAmountChange = async (e) => {
+    if (chainId) {
+      setIsLoading(true);
+    }
+
     let { value } = e.target;
     let newVal = +value <= 0 ? "0" : value;
     setSelectedChain({
@@ -228,9 +241,62 @@ const CrossSwap = () => {
       console.log("Failed to switch network:", error);
     }
   };
-  const CheckAllowance = async () => {
+  const CheckEstimateGas = async ({
+    bridgeFees,
+    Bridge_Inst,
+    Drift_Token_Address,
+    bridge_address,
+  }) => {
+    let amount = 0;
+    try {
+      if (
+        Number(ConvertNumber(selectedChain?.value)) >=
+        Number(user?.dynamicDrift)
+      ) {
+        amount = user?.dynamicDrift;
+      } else {
+        amount = ConvertNumber(selectedChain?.value);
+      }
+      const approve = await Bridge_Inst.methods.transferTokensToOtherChain(
+        convSelectedChain?.selector,
+        recipientAddress,
+        Drift_Token_Address,
+        amount.toString()
+      );
+      const estimateGas = await approve.estimateGas({
+        from: address,
+        value: bridgeFees,
+      });
+      const res = await approve.call({
+        from: address,
+        to: bridge_address,
+        gas: estimateGas,
+        // maxPriorityFeePerGas: 290000,
+        // maxFeePerGas: 3000000,
+      });
+      console.log("res", res);
+      console.log("estimateGas", estimateGas);
+      setIsInsuffGas(false);
+    } catch (error) {
+      setIsInsuffGas(true);
+      const err = await getErrorMessage(error);
+      if (err === "Insufficient funds.") {
+        setIsInsuffGasErr("Insufficient funds");
+      } else {
+        console.log("error", error);
+        setIsInsuffGasErr("Oops! Something went wrong");
+      }
+    }
+  };
+  const CheckAllowance = async (bridgeFees) => {
     if (!chainId) return;
-    const { contractInstDrift, address, bridge_address } = GetCurrentInstance();
+    const {
+      contractInstDrift,
+      address,
+      bridge_address,
+      Bridge_Inst,
+      Drift_Token_Address,
+    } = GetCurrentInstance();
     try {
       const allowance = await contractInstDrift?.methods
         .allowance(address, bridge_address)
@@ -243,9 +309,18 @@ const CrossSwap = () => {
       } else {
         setIsApproved(false);
       }
+
       loadingTimerId && clearTimeout(loadingTimerId);
+      await CheckEstimateGas({
+        bridgeFees,
+        Bridge_Inst,
+        Drift_Token_Address,
+        bridge_address,
+      });
       CheckBalance();
-    } catch (error) {}
+    } catch (error) {
+      console.log(error.message);
+    }
   };
   const CheckBalance = () => {
     if (
@@ -286,7 +361,7 @@ const CrossSwap = () => {
         from: address,
         to: currentInst?.Drift_Token_Address,
         gas: estimateGas,
-        maxPriorityFeePerGas: 50000000000,
+        maxPriorityFeePerGas: 3000000,
       });
 
       transaction
@@ -325,6 +400,9 @@ const CrossSwap = () => {
     ResetLoading();
   };
   const Transfer = async () => {
+    if (!chainId) {
+      return;
+    }
     const currentInst = GetCurrentInstance();
     setIsLoading(true);
     setLoadingTransaction(true);
@@ -359,19 +437,21 @@ const CrossSwap = () => {
         from: address,
         to: currentInst?.bridge_address,
         gas: estimateGas,
-        maxPriorityFeePerGas: 50000000000,
+        maxPriorityFeePerGas: 3000000,
       });
 
       transaction
         .on("transactionHash", (txHash) => {
           console.log(txHash);
+          setTxHash(txHash);
         })
         .on("receipt", async (receipt) => {
           console.log("RECEIPT => \n", receipt);
-
+          setLoadingTransaction(false);
           dispatch(LoadUser({ ...currentInst }));
-
-          // unstakeDrift(e);
+          setModalMessage(
+            `The transaction has been successfully intiated and will transfer from ${selectedChain?.currency} to another ${convSelectedChain?.currency}`
+          );
         })
         .on("error", async (error, receipt) => {
           console.log("ERROR => \n", error);
@@ -415,6 +495,7 @@ const CrossSwap = () => {
         const filteredChain = SupportChain.filter(
           (fchain) => fchain?.chainId !== chain?.chainId
         )[0];
+        setRecipientAddress(address);
         if (filteredChain && user) {
           setConvSelectedChain({
             ...filteredChain,
@@ -441,8 +522,7 @@ const CrossSwap = () => {
 
   useEffect(() => {
     if (debouncedQuery && chainId) {
-      // console.log("Run");
-      CheckAllowance();
+      GetBridgeFee(convSelectedChain);
     }
   }, [debouncedQuery]);
 
@@ -514,7 +594,7 @@ const CrossSwap = () => {
                     <div className="w-100">
                       <div className="d-flex align-items-center justify-content-between gap-2 mb-1">
                         <label
-                          htmlFor="fromBNBChainMainnet"
+                          htmlFor="fromMainnet"
                           className="text-start d-block w-100 FS_14"
                         >
                           From:{" "}
@@ -574,12 +654,12 @@ const CrossSwap = () => {
                       <input
                         className="input-field pe-2 fs-2 fw-bold"
                         type="number"
-                        name="fromBNBChainMainnet"
-                        id="fromBNBChainMainnet"
+                        name="fromMainnet"
+                        id="fromMainnet"
                         placeholder="0"
                         step="any"
                         value={selectedChain?.value || ""}
-                        onChange={CalculateValue}
+                        onChange={onAmountChange}
                       />
                     </div>
                   </div>
@@ -618,10 +698,12 @@ const CrossSwap = () => {
                           >
                             <Skeleton />
                           </div>
-                        ) : (
+                        ) : user?.dynamicDrift ? (
                           Number(
                             ConvertNumber(user?.dynamicDrift, true)
                           ).toFixed(2)
+                        ) : (
+                          0
                         )}
                       </span>
                       <button
@@ -662,7 +744,7 @@ const CrossSwap = () => {
                     <div className="w-100">
                       <div className="d-flex align-items-center justify-content-between gap-2 mb-1">
                         <label
-                          htmlFor="fromBNBChainMainnet"
+                          htmlFor="toMainnet"
                           className="text-start d-block w-100 FS_14 mb-1"
                         >
                           To:{" "}
@@ -724,8 +806,8 @@ const CrossSwap = () => {
                         readOnly
                         className="input-field pe-2 fs-2 fw-bold"
                         type="number"
-                        name="fromBNBChainMainnet"
-                        id="fromBNBChainMainnet"
+                        name="toMainnet"
+                        id="toMainnet"
                         placeholder="0"
                         step="any"
                         value={convSelectedChain?.value || ""}
@@ -817,7 +899,7 @@ const CrossSwap = () => {
                         />
                       </div>
                     ) : (
-                      "Insufficient Balance"
+                      "Insufficient Funds"
                     )}
                   </button>
                 ) : chainId && !isApproved && +selectedChain?.value > 0 ? (
@@ -842,6 +924,24 @@ const CrossSwap = () => {
                       </div>
                     ) : (
                       "Approve Drift"
+                    )}
+                  </button>
+                ) : chainId && isInsuffGas && +selectedChain?.value > 0 ? (
+                  <button
+                    type="button"
+                    className={`btn pinkBtn BtnStyle1 text-white fw-bold shadow-none rounded-2 mt-4 w-100 FS_14 removeBtnTransform`}
+                    disabled
+                  >
+                    {isLoading ? (
+                      <div className="d-flex justify-content-center align-items-center">
+                        <img
+                          src={LoadingGif}
+                          style={{ width: 20 }}
+                          alt="loading"
+                        />
+                      </div>
+                    ) : (
+                      isInsuffGasErr
                     )}
                   </button>
                 ) : (
