@@ -53,26 +53,40 @@ function Home() {
     user,
     isLoading,
     web3Inst_ETH,
-    contractInstICO_ETH,
-    contractInstPresaleToken_ETH,
     contractInstDrift_ETH,
-    contractInstClaim_ETH,
-    contractInstDriftStake_ETH,
-    contractInstStakePool_ETH,
     web3Inst_BNB,
-    contractInstICO_BNB,
-    contractInstPresaleToken_BNB,
     contractInstDrift_BNB,
-    contractInstClaim_BNB,
-    contractInstDriftStake_BNB,
-    contractInstStakePool_BNB,
     web3Inst_POLYGON,
-    contractInstPresaleToken_POLYGON,
-    contractInstICO_POLYGON,
     contractInstDrift_POLYGON,
-    contractInstClaim_POLYGON,
-    contractInstDriftStake_POLYGON,
-    contractInstStakePool_POLYGON,
+
+    // Send Inst
+    web3Inst_ETHSend,
+    contractInstICO_ETHSend,
+    contractInstPresaleToken_ETHSend,
+    contractInstDrift_ETHSend,
+    contractInstClaim_ETHSend,
+    contractInstStakePool_ETHSend,
+    contractInstDriftStake_ETHSend,
+
+    web3Inst_BNBSend,
+    contractInstICO_BNBSend,
+    contractInstPresaleToken_BNBSend,
+    contractInstDrift_BNBSend,
+    contractInstClaim_BNBSend,
+    contractInstStakePool_BNBSend,
+    contractInstDriftStake_BNBSend,
+
+    web3Inst_POLYGONSend,
+    contractInstPresaleToken_POLYGONSend,
+    contractInstICO_POLYGONSend,
+    contractInstDrift_POLYGONSend,
+    contractInstClaim_POLYGONSend,
+    contractInstStakePool_POLYGONSend,
+    contractInstDriftStake_POLYGONSend,
+
+    contractInstBridge_ETHSend,
+    contractInstBridge_BNBSend,
+    contractInstBridge_POLYGONSend,
   } = useSelector((state) => state.Blockchain);
 
   const { address, chainId } = useWeb3ModalAccount();
@@ -84,6 +98,93 @@ function Home() {
   const [errors, setErrors] = useState({
     transaction: "",
   });
+
+  const GetCurrentInstance = () => {
+    let Claim_TokenAddress;
+    let PresaleToken_Inst;
+    let ICO_Inst;
+    let Claim_Inst;
+    let Pool_Inst;
+    let Stake_Drift_Inst;
+    let Stake_Drift_Address;
+    let Drift_Inst;
+    let Pool_Address;
+    let Web3_Inst;
+    let Bridge_Address;
+    let Bridge_Inst;
+    let Drift_Address;
+    let Drift_Token_Address;
+    let Presale_TokenAddress;
+
+    if (chainId === 1) {
+      Web3_Inst = web3Inst_ETHSend;
+      Claim_TokenAddress = process.env.REACT_APP_CLAIM_ETH;
+      PresaleToken_Inst = contractInstPresaleToken_ETHSend;
+      Presale_TokenAddress = process.env.REACT_APP_TOKEN_CONTRACT_ETH;
+      ICO_Inst = contractInstICO_ETHSend;
+      Claim_Inst = contractInstClaim_ETHSend;
+      Pool_Inst = contractInstStakePool_ETHSend;
+      Stake_Drift_Inst = contractInstDriftStake_ETHSend;
+      Drift_Inst = contractInstDrift_ETHSend;
+      Pool_Address = process.env.REACT_APP_ST_POOL_DRIFT_ETH;
+      Stake_Drift_Address = process.env.REACT_APP_ST_DRIFT_ETH;
+      Bridge_Address = process.env.REACT_APP_BRIDGE_ETH;
+      Bridge_Inst = contractInstBridge_ETHSend;
+      Drift_Address = process.env.REACT_APP_DRIFT_ETH;
+      Drift_Token_Address = process.env.REACT_APP_DRIFT_ETH;
+    } else if (chainId === 56) {
+      Web3_Inst = web3Inst_BNBSend;
+      Claim_TokenAddress = process.env.REACT_APP_CLAIM_BNB;
+      PresaleToken_Inst = contractInstPresaleToken_BNBSend;
+      Presale_TokenAddress = process.env.REACT_APP_TOKEN_CONTRACT_BNB;
+      ICO_Inst = contractInstICO_BNBSend;
+      Claim_Inst = contractInstClaim_BNBSend;
+      Pool_Inst = contractInstStakePool_BNBSend;
+      Stake_Drift_Inst = contractInstDriftStake_BNBSend;
+      Drift_Inst = contractInstDrift_BNBSend;
+      Pool_Address = process.env.REACT_APP_ST_POOL_DRIFT_BNB;
+      Stake_Drift_Address = process.env.REACT_APP_ST_DRIFT_BNB;
+      Bridge_Address = process.env.REACT_APP_BRIDGE_BNB;
+      Bridge_Inst = contractInstBridge_BNBSend;
+      Drift_Address = process.env.REACT_APP_DRIFT_BNB;
+      Drift_Token_Address = process.env.REACT_APP_DRIFT_BNB;
+    } else if (chainId === 137) {
+      Web3_Inst = web3Inst_POLYGONSend;
+      Claim_TokenAddress = process.env.REACT_APP_CLAIM_POLYGON;
+      PresaleToken_Inst = contractInstPresaleToken_POLYGONSend;
+      Presale_TokenAddress = process.env.REACT_APP_TOKEN_CONTRACT_POLYGON;
+      ICO_Inst = contractInstICO_POLYGONSend;
+      Claim_Inst = contractInstClaim_POLYGONSend;
+      Pool_Inst = contractInstStakePool_POLYGONSend;
+      Stake_Drift_Inst = contractInstDriftStake_POLYGONSend;
+      Drift_Inst = contractInstDrift_POLYGONSend;
+      Pool_Address = process.env.REACT_APP_ST_POOL_DRIFT_POLYGON;
+      Stake_Drift_Address = process.env.REACT_APP_ST_DRIFT_POLYGON;
+      Bridge_Address = process.env.REACT_APP_BRIDGE_POLYGON;
+      Bridge_Inst = contractInstBridge_POLYGONSend;
+      Drift_Address = process.env.REACT_APP_DRIFT_POLYGON;
+      Drift_Token_Address = process.env.REACT_APP_DRIFT_POLYGON;
+    }
+    const res = {
+      web3Inst: Web3_Inst,
+      contractInstICO: ICO_Inst,
+      address,
+      contractInstPresaleToken: PresaleToken_Inst,
+      contractInstClaim: Claim_Inst,
+      claimAddress: Claim_TokenAddress,
+      contractInstStakePool: Pool_Inst,
+      contractInstDriftStake: Stake_Drift_Inst,
+      contractInstDrift: Drift_Inst,
+      pool_address: Pool_Address,
+      bridge_address: Bridge_Address,
+      Bridge_Inst,
+      Drift_Address,
+      Drift_Token_Address,
+      Stake_Drift_Address,
+      Presale_TokenAddress,
+    };
+    return res;
+  };
 
   function scroll() {
     document
@@ -108,59 +209,24 @@ function Home() {
     setTransactionModal(true);
     setLoading(true);
 
-    let Presale_TokenAddress;
-    let Claim_TokenAddress;
-    let PresaleToken_Inst;
-    let ICO_Inst;
-    let Claim_Inst;
-    let Pool_Inst;
-    let Stake_Drift_Inst;
-    let Drift_Inst;
-    let Pool_Address;
-    let Web3_Inst;
-    let Bridge_Address;
-
-    if (selectedNetworkId === 1 && chainId === 1) {
-      Web3_Inst = web3Inst_ETH;
-      Presale_TokenAddress = process.env.REACT_APP_TOKEN_CONTRACT_ETH;
-      Claim_TokenAddress = process.env.REACT_APP_CLAIM_ETH;
-      PresaleToken_Inst = contractInstPresaleToken_ETH;
-      ICO_Inst = contractInstICO_ETH;
-      Claim_Inst = contractInstClaim_ETH;
-      Pool_Inst = contractInstStakePool_ETH;
-      Stake_Drift_Inst = contractInstDriftStake_ETH;
-      Drift_Inst = contractInstDrift_ETH;
-      Pool_Address = process.env.REACT_APP_ST_POOL_DRIFT_ETH;
-      Bridge_Address = process.env.REACT_APP_BRIDGE_ETH;
-    } else if (selectedNetworkId === 56 && chainId === 56) {
-      Web3_Inst = web3Inst_BNB;
-      Presale_TokenAddress = process.env.REACT_APP_TOKEN_CONTRACT_BNB;
-      Claim_TokenAddress = process.env.REACT_APP_CLAIM_BNB;
-      PresaleToken_Inst = contractInstPresaleToken_BNB;
-      ICO_Inst = contractInstICO_BNB;
-      Claim_Inst = contractInstClaim_BNB;
-      Pool_Inst = contractInstStakePool_BNB;
-      Stake_Drift_Inst = contractInstDriftStake_BNB;
-      Drift_Inst = contractInstDrift_BNB;
-      Pool_Address = process.env.REACT_APP_ST_POOL_DRIFT_BNB;
-      Bridge_Address = process.env.REACT_APP_BRIDGE_BNB;
-    } else if (selectedNetworkId === 137 && chainId === 137) {
-      Web3_Inst = web3Inst_POLYGON;
-      Presale_TokenAddress = process.env.REACT_APP_TOKEN_CONTRACT_POLYGON;
-      Claim_TokenAddress = process.env.REACT_APP_CLAIM_POLYGON;
-      PresaleToken_Inst = contractInstPresaleToken_POLYGON;
-      ICO_Inst = contractInstICO_POLYGON;
-      Claim_Inst = contractInstClaim_POLYGON;
-      Pool_Inst = contractInstStakePool_POLYGON;
-      Stake_Drift_Inst = contractInstDriftStake_POLYGON;
-      Drift_Inst = contractInstDrift_POLYGON;
-      Pool_Address = process.env.REACT_APP_ST_POOL_DRIFT_POLYGON;
-      Bridge_Address = process.env.REACT_APP_BRIDGE_POLYGON;
-    } else return;
+    const {
+      web3Inst,
+      claimAddress,
+      contractInstPresaleToken,
+      contractInstICO,
+      contractInstClaim,
+      contractInstStakePool,
+      contractInstDriftStake,
+      contractInstDrift,
+      pool_address,
+      bridge_address,
+      Stake_Drift_Address,
+      Presale_TokenAddress,
+    } = GetCurrentInstance();
 
     try {
-      const approve = await PresaleToken_Inst.methods.approve(
-        Claim_TokenAddress,
+      const approve = await contractInstPresaleToken.methods.approve(
+        claimAddress,
         user?.balance + 0 || 0
       );
 
@@ -186,22 +252,23 @@ function Home() {
           setErrors((state) => ({ ...state, transaction: "" }));
           dispatch(
             LoadUser({
-              web3Inst: Web3_Inst,
-              contractInstICO: ICO_Inst,
               address,
-              contractInstPresaleToken: PresaleToken_Inst,
-              contractInstClaim: Claim_Inst,
-              claimAddress: Claim_TokenAddress,
-              contractInstStakePool: Pool_Inst,
-              contractInstDriftStake: Stake_Drift_Inst,
-              contractInstDrift: Drift_Inst,
-              pool_address: Pool_Address,
+              web3Inst,
+              claimAddress,
+              contractInstPresaleToken,
+              contractInstICO,
+              contractInstClaim,
+              contractInstStakePool,
+              contractInstDriftStake,
+              Stake_Drift_Address,
+              contractInstDrift,
+              pool_address,
             })
           );
           dispatch(
             LoadPoolData({
-              web3Inst: Web3_Inst,
-              contractInstStakePool: Pool_Inst,
+              web3Inst,
+              contractInstStakePool,
             })
           );
 
@@ -238,61 +305,30 @@ function Home() {
     setTransactionModal(true);
     setLoading(true);
 
-    let Claim_Address;
-    let Claim_Inst;
-    let PresaleToken_Inst;
-    let ICO_Inst;
-    let Pool_Inst;
-    let Stake_Drift_Inst;
-    let Drift_Inst;
-    let Pool_Address;
-    let Web3_Inst;
-    let Bridge_Address;
-
-    if (selectedNetworkId === 1 && chainId === 1) {
-      Web3_Inst = web3Inst_ETH;
-      Claim_Inst = contractInstClaim_ETH;
-      Claim_Address = process.env.REACT_APP_CLAIM_ETH;
-      PresaleToken_Inst = contractInstPresaleToken_ETH;
-      ICO_Inst = contractInstICO_ETH;
-      Pool_Inst = contractInstStakePool_ETH;
-      Stake_Drift_Inst = contractInstDriftStake_ETH;
-      Drift_Inst = contractInstDrift_ETH;
-      Pool_Address = process.env.REACT_APP_ST_POOL_DRIFT_ETH;
-      Bridge_Address = process.env.REACT_APP_BRIDGE_ETH;
-    } else if (selectedNetworkId === 56 && chainId === 56) {
-      Web3_Inst = web3Inst_BNB;
-      Claim_Inst = contractInstClaim_BNB;
-      Claim_Address = process.env.REACT_APP_CLAIM_BNB;
-      PresaleToken_Inst = contractInstPresaleToken_BNB;
-      ICO_Inst = contractInstICO_BNB;
-      Pool_Inst = contractInstStakePool_BNB;
-      Stake_Drift_Inst = contractInstDriftStake_BNB;
-      Drift_Inst = contractInstDrift_BNB;
-      Pool_Address = process.env.REACT_APP_ST_POOL_DRIFT_BNB;
-      Bridge_Address = process.env.REACT_APP_BRIDGE_BNB;
-    } else if (selectedNetworkId === 137 && chainId === 137) {
-      Web3_Inst = web3Inst_POLYGON;
-      Claim_Inst = contractInstClaim_POLYGON;
-      Claim_Address = process.env.REACT_APP_CLAIM_POLYGON;
-      PresaleToken_Inst = contractInstPresaleToken_POLYGON;
-      ICO_Inst = contractInstICO_POLYGON;
-      Pool_Inst = contractInstStakePool_POLYGON;
-      Stake_Drift_Inst = contractInstDriftStake_POLYGON;
-      Drift_Inst = contractInstDrift_POLYGON;
-      Pool_Address = process.env.REACT_APP_ST_POOL_DRIFT_POLYGON;
-      Bridge_Address = process.env.REACT_APP_BRIDGE_POLYGON;
-    }
+    const {
+      web3Inst,
+      claimAddress,
+      contractInstPresaleToken,
+      contractInstICO,
+      contractInstClaim,
+      contractInstStakePool,
+      contractInstDriftStake,
+      contractInstDrift,
+      pool_address,
+      bridge_address,
+      Stake_Drift_Address,
+      Presale_TokenAddress,
+    } = GetCurrentInstance();
 
     try {
-      const claimTokens = await Claim_Inst.methods.claimTokens();
+      const claimTokens = await contractInstClaim.methods.claimTokens();
       const estimateGas = await claimTokens.estimateGas({
         from: address,
       });
 
       const transaction = claimTokens.send({
         from: address,
-        to: Claim_Address,
+        to: claimAddress,
         gas: estimateGas,
         maxPriorityFeePerGas: 50000000000,
       });
@@ -308,22 +344,22 @@ function Home() {
           setErrors((state) => ({ ...state, transaction: "" }));
           dispatch(
             LoadUser({
-              web3Inst: Web3_Inst,
-              contractInstICO: ICO_Inst,
+              web3Inst,
+              contractInstICO,
               address,
-              contractInstPresaleToken: PresaleToken_Inst,
-              contractInstClaim: Claim_Inst,
-              claimAddress: Claim_Address,
-              contractInstStakePool: Pool_Inst,
-              contractInstDriftStake: Stake_Drift_Inst,
-              contractInstDrift: Drift_Inst,
-              pool_address: Pool_Address,
+              contractInstPresaleToken,
+              contractInstClaim,
+              claimAddress,
+              contractInstStakePool,
+              contractInstDriftStake,
+              contractInstDrift,
+              pool_address,
             })
           );
           dispatch(
             LoadPoolData({
-              web3Inst: Web3_Inst,
-              contractInstStakePool: Pool_Inst,
+              web3Inst,
+              contractInstStakePool,
             })
           );
 

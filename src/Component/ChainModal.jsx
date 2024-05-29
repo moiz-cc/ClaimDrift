@@ -4,7 +4,7 @@ import {
   useWeb3ModalState,
 } from "@web3modal/ethers5/react";
 import React, { useEffect, useState } from "react";
-import SupportChain from "../config/SupportChain";
+import { SupportedChain } from "../config";
 import { useDebounce } from "use-debounce";
 import { useSelector } from "react-redux";
 
@@ -24,7 +24,7 @@ const ChainModal = ({ state }) => {
   } = state;
   const [query, setQuery] = useState("");
   const [debouncedQuery] = useDebounce(query, 1000);
-  const [chains, setChains] = useState(SupportChain);
+  const [chains, setChains] = useState(SupportedChain);
 
   const onChainChange = async (chain) => {
     const currentInst = GetCurrentInstance();
@@ -42,7 +42,7 @@ const ChainModal = ({ state }) => {
     } else {
       if (isFirstModal) {
         setSelectedChain({ ...chain });
-        const filterTokenChains = SupportChain?.filter(
+        const filterTokenChains = SupportedChain?.filter(
           (stoken) => stoken?.chainId !== chain?.chainId
         )[0];
         setConvSelectedChain(filterTokenChains);
@@ -56,14 +56,14 @@ const ChainModal = ({ state }) => {
 
   useEffect(() => {
     if (debouncedQuery) {
-      const filterRes = SupportChain.filter(
+      const filterRes = SupportedChain.filter(
         (chain) =>
           chain?.name.toLowerCase().includes(debouncedQuery.toLowerCase()) ||
           chain?.currency.toLowerCase().includes(debouncedQuery.toLowerCase())
       );
       setChains(filterRes);
     } else {
-      setChains(SupportChain);
+      setChains(SupportedChain);
     }
   }, [debouncedQuery, query]);
 

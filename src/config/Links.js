@@ -4,8 +4,6 @@ const Links = [
   { title: "Amba$$ador", link: "/ambassador" },
   { title: "Staking Portal", link: "/staking-portal" },
   { title: "Cross Swap", link: "/cross-swap" },
-
-  // { title: "Ambassador", link: "/" },
 ];
 
 export { Links };

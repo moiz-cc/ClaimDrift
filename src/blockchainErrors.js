@@ -174,7 +174,7 @@ const getErrFromWeb3 = async (err, chainId) => {
       return defaultErrMsg;
     }
   } else {
-    console.log(err);
+    console.log(err.message);
     return defaultErrMsg;
   }
 };

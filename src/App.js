@@ -27,8 +27,21 @@ import PriceRiskDisclosure from "./Pages/PriceRiskDisclosure.js";
 import Staking from "./Pages/Staking.js";
 import CrossSwap from "./Pages/CrossSwap.js";
 import Tokenomics from "./Pages/Tokenomics.js";
-
+import { metadata, ethereum, polygon, bnb, projectId } from "./config";
 function App() {
+  const [isModalCreated, setIsModalCreated] = useState(false);
+  const CreateWeb3Modal = () => {
+    if (!isModalCreated) {
+      createWeb3Modal({
+        themeMode: "light",
+        ethersConfig: defaultConfig({ metadata }),
+        chains: [ethereum, bnb, polygon],
+        projectId,
+      });
+      setIsModalCreated(true);
+    }
+  };
+  CreateWeb3Modal();
   const dispatch = useDispatch();
   const {
     web3Inst_ETH,
@@ -54,51 +67,6 @@ function App() {
     contractInstStakePool_POLYGON,
   } = useSelector((state) => state.Blockchain);
   const { walletProvider } = useWeb3ModalProvider();
-
-  // 1. Get projectId
-  const projectId = process.env.REACT_APP_PROJECT_ID;
-
-  // 2. Set chains
-  const bnb = {
-    chainId: 56,
-    name: "BNB Chain",
-    currency: "BNB",
-    explorerUrl: "https://bscscan.com/",
-    rpcUrl: process.env.REACT_APP_RPC_BNB,
-  };
-
-  const ethereum = {
-    chainId: 1,
-    name: "Ethereum",
-    currency: "ETH",
-    explorerUrl: "https://etherscan.io",
-    rpcUrl: process.env.REACT_APP_RPC_ETH,
-  };
-
-  const polygon = {
-    chainId: 137,
-    name: "Polygon",
-    currency: "MATIC",
-    explorerUrl: "https://polygonscan.com",
-    rpcUrl: process.env.REACT_APP_RPC_POLYGON,
-  };
-
-  // 3. Create modal
-  const metadata = {
-    name: "Drift Token",
-    description: "A Web3 project like no other",
-    url: "https://drifttoken.io",
-    icons: [
-      "https://drifttoken.io/static/media/Drift-Logo.455e45448280600e784a21edef0be300.svg",
-    ],
-  };
-
-  createWeb3Modal({
-    themeMode: "light",
-    ethersConfig: defaultConfig({ metadata }),
-    chains: [ethereum, bnb, polygon],
-    projectId,
-  });
 
   const [isWeb3InstanceConnect, setIsWeb3InstanceConnect] = useState(false);
   const { address, isConnected, chainId } = useWeb3ModalAccount();
@@ -207,9 +175,8 @@ function App() {
       );
     }
   };
-
   const LoadContract = () => {
-    if (isConnected) {
+    if (isConnected && walletProvider && chainId) {
       dispatch(createInstance({ walletProvider, chainId }));
       setIsWeb3InstanceConnect(true);
     } else {
@@ -232,7 +199,7 @@ function App() {
   }, [isConnected, chainId]);
 
   useEffect(() => {
-    if (isConnected && walletProvider && address) {
+    if (isConnected && walletProvider && address && chainId) {
       getUserData();
       getPoolData();
     }

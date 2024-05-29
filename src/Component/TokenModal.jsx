@@ -3,7 +3,7 @@ import {
   useWeb3ModalAccount,
 } from "@web3modal/ethers5/react";
 import React, { useEffect, useState } from "react";
-import SupportToken from "../config/SupportToken";
+import { SupportedToken } from "../config";
 import { useDebounce } from "use-debounce";
 
 const TokenModal = ({ state }) => {
@@ -11,20 +11,20 @@ const TokenModal = ({ state }) => {
     state;
   const [query, setQuery] = useState("");
   const [debouncedQuery] = useDebounce(query, 1000);
-  const [tokens, setTokens] = useState(SupportToken);
+  const [tokens, setTokens] = useState(SupportedToken);
   const onTokenChange = async (token) => {
     console.log("Change Token");
   };
   useEffect(() => {
     if (debouncedQuery) {
-      const filterRes = SupportToken.filter(
+      const filterRes = SupportedToken.filter(
         (token) =>
           token?.name.toLowerCase().includes(debouncedQuery.toLowerCase()) ||
           token?.currency.toLowerCase().includes(debouncedQuery.toLowerCase())
       );
       setTokens(filterRes);
     } else {
-      setTokens(SupportToken);
+      setTokens(SupportedToken);
     }
   }, [debouncedQuery, query]);
 

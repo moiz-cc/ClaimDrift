@@ -12,7 +12,7 @@ import ChainModal from "../Component/ChainModal";
 import GeneralModal from "../Component/GeneralModal";
 import Skeleton from "../Component/Skeleton";
 import TokenModal from "../Component/TokenModal";
-import SupportChain from "../config/SupportChain";
+import { maxPriorityFeePerGas, SupportedChain } from "../config";
 import ConvertNumber from "../Helpers/ConvertNumber";
 import GetChain from "../Helpers/GetChain";
 import LoadingGif from "../Assets/Images/loading.gif";
@@ -28,37 +28,37 @@ CheckBalance.
 const CrossSwap = () => {
   const {
     user,
-    pool,
-    web3Inst_ETH,
-    contractInstICO_ETH,
-    contractInstPresaleToken_ETH,
-    contractInstDrift_ETH,
-    contractInstClaim_ETH,
-    contractInstStakePool_ETH,
-    contractInstDriftStake_ETH,
-    web3Inst_BNB,
-    contractInstICO_BNB,
-    contractInstPresaleToken_BNB,
-    contractInstDrift_BNB,
-    contractInstClaim_BNB,
-    contractInstStakePool_BNB,
-    contractInstDriftStake_BNB,
-    web3Inst_POLYGON,
+    // Send Inst
+    web3Inst_ETHSend,
+    contractInstICO_ETHSend,
+    contractInstPresaleToken_ETHSend,
+    contractInstDrift_ETHSend,
+    contractInstClaim_ETHSend,
+    contractInstStakePool_ETHSend,
+    contractInstDriftStake_ETHSend,
 
-    contractInstPresaleToken_POLYGON,
-    contractInstICO_POLYGON,
-    contractInstDrift_POLYGON,
-    contractInstClaim_POLYGON,
-    contractInstStakePool_POLYGON,
-    contractInstDriftStake_POLYGON,
+    web3Inst_BNBSend,
+    contractInstICO_BNBSend,
+    contractInstPresaleToken_BNBSend,
+    contractInstDrift_BNBSend,
+    contractInstClaim_BNBSend,
+    contractInstStakePool_BNBSend,
+    contractInstDriftStake_BNBSend,
 
-    contractInstBridge_ETH,
-    contractInstBridge_BNB,
-    contractInstBridge_POLYGON,
+    web3Inst_POLYGONSend,
+    contractInstPresaleToken_POLYGONSend,
+    contractInstICO_POLYGONSend,
+    contractInstDrift_POLYGONSend,
+    contractInstClaim_POLYGONSend,
+    contractInstStakePool_POLYGONSend,
+    contractInstDriftStake_POLYGONSend,
+
+    contractInstBridge_ETHSend,
+    contractInstBridge_BNBSend,
+    contractInstBridge_POLYGONSend,
   } = useSelector((state) => state.Blockchain);
   const { switchNetwork } = useSwitchNetwork();
   const { address, chainId } = useWeb3ModalAccount();
-  const { selectedNetworkId } = useWeb3ModalState();
   const [recipientAddress, setRecipientAddress] = useState(null);
   const [isFirstModal, setIsFirstModal] = useState(true);
   const [selectedChain, setSelectedChain] = useState(null);
@@ -70,10 +70,11 @@ const CrossSwap = () => {
   const [isInsuffGas, setIsInsuffGas] = useState(false);
   const [isInsuffGasErr, setIsInsuffGasErr] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isLoadingChain, setIsLoadingChain] = useState(true);
   const [loadingTransaction, setLoadingTransaction] = useState(false);
   const [transactionModal, setTransactionModal] = useState(false);
-  const [txHash, setTxHash] = useState("");
   const [modalMessage, setModalMessage] = useState(null);
+  const [txHash, setTxHash] = useState("");
   const [errors, setErrors] = useState({
     transaction: "",
   });
@@ -83,6 +84,7 @@ const CrossSwap = () => {
   const ResetLoading = () => {
     const timerId = setTimeout(() => {
       setIsLoading(false);
+      setIsLoadingChain(false);
       loadingTimerId && clearTimeout(loadingTimerId);
       clearTimeout(timerId);
     }, 1000);
@@ -104,48 +106,48 @@ const CrossSwap = () => {
     let Drift_Token_Address;
 
     if (chainId === 1) {
-      Web3_Inst = web3Inst_ETH;
+      Web3_Inst = web3Inst_ETHSend;
       Claim_TokenAddress = process.env.REACT_APP_CLAIM_ETH;
-      PresaleToken_Inst = contractInstPresaleToken_ETH;
-      ICO_Inst = contractInstICO_ETH;
-      Claim_Inst = contractInstClaim_ETH;
-      Pool_Inst = contractInstStakePool_ETH;
-      Stake_Drift_Inst = contractInstDriftStake_ETH;
-      Drift_Inst = contractInstDrift_ETH;
+      PresaleToken_Inst = contractInstPresaleToken_ETHSend;
+      ICO_Inst = contractInstICO_ETHSend;
+      Claim_Inst = contractInstClaim_ETHSend;
+      Pool_Inst = contractInstStakePool_ETHSend;
+      Stake_Drift_Inst = contractInstDriftStake_ETHSend;
+      Drift_Inst = contractInstDrift_ETHSend;
       Pool_Address = process.env.REACT_APP_ST_POOL_DRIFT_ETH;
       Stake_Drift_Address = process.env.REACT_APP_ST_DRIFT_ETH;
       Bridge_Address = process.env.REACT_APP_BRIDGE_ETH;
-      Bridge_Inst = contractInstBridge_ETH;
+      Bridge_Inst = contractInstBridge_ETHSend;
       Drift_Address = process.env.REACT_APP_DRIFT_ETH;
       Drift_Token_Address = process.env.REACT_APP_DRIFT_ETH;
     } else if (chainId === 56) {
-      Web3_Inst = web3Inst_BNB;
+      Web3_Inst = web3Inst_BNBSend;
       Claim_TokenAddress = process.env.REACT_APP_CLAIM_BNB;
-      PresaleToken_Inst = contractInstPresaleToken_BNB;
-      ICO_Inst = contractInstICO_BNB;
-      Claim_Inst = contractInstClaim_BNB;
-      Pool_Inst = contractInstStakePool_BNB;
-      Stake_Drift_Inst = contractInstDriftStake_BNB;
-      Drift_Inst = contractInstDrift_BNB;
+      PresaleToken_Inst = contractInstPresaleToken_BNBSend;
+      ICO_Inst = contractInstICO_BNBSend;
+      Claim_Inst = contractInstClaim_BNBSend;
+      Pool_Inst = contractInstStakePool_BNBSend;
+      Stake_Drift_Inst = contractInstDriftStake_BNBSend;
+      Drift_Inst = contractInstDrift_BNBSend;
       Pool_Address = process.env.REACT_APP_ST_POOL_DRIFT_BNB;
       Stake_Drift_Address = process.env.REACT_APP_ST_DRIFT_BNB;
       Bridge_Address = process.env.REACT_APP_BRIDGE_BNB;
-      Bridge_Inst = contractInstBridge_BNB;
+      Bridge_Inst = contractInstBridge_BNBSend;
       Drift_Address = process.env.REACT_APP_DRIFT_BNB;
       Drift_Token_Address = process.env.REACT_APP_DRIFT_BNB;
     } else if (chainId === 137) {
-      Web3_Inst = web3Inst_POLYGON;
+      Web3_Inst = web3Inst_POLYGONSend;
       Claim_TokenAddress = process.env.REACT_APP_CLAIM_POLYGON;
-      PresaleToken_Inst = contractInstPresaleToken_POLYGON;
-      ICO_Inst = contractInstICO_POLYGON;
-      Claim_Inst = contractInstClaim_POLYGON;
-      Pool_Inst = contractInstStakePool_POLYGON;
-      Stake_Drift_Inst = contractInstDriftStake_POLYGON;
-      Drift_Inst = contractInstDrift_POLYGON;
+      PresaleToken_Inst = contractInstPresaleToken_POLYGONSend;
+      ICO_Inst = contractInstICO_POLYGONSend;
+      Claim_Inst = contractInstClaim_POLYGONSend;
+      Pool_Inst = contractInstStakePool_POLYGONSend;
+      Stake_Drift_Inst = contractInstDriftStake_POLYGONSend;
+      Drift_Inst = contractInstDrift_POLYGONSend;
       Pool_Address = process.env.REACT_APP_ST_POOL_DRIFT_POLYGON;
       Stake_Drift_Address = process.env.REACT_APP_ST_DRIFT_POLYGON;
       Bridge_Address = process.env.REACT_APP_BRIDGE_POLYGON;
-      Bridge_Inst = contractInstBridge_POLYGON;
+      Bridge_Inst = contractInstBridge_POLYGONSend;
       Drift_Address = process.env.REACT_APP_DRIFT_POLYGON;
       Drift_Token_Address = process.env.REACT_APP_DRIFT_POLYGON;
     } else return null;
@@ -193,8 +195,6 @@ const CrossSwap = () => {
           user?.dynamicDrift
         )
         .call();
-
-      await CheckAllowance(bridgeFees);
       return bridgeFees || 0;
     } catch (error) {
       console.log("Error fetching bridge fees:", error);
@@ -207,7 +207,8 @@ const CrossSwap = () => {
     }
 
     let { value } = e.target;
-    let newVal = +value <= 0 ? "0" : value;
+    let newVal = +value <= 0 ? 0 : value;
+
     setSelectedChain({
       ...selectedChain,
       value: newVal,
@@ -216,10 +217,6 @@ const CrossSwap = () => {
       ...convSelectedChain,
       value: newVal,
     });
-
-    if (Number(newVal) === 0 && chainId) {
-      await CheckAllowance();
-    }
   };
   const SwitchChain = async () => {
     if (!chainId) {
@@ -230,13 +227,11 @@ const CrossSwap = () => {
       return;
     }
     setIsLoading(true);
+    setIsLoadingChain(true);
     const oldSelectedChain = { ...selectedChain };
     const oldConvSelectedChain = { ...convSelectedChain };
     try {
       const res = await switchNetwork(oldConvSelectedChain?.chainId);
-      if (res) {
-        CheckBalance();
-      }
     } catch (error) {
       console.log("Failed to switch network:", error);
     }
@@ -271,24 +266,25 @@ const CrossSwap = () => {
         from: address,
         to: bridge_address,
         gas: estimateGas,
-        // maxPriorityFeePerGas: 290000,
-        // maxFeePerGas: 3000000,
       });
-      console.log("res", res);
+      console.log("response", res);
       console.log("estimateGas", estimateGas);
       setIsInsuffGas(false);
+      ResetLoading();
     } catch (error) {
       setIsInsuffGas(true);
       const err = await getErrorMessage(error);
+      console.log(err);
       if (err === "Insufficient funds.") {
-        setIsInsuffGasErr("Insufficient funds");
+        setIsInsuffGasErr("Insufficient funds for gas");
       } else {
-        console.log("error", error);
         setIsInsuffGasErr("Oops! Something went wrong");
       }
+      ResetLoading();
+      // console.log("error", error);
     }
   };
-  const CheckAllowance = async (bridgeFees) => {
+  const CheckAllowance = async () => {
     if (!chainId) return;
     const {
       contractInstDrift,
@@ -297,41 +293,43 @@ const CrossSwap = () => {
       Bridge_Inst,
       Drift_Token_Address,
     } = GetCurrentInstance();
+
     try {
       const allowance = await contractInstDrift?.methods
         .allowance(address, bridge_address)
         .call();
+
       if (
-        Number(selectedChain?.value) &&
         Number(ConvertNumber(allowance, true)) >= Number(selectedChain?.value)
       ) {
         setIsApproved(true);
+        loadingTimerId && clearTimeout(loadingTimerId);
+        const bridgeFees = await GetBridgeFee(convSelectedChain);
+        if (bridgeFees) {
+          await CheckEstimateGas({
+            bridgeFees,
+            Bridge_Inst,
+            Drift_Token_Address,
+            bridge_address,
+          });
+        }
       } else {
         setIsApproved(false);
       }
-
-      loadingTimerId && clearTimeout(loadingTimerId);
-      await CheckEstimateGas({
-        bridgeFees,
-        Bridge_Inst,
-        Drift_Token_Address,
-        bridge_address,
-      });
-      CheckBalance();
     } catch (error) {
       console.log(error.message);
     }
   };
-  const CheckBalance = () => {
+  const CheckBalance = async () => {
     if (
       Number(ConvertNumber(user?.dynamicDrift, true)) >=
       Number(selectedChain?.value)
     ) {
+      await CheckAllowance();
       setIsInsuffBalance(false);
     } else {
       setIsInsuffBalance(true);
     }
-    ResetLoading();
   };
   const Approve = async () => {
     const currentInst = GetCurrentInstance();
@@ -350,27 +348,26 @@ const CrossSwap = () => {
     try {
       const approve = await currentInst?.contractInstDrift.methods.approve(
         currentInst?.bridge_address,
-        `${amount}` || 0
+        amount
       );
 
       const estimateGas = await approve.estimateGas({
         from: address,
       });
-
       const transaction = approve.send({
         from: address,
         to: currentInst?.Drift_Token_Address,
         gas: estimateGas,
-        maxPriorityFeePerGas: 3000000,
+        maxPriorityFeePerGas,
       });
 
       transaction
         .on("transactionHash", (txHash) => {
-          console.log(txHash);
+          // console.log(txHash);
           setTxHash(txHash);
         })
         .on("receipt", async (receipt) => {
-          console.log("RECEIPT => \n", receipt);
+          // console.log("RECEIPT => \n", receipt);
           setModalMessage(
             "Your transaction to grant token allowance for bridging has been successfully completed."
           );
@@ -396,7 +393,6 @@ const CrossSwap = () => {
       setErrors((state) => ({ ...state, transaction: errorMsg }));
       setLoadingTransaction(false);
     }
-
     ResetLoading();
   };
   const Transfer = async () => {
@@ -437,7 +433,7 @@ const CrossSwap = () => {
         from: address,
         to: currentInst?.bridge_address,
         gas: estimateGas,
-        maxPriorityFeePerGas: 3000000,
+        maxPriorityFeePerGas,
       });
 
       transaction
@@ -492,7 +488,7 @@ const CrossSwap = () => {
       if (chainId) {
         const chain = GetChain(chainId);
         setSelectedChain({ ...chain });
-        const filteredChain = SupportChain.filter(
+        const filteredChain = SupportedChain.filter(
           (fchain) => fchain?.chainId !== chain?.chainId
         )[0];
         setRecipientAddress(address);
@@ -508,9 +504,9 @@ const CrossSwap = () => {
           });
         }
       } else {
-        const chain = SupportChain[0];
+        const chain = SupportedChain[0];
         setSelectedChain(chain);
-        const filteredChain = SupportChain.find(
+        const filteredChain = SupportedChain.find(
           (fchain) => fchain?.chainId !== chain?.chainId
         );
         setConvSelectedChain(filteredChain);
@@ -522,7 +518,7 @@ const CrossSwap = () => {
 
   useEffect(() => {
     if (debouncedQuery && chainId) {
-      GetBridgeFee(convSelectedChain);
+      CheckBalance();
     }
   }, [debouncedQuery]);
 
@@ -590,78 +586,74 @@ const CrossSwap = () => {
                   className="InputContainer border bg-white rounded-3 py-3 py-md-2 px-3"
                   style={{ marginBottom: "-0.8rem" }}
                 >
-                  <div className="d-flex align-items-start">
-                    <div className="w-100">
-                      <div className="d-flex align-items-center justify-content-between gap-2 mb-1">
-                        <label
-                          htmlFor="fromMainnet"
-                          className="text-start d-block w-100 FS_14"
-                        >
-                          From:{" "}
-                          {isLoading ? (
-                            <div
-                              className="d-inline-block "
-                              style={{ width: "100px" }}
-                            >
-                              <Skeleton />
-                            </div>
-                          ) : (
-                            <strong>
-                              {selectedChain?.currency || ""} Chain
-                            </strong>
-                          )}
-                        </label>
-                        {isLoading ? (
+                  <div className="w-100">
+                    <div className="d-flex align-items-center justify-content-between gap-2 mb-1">
+                      <label
+                        htmlFor="fromMainnet"
+                        className="text-start d-block w-100 FS_14"
+                      >
+                        From:{" "}
+                        {isLoadingChain ? (
                           <div
-                            className="d-inline-block"
+                            className="d-inline-block "
                             style={{ width: "100px" }}
                           >
                             <Skeleton />
                           </div>
                         ) : (
-                          <button
-                            type="button"
-                            className="btn btn-sm d-flex align-items-center border rounded-4 justify-content-center ps-3 pe-1 FS_14 removeBtnTransform"
-                            style={{ minWidth: "110px" }}
-                            data-bs-toggle="modal"
-                            data-bs-target="#chainModal"
-                            onClick={() => setIsFirstModal(true)}
-                          >
-                            <img
-                              src={selectedChain?.icon || ""}
-                              alt={selectedChain?.currency || ""}
-                              width={"18px"}
-                            />
-                            <span className="mx-2">
-                              {selectedChain?.currency || ""}
-                            </span>
-                            <svg
-                              width="8"
-                              height="8"
-                              viewBox="0 0 6 4"
-                              fill="none"
-                              xmlns="http://www.w3.org/2000/svg"
-                            >
-                              <path
-                                d="M3.00008 3.76921L0.064209 0.833344H5.93594L3.00008 3.76921Z"
-                                fill="black"
-                                fillOpacity="0.3"
-                              ></path>
-                            </svg>
-                          </button>
+                          <strong>{selectedChain?.currency || ""} Chain</strong>
                         )}
-                      </div>
-                      <input
-                        className="input-field pe-2 fs-2 fw-bold"
-                        type="number"
-                        name="fromMainnet"
-                        id="fromMainnet"
-                        placeholder="0"
-                        step="any"
-                        value={selectedChain?.value || ""}
-                        onChange={onAmountChange}
-                      />
+                      </label>
+                      {isLoadingChain ? (
+                        <div
+                          className="d-inline-block"
+                          style={{ width: "100px" }}
+                        >
+                          <Skeleton />
+                        </div>
+                      ) : (
+                        <button
+                          type="button"
+                          className="btn btn-sm d-flex align-items-center border rounded-4 justify-content-center ps-3 pe-1 FS_14 removeBtnTransform"
+                          style={{ minWidth: "110px" }}
+                          data-bs-toggle="modal"
+                          data-bs-target="#chainModal"
+                          onClick={() => setIsFirstModal(true)}
+                        >
+                          <img
+                            src={selectedChain?.icon || ""}
+                            alt={selectedChain?.currency || ""}
+                            width={"18px"}
+                          />
+                          <span className="mx-2">
+                            {selectedChain?.currency || ""}
+                          </span>
+                          <svg
+                            width="8"
+                            height="8"
+                            viewBox="0 0 6 4"
+                            fill="none"
+                            xmlns="http://www.w3.org/2000/svg"
+                          >
+                            <path
+                              d="M3.00008 3.76921L0.064209 0.833344H5.93594L3.00008 3.76921Z"
+                              fill="black"
+                              fillOpacity="0.3"
+                            ></path>
+                          </svg>
+                        </button>
+                      )}
                     </div>
+                    <input
+                      className="input-field pe-2 fs-2 fw-bold"
+                      type="number"
+                      name="fromMainnet"
+                      id="fromMainnet"
+                      placeholder="0"
+                      step="any"
+                      value={selectedChain?.value || ""}
+                      onChange={onAmountChange}
+                    />
                   </div>
 
                   <button
@@ -688,10 +680,10 @@ const CrossSwap = () => {
                   </button>
 
                   {chainId && (
-                    <div className="d-flex w-100 gap-1 justify-content-end mt-2">
+                    <div className="d-flex w-100 gap-1 align-items-baseline justify-content-end mt-2">
                       <span className="FS_12 mb-0 text-nowrap">
                         Balance:{" "}
-                        {isLoading ? (
+                        {isLoadingChain ? (
                           <div
                             className="d-inline-block"
                             style={{ width: "50px" }}
@@ -710,7 +702,11 @@ const CrossSwap = () => {
                         type="button"
                         className="btn max-btn FS_12 border-0 fw-semibold p-0"
                         onClick={() => SetMax()}
-                        disabled={ConvertNumber(user?.dynamicDrift, true) === 0}
+                        disabled={
+                          isLoading ||
+                          isLoadingChain ||
+                          ConvertNumber(user?.dynamicDrift, true) === 0
+                        }
                       >
                         Max
                       </button>
@@ -721,7 +717,7 @@ const CrossSwap = () => {
                   type="button"
                   className="btn px-2 py-1 border bg-light"
                   onClick={() => SwitchChain()}
-                  disabled={isLoading}
+                  disabled={isLoading || isLoadingChain}
                 >
                   <svg
                     width="14"
@@ -740,79 +736,77 @@ const CrossSwap = () => {
                   className="InputContainer border bg-white rounded-3 py-3 py-md-2 px-3"
                   style={{ marginTop: "-0.8rem" }}
                 >
-                  <div className="d-flex align-items-start">
-                    <div className="w-100">
-                      <div className="d-flex align-items-center justify-content-between gap-2 mb-1">
-                        <label
-                          htmlFor="toMainnet"
-                          className="text-start d-block w-100 FS_14 mb-1"
-                        >
-                          To:{" "}
-                          {isLoading ? (
-                            <div
-                              className="d-inline-block "
-                              style={{ width: "100px" }}
-                            >
-                              <Skeleton />
-                            </div>
-                          ) : (
-                            <strong>
-                              {convSelectedChain?.currency || ""} Chain
-                            </strong>
-                          )}
-                        </label>
-                        {isLoading ? (
+                  <div className="w-100">
+                    <div className="d-flex align-items-center justify-content-between gap-2 mb-1">
+                      <label
+                        htmlFor="toMainnet"
+                        className="text-start d-block w-100 FS_14 mb-1"
+                      >
+                        To:{" "}
+                        {isLoadingChain ? (
                           <div
-                            className="d-inline-block"
+                            className="d-inline-block "
                             style={{ width: "100px" }}
                           >
                             <Skeleton />
                           </div>
                         ) : (
-                          <button
-                            type="button"
-                            className="btn btn-sm d-flex align-items-center gap-1 border rounded-4 justify-content-center ps-3 pe-1 FS_14 removeBtnTransform"
-                            style={{ minWidth: "110px" }}
-                            data-bs-toggle="modal"
-                            data-bs-target="#chainModal"
-                            onClick={() => setIsFirstModal(false)}
-                          >
-                            <img
-                              src={convSelectedChain?.icon || ""}
-                              alt={convSelectedChain?.currency || ""}
-                              width={"18px"}
-                            />
-                            <span className="lh-1 me-2">
-                              {convSelectedChain?.currency}
-                            </span>
-                            <svg
-                              width="8"
-                              height="8"
-                              viewBox="0 0 6 4"
-                              fill="none"
-                              xmlns="http://www.w3.org/2000/svg"
-                            >
-                              <path
-                                d="M3.00008 3.76921L0.064209 0.833344H5.93594L3.00008 3.76921Z"
-                                fill="black"
-                                fillOpacity="0.3"
-                              ></path>
-                            </svg>
-                          </button>
+                          <strong>
+                            {convSelectedChain?.currency || ""} Chain
+                          </strong>
                         )}
-                      </div>
-
-                      <input
-                        readOnly
-                        className="input-field pe-2 fs-2 fw-bold"
-                        type="number"
-                        name="toMainnet"
-                        id="toMainnet"
-                        placeholder="0"
-                        step="any"
-                        value={convSelectedChain?.value || ""}
-                      />
+                      </label>
+                      {isLoadingChain ? (
+                        <div
+                          className="d-inline-block"
+                          style={{ width: "100px" }}
+                        >
+                          <Skeleton />
+                        </div>
+                      ) : (
+                        <button
+                          type="button"
+                          className="btn btn-sm d-flex align-items-center gap-1 border rounded-4 justify-content-center ps-3 pe-1 FS_14 removeBtnTransform"
+                          style={{ minWidth: "110px" }}
+                          data-bs-toggle="modal"
+                          data-bs-target="#chainModal"
+                          onClick={() => setIsFirstModal(false)}
+                        >
+                          <img
+                            src={convSelectedChain?.icon || ""}
+                            alt={convSelectedChain?.currency || ""}
+                            width={"18px"}
+                          />
+                          <span className="lh-1 me-2">
+                            {convSelectedChain?.currency}
+                          </span>
+                          <svg
+                            width="8"
+                            height="8"
+                            viewBox="0 0 6 4"
+                            fill="none"
+                            xmlns="http://www.w3.org/2000/svg"
+                          >
+                            <path
+                              d="M3.00008 3.76921L0.064209 0.833344H5.93594L3.00008 3.76921Z"
+                              fill="black"
+                              fillOpacity="0.3"
+                            ></path>
+                          </svg>
+                        </button>
+                      )}
                     </div>
+
+                    <input
+                      readOnly
+                      className="input-field pe-2 fs-2 fw-bold"
+                      type="number"
+                      name="toMainnet"
+                      id="toMainnet"
+                      placeholder="0"
+                      step="any"
+                      value={convSelectedChain?.value || ""}
+                    />
                   </div>
 
                   <button
@@ -956,7 +950,8 @@ const CrossSwap = () => {
                       isLoading ||
                       !+selectedChain?.value > 0 ||
                       !chainId ||
-                      recipientAddress?.length < 25
+                      recipientAddress?.length < 25 ||
+                      isInsuffGas
                     }
                   >
                     {isLoading ? (
