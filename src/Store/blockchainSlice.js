@@ -88,7 +88,6 @@ const makeBatchRequest = async (
   native = [],
   from = "0x0000000000000000000000000000000000000000"
 ) => {
- 
   let batch = new web3.BatchRequest();
   let promises = [];
   if (calls.length > 0) {
@@ -156,6 +155,7 @@ export const LoadBlockchainData = createAsyncThunk(
         Number(tokensToClaim_ETH) +
           Number(tokensToClaim_BNB) +
           Number(tokensToClaim_POLYGON),
+        true,
         true
       );
 
@@ -625,5 +625,5 @@ export const blockchainSlice = createSlice({
 
 export const { createInstance, UpdateUser, UpdateUSDPrice } =
   blockchainSlice.actions;
-  
+
 export default blockchainSlice.reducer;

@@ -1,3 +1,4 @@
+/* global BigInt */
 import React, { useEffect } from "react";
 
 import { useState } from "react";
@@ -18,6 +19,7 @@ import {
 } from "@web3modal/ethers5/react";
 import { Link } from "react-router-dom";
 import Loader from "../Component/Loading.js";
+import { maxPriorityFeePerGas } from "../config/index.js";
 
 const Staking = () => {
   const dispatch = useDispatch();
@@ -176,10 +178,16 @@ const Staking = () => {
     });
     setTxHash("");
   };
+  const countDecimalPlaces = (num) => {
+    if (!Number.isFinite(num)) return 0;
+    const decimal = String(num).split(".")[1];
+    return decimal ? decimal.length : 0;
+  };
+
   const onChange = (e) => {
     const { value, max } = e.target;
 
-    if (ConvertNumber(value) > Number(user?.stakeDrift)) {
+    if (ConvertNumber(value, false) > user?.stakeDrift) {
       setTokens(ConvertNumber(user?.stakeDrift, true));
     } else {
       setTokens(value);
@@ -221,7 +229,7 @@ const Staking = () => {
         from: address,
         to: Stake_Drift_Address,
         gas: estimateGas,
-        maxPriorityFeePerGas: 50000000000,
+        maxPriorityFeePerGas,
       });
 
       transaction
@@ -315,7 +323,7 @@ const Staking = () => {
         from: address,
         to: Stake_Drift_Address,
         gas: estimateGas,
-        maxPriorityFeePerGas: 50000000000,
+        maxPriorityFeePerGas,
       });
 
       transaction
@@ -401,7 +409,7 @@ const Staking = () => {
 
     try {
       const unstake = await contractInstStakePool.methods.unstake(
-        Number(tokens_in_wei) >= Number(user?.stakeDrift)
+        Number(tokens_in_wei) > Number(user?.stakeDrift)
           ? user?.stakeDrift
           : tokens_in_wei
       );
@@ -414,7 +422,7 @@ const Staking = () => {
         from: address,
         to: pool_address,
         gas: estimateGas,
-        maxPriorityFeePerGas: 50000000000,
+        maxPriorityFeePerGas,
       });
 
       transaction
@@ -893,7 +901,7 @@ col-12 col-sm-6 pe-0 ps-0 ps-sm-2 d-flex justify-content-end align-items-end "
                       >
                         <p
                           className="
-                      m-0 text-uppercase"
+                      m-0 text-uppercase text-break"
                           style={{
                             fontSize: 12,
                           }}
@@ -902,7 +910,7 @@ col-12 col-sm-6 pe-0 ps-0 ps-sm-2 d-flex justify-content-end align-items-end "
                         </p>
                         <p
                           className="
-                      DTSC_SubHeading mb-0 text-uppercase fw-bold "
+                      DTSC_SubHeading mb-0 text-uppercase fw-bold text-break"
                           style={{ color: "#ff4bae" }}
                         >
                           {ConvertNumber(user?.stakeDrift || 0, true)} $Drift
@@ -914,8 +922,7 @@ col-12 col-sm-6 pe-0 ps-0 ps-sm-2 d-flex justify-content-end align-items-end "
                       col-12 pe-0 col-sm-6 mt-3 mt-sm-0 ps-0 ps-sm-2"
                       >
                         <p
-                          className="
-                      m-0 text-uppercase"
+                          className="m-0 text-uppercase text-break"
                           style={{
                             fontSize: 12,
                           }}
@@ -925,7 +932,7 @@ col-12 col-sm-6 pe-0 ps-0 ps-sm-2 d-flex justify-content-end align-items-end "
 
                         <p
                           className="
-                      DTSC_SubHeading mb-0 text-uppercase fw-bold "
+                      DTSC_SubHeading mb-0 text-uppercase fw-bold text-break"
                           style={{ color: "#ff4bae" }}
                         >
                           {ConvertNumber(pool?.total_staked || 0, true)} $Drift
@@ -1100,8 +1107,9 @@ col-12 col-sm-6 pe-0 ps-0 ps-sm-2 d-flex justify-content-end align-items-end "
                               type="number"
                               style={{ marginRight: 15 }}
                               min={0}
-                              max={Number(user?.stakeDrift || 0)}
+                              max={user?.stakeDrift || 0}
                               value={tokens}
+                              step={"any"}
                               onChange={onChange}
                             />
                             <button

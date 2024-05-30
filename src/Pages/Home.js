@@ -45,6 +45,7 @@ import {
   LoadUser,
 } from "../Store/blockchainSlice";
 import Loader from "../Component/Loading";
+import { maxPriorityFeePerGas } from "../config";
 
 function Home() {
   const dispatch = useDispatch();
@@ -192,13 +193,6 @@ function Home() {
       .scrollIntoView({ behavior: "smooth" }, true);
   }
 
-  function numberWithCommas(x) {
-    x = x.toString();
-    var pattern = /(-?\d+)(\d{3})/;
-    while (pattern.test(x)) x = x.replace(pattern, "$1,$2");
-    return x;
-  }
-
   const allow = async (e) => {
     e.preventDefault();
     if (!address) {
@@ -238,7 +232,7 @@ function Home() {
         from: address,
         to: Presale_TokenAddress,
         gas: estimateGas,
-        maxPriorityFeePerGas: 50000000000,
+        maxPriorityFeePerGas,
       });
 
       transaction
@@ -330,7 +324,7 @@ function Home() {
         from: address,
         to: claimAddress,
         gas: estimateGas,
-        maxPriorityFeePerGas: 50000000000,
+        maxPriorityFeePerGas,
       });
 
       transaction
@@ -644,7 +638,7 @@ function Home() {
                       <p className="m-0">
                         Total Remaining Claims{" "}
                         <span style={{ fontWeight: "bold" }}>
-                          {numberWithCommas(Number(data?.tokensToClaim || 0))}
+                          {data?.tokensToClaim || 0}
                         </span>
                       </p>
                     </div>
@@ -721,7 +715,7 @@ function Home() {
                           </div>
                         </div>
                         <div className="row p-0 m-0 mt-3">
-                          <div className="col-12 col-xl-6 ps-0 pe-0 pe-xl-2">
+                          {/* <div className="col-12 col-xl-6 ps-0 pe-0 pe-xl-2">
                             <label>
                               <p>Staked Tokens</p>
                             </label>
@@ -737,13 +731,13 @@ function Home() {
                               />
                               <img src={token} alt="" width={32} height={32} />
                             </div>
-                          </div>
+                          </div> */}
                           <div
                             className="
-                      col-12 col-xl-6 mt-4 mt-xl-0 pe-0 ps-0 ps-xl-2"
+                      col-12 mt-4 mt-xl-0 pe-0 ps-0"
                           >
                             <label>
-                              <p>Dynamic Tokens</p>
+                              <p>Drift Tokens</p>
                             </label>
                             <div className="input align-items-center">
                               <input
@@ -752,7 +746,11 @@ function Home() {
                                 type="number"
                                 name="no_of_tokens"
                                 id="no_of_tokens"
-                                value={user?.Dynamic || 0}
+                                // value={user?.Dynamic || 0}
+                                value={
+                                  ConvertNumber(Number(user?.balance), true) ||
+                                  0
+                                }
                                 style={{ marginRight: 15 }}
                               />
 

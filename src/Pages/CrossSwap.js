@@ -1,5 +1,6 @@
 import {
   useSwitchNetwork,
+  useWeb3Modal,
   useWeb3ModalAccount,
   useWeb3ModalState,
 } from "@web3modal/ethers5/react";
@@ -18,12 +19,12 @@ import GetChain from "../Helpers/GetChain";
 import LoadingGif from "../Assets/Images/loading.gif";
 import { LoadUser } from "../Store/blockchainSlice";
 
-// Function Calls Flow.
 /*
-GetBridgeFee.
-CheckAllowance.
-CheckEstimateGas.
+>>Function Calls Flow<<
 CheckBalance.
+CheckAllowance.
+GetBridgeFee.
+CheckEstimateGas.
 */
 const CrossSwap = () => {
   const {
@@ -57,6 +58,7 @@ const CrossSwap = () => {
     contractInstBridge_BNBSend,
     contractInstBridge_POLYGONSend,
   } = useSelector((state) => state.Blockchain);
+  const { open } = useWeb3Modal();
   const { switchNetwork } = useSwitchNetwork();
   const { address, chainId } = useWeb3ModalAccount();
   const [recipientAddress, setRecipientAddress] = useState(null);
@@ -266,6 +268,7 @@ const CrossSwap = () => {
         from: address,
         to: bridge_address,
         gas: estimateGas,
+        value: bridgeFees,
       });
       console.log("response", res);
       console.log("estimateGas", estimateGas);
@@ -325,6 +328,7 @@ const CrossSwap = () => {
       Number(ConvertNumber(user?.dynamicDrift, true)) >=
       Number(selectedChain?.value)
     ) {
+      setIsLoading(true);
       await CheckAllowance();
       setIsInsuffBalance(false);
     } else {
@@ -371,8 +375,9 @@ const CrossSwap = () => {
           setModalMessage(
             "Your transaction to grant token allowance for bridging has been successfully completed."
           );
-          dispatch(LoadUser({ ...currentInst }));
+          // dispatch(LoadUser({ ...currentInst }));
           setLoadingTransaction(false);
+          await CheckBalance();
         })
         .on("error", async (error, receipt) => {
           console.log("ERROR => \n", error);
@@ -434,6 +439,7 @@ const CrossSwap = () => {
         to: currentInst?.bridge_address,
         gas: estimateGas,
         maxPriorityFeePerGas,
+        value: bridgeFees,
       });
 
       transaction
@@ -486,16 +492,18 @@ const CrossSwap = () => {
   useEffect(() => {
     const handleChainSelection = async () => {
       if (chainId) {
+        setIsLoading(true);
         const chain = GetChain(chainId);
         setSelectedChain({ ...chain });
         const filteredChain = SupportedChain.filter(
           (fchain) => fchain?.chainId !== chain?.chainId
         )[0];
-        setRecipientAddress(address);
+
         if (filteredChain && user) {
+          const bridgeFees = await GetBridgeFee(filteredChain);
           setConvSelectedChain({
             ...filteredChain,
-            bridgeFees: await GetBridgeFee(filteredChain),
+            bridgeFees,
           });
         } else {
           setConvSelectedChain({
@@ -503,6 +511,7 @@ const CrossSwap = () => {
             bridgeFees: 0,
           });
         }
+        setRecipientAddress(address);
       } else {
         const chain = SupportedChain[0];
         setSelectedChain(chain);
@@ -938,7 +947,7 @@ const CrossSwap = () => {
                       isInsuffGasErr
                     )}
                   </button>
-                ) : (
+                ) : chainId ? (
                   <button
                     type="button"
                     className={`btn pinkBtn BtnStyle1 text-white fw-bold shadow-none rounded-2 mt-4 w-100 FS_14 removeBtnTransform`}
@@ -964,6 +973,24 @@ const CrossSwap = () => {
                       </div>
                     ) : (
                       "Transfer"
+                    )}
+                  </button>
+                ) : (
+                  <button
+                    type="button"
+                    className={`btn pinkBtn BtnStyle1 text-white fw-bold shadow-none rounded-2 mt-4 w-100 FS_14 removeBtnTransform`}
+                    onClick={() => open()}
+                  >
+                    {isLoading ? (
+                      <div className="d-flex justify-content-center align-items-center">
+                        <img
+                          src={LoadingGif}
+                          style={{ width: 20 }}
+                          alt="loading"
+                        />
+                      </div>
+                    ) : (
+                      "Connect Wallet"
                     )}
                   </button>
                 )}

@@ -74,4 +74,4 @@ export const SupportedToken = [
   },
 ];
 
-export const maxPriorityFeePerGas = 50000000000;
+export const maxPriorityFeePerGas = 30000000000;

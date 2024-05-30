@@ -182,6 +182,13 @@ function App() {
     } else {
       dispatch(createInstance());
     }
+  };
+
+  useEffect(() => {
+    LoadContract();
+  }, [isConnected, chainId]);
+
+  useEffect(() => {
     if (
       contractInstDrift_ETH &&
       contractInstDrift_BNB &&
@@ -192,11 +199,14 @@ function App() {
     ) {
       getBlockchainData();
     }
-  };
-
-  useEffect(() => {
-    LoadContract();
-  }, [isConnected, chainId]);
+  }, [
+    contractInstDrift_ETH,
+    contractInstDrift_BNB,
+    contractInstDrift_POLYGON,
+    web3Inst_ETH,
+    web3Inst_BNB,
+    web3Inst_POLYGON,
+  ]);
 
   useEffect(() => {
     if (isConnected && walletProvider && address && chainId) {
@@ -220,7 +230,7 @@ function App() {
         <Route path="/ambassador" element={<Ambassador />} />
         <Route path="/privacy-policy" element={<PrivacyPolicy />} />
         <Route path="/staking-portal" element={<Staking />} />
-        <Route path="/cross-swap" element={<CrossSwap />} />
+        {/* <Route path="/cross-swap" element={<CrossSwap />} /> */}
         <Route path="/03052024tok" element={<Tokenomics />} />
         <Route
           path="/price-risk-disclosure"
