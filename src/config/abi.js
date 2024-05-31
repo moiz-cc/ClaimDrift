@@ -1,5 +1,5 @@
 // TOKEN ABI
-import { web3errors } from "web3-errors-extract";
+const { Web3errors } = require("web3-errors-extract");
 
 export const presaletokenAbi_ETH = [
   {
@@ -8433,24 +8433,28 @@ export const swapBridge_Abi = [
   { stateMutability: "payable", type: "receive" },
 ];
 
-export const err1 = new web3errors(process.env.REACT_APP_RPC_ETH, [
-  presaletokenAbi_ETH,
-  crowdSaleAbi_ETH,
-]);
+// export const err1 = new web3errors(process.env.REACT_APP_RPC_ETH, [
+//   presaletokenAbi_ETH,
+//   crowdSaleAbi_ETH,
+// ]);
 
-export const err2 = new web3errors(process.env.REACT_APP_RPC_BNB, [
-  presaletokenAbi_BNB,
-  crowdSaleAbi_BNB,
-]);
+// export const err2 = new web3errors(process.env.REACT_APP_RPC_BNB, [
+//   presaletokenAbi_BNB,
+//   crowdSaleAbi_BNB,
+// ]);
 
-export const err3 = new web3errors(process.env.REACT_APP_RPC_POLYGON, [
-  presaletokenAbi_POLYGON,
-  crowdSaleAbi_POLYGON,
-]);
+// export const err3 = new web3errors(process.env.REACT_APP_RPC_POLYGON, [
+//   presaletokenAbi_POLYGON,
+//   crowdSaleAbi_POLYGON,
+// ]);
 
-export const err4 = new web3errors(process.env.REACT_APP_RPC_ETH, [
-  swapBridge_Abi,
-  driftAbi,
+export const err4 = new Web3errors(process.env.REACT_APP_RPC_ETH, [
+swapBridge_Abi,
+driftAbi,
+]);
+export const err5 = new Web3errors(process.env.REACT_APP_RPC_ETH, [
+  driftStakePoolAbi,
+  driftStakeAbi,
 ]);
 
 /*
@@ -8475,6 +8479,6 @@ export const err4 = new web3errors(process.env.REACT_APP_RPC_ETH, [
 //   .then(console.log)
 //   .catch(console.error);
 // err4
-//   .getErrorMessage([{ err: "From ABI swapBridge_Abi" }])
+//   .getErrorMessage({ err: "From ABI swapBridge_Abi" })
 //   .then(console.log)
 //   .catch(console.error);

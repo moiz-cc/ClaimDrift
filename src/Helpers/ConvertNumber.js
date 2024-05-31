@@ -37,7 +37,8 @@ const web3Divide = (val, b) => {
 const web3Multiply = (val, b) => {
   const a = val.toString();
   let v1 = a.split(".");
-  let len = v1.length > 1 ? b - v1[1].length : 0;
+  let len = v1.length > 1 ? b - v1[1].length : b;
+
   let i = 0;
   while (i < len) {
     v1.push("0");

@@ -1,11 +1,10 @@
-/* global BigInt */
 import React, { useEffect } from "react";
 
 import { useState } from "react";
 import { useSelector } from "react-redux";
-import ConvertNumber from "../Helpers/ConvertNumber";
+import ConvertNumber from "../Helpers/ConvertNumber.js";
 import { useDispatch } from "react-redux";
-import { LoadUser, LoadPoolData } from "../Store/blockchainSlice";
+import { LoadUser, LoadPoolData } from "../Store/blockchainSlice.js";
 import { getErrorMessage } from "../blockchainErrors.js";
 import Error from "../Assets/Images/Error.svg";
 import staking_pool from "../Assets/Images/Pool.png";
@@ -18,8 +17,9 @@ import {
   useWeb3ModalState,
 } from "@web3modal/ethers5/react";
 import { Link } from "react-router-dom";
-import Loader from "../Component/Loading.js";
-import { maxPriorityFeePerGas } from "../config/index.js";
+import Loader from "../Component/Loading.jsx";
+import { maxPriorityFeePerGas, regexInt } from "../config/index.js";
+import { err4, err5 } from "../config/abi.js";
 
 const Staking = () => {
   const dispatch = useDispatch();
@@ -186,8 +186,7 @@ const Staking = () => {
 
   const onChange = (e) => {
     const { value, max } = e.target;
-
-    if (ConvertNumber(value, false) > user?.stakeDrift) {
+    if (Number(ConvertNumber(value, false)) > Number(user?.stakeDrift)) {
       setTokens(ConvertNumber(user?.stakeDrift, true));
     } else {
       setTokens(value);
@@ -286,6 +285,7 @@ const Staking = () => {
     }
   };
   const allow = async (e) => {
+    console.log("Start Approve");
     if (!address) {
       open();
 
@@ -294,7 +294,7 @@ const Staking = () => {
     setClaimtransactionModal(true);
 
     setLoading(true);
-
+    console.log("A");
     const {
       web3Inst,
       claimAddress,
@@ -310,14 +310,17 @@ const Staking = () => {
     } = GetCurrentInstance();
 
     try {
+      console.log("B");
       const approve = await contractInstDriftStake.methods.approve(
         pool_address,
-        user?.stakeDrift + 0 || 0
+        ConvertNumber(tokens)
       );
 
+      console.log("C");
       const estimateGas = await approve.estimateGas({
         from: address,
       });
+      console.log("D");
 
       const transaction = approve.send({
         from: address,
@@ -326,6 +329,7 @@ const Staking = () => {
         maxPriorityFeePerGas,
       });
 
+      console.log("E");
       transaction
         .on("transactionHash", (txHash) => {
           console.log(txHash);
@@ -365,6 +369,7 @@ const Staking = () => {
 
           setLoading(false);
 
+          err4.getErrorMessage(error).then(console.log).catch(console.error);
           const errorMsg = await getErrorMessage(error, chainId);
           setErrors({ ...errors, transaction: errorMsg });
           console.log("RECEIPT ERROR => \n", receipt);
@@ -374,6 +379,8 @@ const Staking = () => {
           }
         });
     } catch (error) {
+      console.log("Error", error);
+      err4.getErrorMessage(error).then(console.log).catch(console.error);
       const errorMsg = await getErrorMessage(error, chainId);
       console.log(errorMsg);
       setErrors((state) => ({ ...state, transaction: errorMsg }));
@@ -382,10 +389,11 @@ const Staking = () => {
   };
 
   const unstakeDrift = async (e) => {
-    // e.preventDefault();
+    console.log("object");
+    e.preventDefault();
 
     const tokens_in_wei = ConvertNumber(tokens);
-
+    console.log("Start ");
     if (!address) {
       open();
 
@@ -406,17 +414,18 @@ const Staking = () => {
       pool_address,
       bridge_address,
     } = GetCurrentInstance();
-
+    console.log("Starting");
     try {
       const unstake = await contractInstStakePool.methods.unstake(
         Number(tokens_in_wei) > Number(user?.stakeDrift)
           ? user?.stakeDrift
           : tokens_in_wei
       );
-
+      console.log("Ok");
       const estimateGas = await unstake.estimateGas({
         from: address,
       });
+      console.log("Ok1");
 
       const transaction = unstake.send({
         from: address,
@@ -424,6 +433,7 @@ const Staking = () => {
         gas: estimateGas,
         maxPriorityFeePerGas,
       });
+      console.log("Ok2");
 
       transaction
         .on("transactionHash", (txHash) => {
@@ -473,13 +483,14 @@ const Staking = () => {
           }
         });
     } catch (error) {
+      console.log("Here Error");
+      err5.getErrorMessage(error).then(console.log).catch(console.error);
       const errorMsg = await getErrorMessage(error, chainId);
-
       setErrors((state) => ({ ...state, transaction: errorMsg }));
       setLoading(false);
     }
   };
-
+  // console.log(user?.is_pool_allowed);
   return (
     <div className="Staking ">
       <div className="StakingHeroSection d-flex align-items-center ">
@@ -1122,36 +1133,28 @@ col-12 col-sm-6 pe-0 ps-0 ps-sm-2 d-flex justify-content-end align-items-end "
                             </button>
                           </div>
 
-                          {!user?.is_pool_allowed > 0 ? (
+                          {
                             <button
                               className="btn BtnStyle2 bg-pink  fw-bold mt-3 text-uppercase text-white shadow-none"
-                              onClick={(e) => allow()}
+                              onClick={(e) =>
+                                user?.is_pool_allowed < ConvertNumber(tokens)
+                                  ? allow(e)
+                                  : unstakeDrift(e)
+                              }
                               disabled={
                                 user?.stakeDrift === undefined ||
                                 Number(user?.stakeDrift) === 0 ||
                                 user === null ||
-                                isLocked
+                                isLocked ||
+                                tokens == "" ||
+                                tokens == "0"
                               }
                             >
                               Unstake
                             </button>
-                          ) : (
-                            <button
-                              className="btn BtnStyle2 bg-pink  fw-bold mt-3 text-uppercase shadow-none"
-                              onClick={(e) => unstakeDrift()}
-                              disabled={
-                                user?.stakeDrift === undefined ||
-                                Number(user?.stakeDrift) === 0 ||
-                                user === null ||
-                                isLocked
-                              }
-                            >
-                              Unstake
-                            </button>
-                          )}
+                          }
                         </div>
                       </div>
-                      {/* )} */}
                     </div>
                   </div>
                 )}

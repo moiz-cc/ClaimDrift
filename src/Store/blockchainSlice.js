@@ -248,7 +248,7 @@ export const LoadUser = createAsyncThunk(
           Number(balance) == 0 && (Number(Staked) > 0 || Number(Dynamic) > 0)
             ? true
             : false,
-        is_pool_allowed: Number(is_pool_allowed) > 0,
+        is_pool_allowed,
         remaining_claim: Reward.pendingRewards,
         stakeDrift,
         stakedTime: stakedTime.lastStakedTime,

@@ -1,12 +1,18 @@
 import "./App.css";
-import Header from "./Component/Header";
-import Home from "./Pages/Home";
-import Footer from "./Component/Footer";
-import Utilities from "./Pages/Utilities";
-import Ambassador from "./Pages/Ambassador";
+import Header from "./Component/Header.jsx";
+import Home from "./Pages/Home.jsx";
+import Footer from "./Component/Footer.jsx";
+import Utilities from "./Pages/Utilities.jsx";
+import Ambassador from "./Pages/Ambassador.jsx";
+import PrivacyPolicy from "./Pages/PrivacyPolicy.jsx";
+import PriceRiskDisclosure from "./Pages/PriceRiskDisclosure.jsx";
+import Staking from "./Pages/Staking.jsx";
+import CrossSwap from "./Pages/CrossSwap.jsx";
+import Tokenomics from "./Pages/Tokenomics.jsx";
 import { Routes, Route } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+// import { web3errors } from "web3-errors-extract";
 
 import {
   createWeb3Modal,
@@ -22,11 +28,6 @@ import {
 } from "./Store/blockchainSlice.js";
 import { LoadUser, LoadPoolData } from "./Store/blockchainSlice.js";
 
-import PrivacyPolicy from "./Pages/PrivacyPolicy.js";
-import PriceRiskDisclosure from "./Pages/PriceRiskDisclosure.js";
-import Staking from "./Pages/Staking.js";
-import CrossSwap from "./Pages/CrossSwap.js";
-import Tokenomics from "./Pages/Tokenomics.js";
 import { metadata, ethereum, polygon, bnb, projectId } from "./config";
 function App() {
   const [isModalCreated, setIsModalCreated] = useState(false);

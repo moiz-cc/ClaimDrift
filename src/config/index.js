@@ -75,3 +75,8 @@ export const SupportedToken = [
 ];
 
 export const maxPriorityFeePerGas = 30000000000;
+
+const _regexInt = /^(\d+)/;
+export const regexInt = (value) => {
+  return _regexInt.test(value);
+};
