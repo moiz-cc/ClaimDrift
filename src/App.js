@@ -220,6 +220,7 @@ function App() {
     isWeb3InstanceConnect,
     selectedNetworkId,
     chainId,
+    address,
   ]);
 
   return (
@@ -231,7 +232,7 @@ function App() {
         <Route path="/ambassador" element={<Ambassador />} />
         <Route path="/privacy-policy" element={<PrivacyPolicy />} />
         <Route path="/staking-portal" element={<Staking />} />
-        {/* <Route path="/cross-swap" element={<CrossSwap />} /> */}
+        <Route path="/ccip-bridge" element={<CrossSwap />} />
         <Route path="/03052024tok" element={<Tokenomics />} />
         <Route
           path="/price-risk-disclosure"

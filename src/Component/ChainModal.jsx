@@ -80,7 +80,7 @@ const ChainModal = ({ state }) => {
           <div className="modal-body">
             <div className="d-flex align-items-center justify-content-between">
               <h1 className="modal-title fs-5 fw-semibold" id="chainModal">
-                Select a chain
+                Select chain
               </h1>
               <button
                 type="button"

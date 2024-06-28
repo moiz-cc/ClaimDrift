@@ -54,7 +54,7 @@ const ConvertNumber = (
   isLocale = false,
   dec = 18
 ) => {
-  if (Number(number) == 0) {
+  if (Number(number) == 0 || !number) {
     return 0;
   }
   let num = number;

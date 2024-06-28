@@ -270,8 +270,8 @@ const CrossSwap = () => {
         gas: estimateGas,
         value: bridgeFees,
       });
-      console.log("response", res);
-      console.log("estimateGas", estimateGas);
+      // console.log("response", res);
+      // console.log("estimateGas", estimateGas);
       setIsInsuffGas(false);
       ResetLoading();
     } catch (error) {
@@ -281,7 +281,9 @@ const CrossSwap = () => {
       if (err === "Insufficient funds.") {
         setIsInsuffGasErr("Insufficient funds for gas");
       } else {
-        setIsInsuffGasErr("Oops! Something went wrong");
+        const message = err?.split(":");
+
+        setIsInsuffGasErr(message[message?.length - 1]);
       }
       ResetLoading();
       // console.log("error", error);
@@ -547,12 +549,12 @@ const CrossSwap = () => {
 
   return (
     <div className="CrossSwap">
-      <div className="CrossSwapSection ">
+      <div className="CrossSwapSection d-flex align-items-center ">
         <div className="CrossSwapSection_Container m-auto container-lg">
           <div className="row m-0 w-100 Home_Hero_Section">
             <div className="col-12 col-md-6 p-0 ">
               <h1 className="Home_Hero_Section_Heading mt-2 fw-bold text-white text-uppercase">
-                DRIFT Cross Swap
+                Cross-Chain Interoperability Protocol (CCIP) Bridge
               </h1>
 
               <p className="m-0 p-0 my-4 text-white">
@@ -569,7 +571,9 @@ const CrossSwap = () => {
       <div className="CrossSwapSectionCardContainer d-flex align-items-center gap-3 justify-content-center my-5 px-3">
         <div className="d-flex flex-column gap-2">
           <div className="card bg-light border-0 rounded-3">
-            <h1 className="fs-4 fw-bold mb-0 text-start pt-3 ps-3">Bridge</h1>
+            <h1 className="fs-4 fw-bold mb-0 text-center pb-0 p-3">
+              Cross-Chain Bridge
+            </h1>
             <div className="card-body text-center pt-2">
               <form action="">
                 <div className="InputContainer border bg-white rounded-3 py-3 py-md-2 px-3 mb-2">
@@ -997,8 +1001,13 @@ const CrossSwap = () => {
               </form>
             </div>
           </div>
-          <div className="d-flex align-items-center gap-2 justify-content-center">
-            <span className="fw-bold text-light-emphasis">Powered by</span>{" "}
+          <div className="d-flex align-items-end gap-2 justify-content-center">
+            <span
+              className="fw-bold text-light-emphasis"
+              style={{ fontSize: "14px" }}
+            >
+              Powered by
+            </span>{" "}
             <img src={chainlinkCCIPSmall || ""} alt="Powered By" />
           </div>
         </div>

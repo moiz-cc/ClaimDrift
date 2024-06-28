@@ -284,8 +284,9 @@ const Staking = () => {
       setLoading(false);
     }
   };
+
   const allow = async (e) => {
-    console.log("Start Approve");
+    // console.log("Start Approve");
     if (!address) {
       open();
 
@@ -294,7 +295,7 @@ const Staking = () => {
     setClaimtransactionModal(true);
 
     setLoading(true);
-    console.log("A");
+    // console.log("A");
     const {
       web3Inst,
       claimAddress,
@@ -310,17 +311,17 @@ const Staking = () => {
     } = GetCurrentInstance();
 
     try {
-      console.log("B");
+      // console.log("B");
       const approve = await contractInstDriftStake.methods.approve(
         pool_address,
         ConvertNumber(tokens)
       );
 
-      console.log("C");
+      // console.log("C");
       const estimateGas = await approve.estimateGas({
         from: address,
       });
-      console.log("D");
+      // console.log("D");
 
       const transaction = approve.send({
         from: address,
@@ -329,7 +330,7 @@ const Staking = () => {
         maxPriorityFeePerGas,
       });
 
-      console.log("E");
+      // console.log("E");
       transaction
         .on("transactionHash", (txHash) => {
           console.log(txHash);
@@ -389,11 +390,11 @@ const Staking = () => {
   };
 
   const unstakeDrift = async (e) => {
-    console.log("object");
+    // console.log("object");
     e.preventDefault();
 
     const tokens_in_wei = ConvertNumber(tokens);
-    console.log("Start ");
+    // console.log("Start ");
     if (!address) {
       open();
 
@@ -414,18 +415,18 @@ const Staking = () => {
       pool_address,
       bridge_address,
     } = GetCurrentInstance();
-    console.log("Starting");
+    // console.log("Starting");
     try {
       const unstake = await contractInstStakePool.methods.unstake(
         Number(tokens_in_wei) > Number(user?.stakeDrift)
           ? user?.stakeDrift
           : tokens_in_wei
       );
-      console.log("Ok");
+      // console.log("Ok");
       const estimateGas = await unstake.estimateGas({
         from: address,
       });
-      console.log("Ok1");
+      // console.log("Ok1");
 
       const transaction = unstake.send({
         from: address,
@@ -433,7 +434,7 @@ const Staking = () => {
         gas: estimateGas,
         maxPriorityFeePerGas,
       });
-      console.log("Ok2");
+      // console.log("Ok2");
 
       transaction
         .on("transactionHash", (txHash) => {
@@ -483,7 +484,7 @@ const Staking = () => {
           }
         });
     } catch (error) {
-      console.log("Here Error");
+      // console.log("Here Error");
       err5.getErrorMessage(error).then(console.log).catch(console.error);
       const errorMsg = await getErrorMessage(error, chainId);
       setErrors((state) => ({ ...state, transaction: errorMsg }));
